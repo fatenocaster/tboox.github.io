@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TBOOX</title>
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
+    <link rel="stylesheet" href=" /css/main.css ">
+    <link rel="canonical" href="http://tboox.org/">
+    <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?162f1cd478898a0686b0b5d5115e2af2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">TBOOX</a>
+        <small>Welcome to the website for the TBOOX Open Source Project!</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a class="active" href="/cn">
+                        
+                        <i class="fa fa-home"></i>中文
+                    </a>
+                </li>
+
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/project/">
+                        
+                            <i class="fa fa-bookmark"></i>Projects
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/archive/">
+                        
+                            <i class="fa fa-archive"></i>Archives
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/category/">
+                        
+                            <i class="fa fa-th-list"></i>Categories
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/tag/">
+                        
+                            <i class="fa fa-tags"></i>Tags
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/donation/">
+                        
+                            <i class="fa fa-heart"></i>Donate
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/about/">
+                        
+                            <i class="fa fa-user"></i>About
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" index="">
+    <div class="left">
+        <h1>The TBOOX Open Source Project!</h1>
+        <small>Focus on cross-platform development using c language</small>
+        <hr />
+        <ul>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/2016/07/17/update-v2.0.3/">xmake v2.0.3 update!</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-17
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#update" title="Tag: update" rel="tag">update</a>&nbsp;
+    
+        <a href="/tag/#xmake.io" title="Tag: xmake.io" rel="tag">xmake.io</a>&nbsp;
+    
+        <a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p><a href="http://www.xmake.io">Website</a>
+<a href="https://github.com/waruqi/xmake">Sources</a></p>
+
+<h1 id="changelog">Changelog</h1>
+
+<h3 id="new-features">New features</h3>
+
+<ul>
+  <li>Add check includes dependence automatically</li>
+  <li>Add print colors</li>
+  <li>Add debugger support, .e.g <code class="highlighter-rouge">xmake run -d program ...</code></li>
+</ul>
+
+<h3 id="changes">Changes</h3>
+
+<ul>
+  <li>Improve the interfaces of run shell</li>
+  <li>Upgrade luajit to v2.0.4</li>
+  <li>Improve to generate makefile plugin</li>
+  <li>Optimizate the multitasking compiling speed</li>
+</ul>
+
+<h3 id="bugs-fixed">Bugs fixed</h3>
+
+<ul>
+  <li>Fix install directory bug</li>
+  <li>Fix the root directory error for <code class="highlighter-rouge">import</code> interface</li>
+  <li>Fix check visual stdio error on windows</li>
+</ul>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/2016/07/17/update-v2.0.3/"><i class="fa fa-newspaper-o"></i>Read All</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/2016/07/17/demo-build-a-simple-project/">Demo: Build a simple project</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-17
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#demo" title="Tag: demo" rel="tag">demo</a>&nbsp;
+    
+        <a href="/tag/#build" title="Tag: build" rel="tag">build</a>&nbsp;
+    
+        <a href="/tag/#project" title="Tag: project" rel="tag">project</a>&nbsp;
+    
+        <a href="/tag/#hello" title="Tag: hello" rel="tag">hello</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p><a href="https://asciinema.org/a/79998"><img src="https://asciinema.org/a/79998.png" alt="asciicast" /></a></p>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/2016/07/17/demo-build-a-simple-project/"><i class="fa fa-newspaper-o"></i>Read All</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/2016/07/16/how-to-build-a-simple-project/">How to build a simple project quickly</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-16
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#build" title="Tag: build" rel="tag">build</a>&nbsp;
+    
+        <a href="/tag/#project" title="Tag: project" rel="tag">project</a>&nbsp;
+    
+        <a href="/tag/#hello" title="Tag: hello" rel="tag">hello</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>We create an empty console project first:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake create -P ./hello
+
+create hello ...
+create ok!👌
+</code></pre>
+</div>
+
+<p>And xmake will generate some files:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> ./hello
+<span class="gp">$ </span>tree .
+
+.
+├── src
+│   └── main.c
+└── xmake.lua
+</code></pre>
+</div>
+
+<p>It is a simple console program only for printing <code class="highlighter-rouge">hello xmake!</code></p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>cat ./src/main.c 
+
+<span class="c">#include &lt;stdio.h&gt;</span>
+int main<span class="o">(</span>int argc, char<span class="k">**</span> argv<span class="o">)</span>
+<span class="o">{</span>
+    <span class="nb">printf</span><span class="o">(</span><span class="s2">"hello xmake!</span><span class="se">\n</span><span class="s2">"</span><span class="o">)</span>;
+    <span class="k">return </span>0;
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The content of <code class="highlighter-rouge">xmake.lua</code> is very simple:</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="err">$</span> <span class="n">cat</span> <span class="n">xmake</span><span class="p">.</span><span class="n">lua</span> 
+
+<span class="n">target</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">)</span>
+    <span class="n">set_kind</span><span class="p">(</span><span class="s2">"binary"</span><span class="p">)</span>
+    <span class="n">add_files</span><span class="p">(</span><span class="s2">"src/*.c"</span><span class="p">)</span> 
+
+</code></pre>
+</div>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/2016/07/16/how-to-build-a-simple-project/"><i class="fa fa-newspaper-o"></i>Read All</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/2016/07/16/batch-check-functions/">Batch checking library functions</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-16
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#check" title="Tag: check" rel="tag">check</a>&nbsp;
+    
+        <a href="/tag/#batch" title="Tag: batch" rel="tag">batch</a>&nbsp;
+    
+        <a href="/tag/#function" title="Tag: function" rel="tag">function</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>xmake provides some api, which can detect whether exist some library functions.</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>
+<span class="n">target</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>
+
+    <span class="c1">-- checks some libc functions from the header files: wchar.h and stdlib.h</span>
+    <span class="n">add_cfuncs</span><span class="p">(</span><span class="s2">"libc"</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span>         <span class="p">{</span><span class="s2">"wchar.h"</span><span class="p">,</span> <span class="s2">"stdlib.h"</span><span class="p">},</span>            <span class="s2">"wcscat"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcsncat"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcscpy"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcsncpy"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcslcpy"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcslen"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcsnlen"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcsstr"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcscasestr"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcscmp"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcscasecmp"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcsncmp"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcsncasecmp"</span><span class="p">,</span>
+                                                                        <span class="s2">"wcstombs"</span><span class="p">,</span>
+                                                                        <span class="s2">"mbstowcs"</span><span class="p">)</span>
+
+    <span class="c1">-- checks the interfaces: pthread_mutex_init, pthread_create in the pthread</span>
+    <span class="c1">-- the first argument is the library alias name</span>
+    <span class="n">add_cfuncs</span><span class="p">(</span><span class="s2">"posix"</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span>        <span class="s2">"pthread.h"</span><span class="p">,</span>                        <span class="s2">"pthread_mutex_init"</span><span class="p">,</span> <span class="s2">"pthread_create"</span><span class="p">)</span>
+
+    <span class="c1">-- checks the pthread interfaces and attempt to links it using flags: -lpthread</span>
+    <span class="n">add_cfuncs</span><span class="p">(</span><span class="s2">"posix"</span><span class="p">,</span> <span class="s2">"pthread"</span><span class="p">,</span>  <span class="s2">"pthread.h"</span><span class="p">,</span>                        <span class="s2">"pthread_mutex_init"</span><span class="p">,</span> <span class="s2">"pthread_create"</span><span class="p">)</span>
+
+</code></pre>
+</div>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/2016/07/16/batch-check-functions/"><i class="fa fa-newspaper-o"></i>Read All</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/2016/07/08/plugin-hello/">Plugin development of hello xmake</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-08
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#plugin" title="Tag: plugin" rel="tag">plugin</a>&nbsp;
+    
+        <a href="/tag/#example" title="Tag: example" rel="tag">example</a>&nbsp;
+    
+        <a href="/tag/#hello" title="Tag: hello" rel="tag">hello</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>xmake v2.0 has supported the plugin module and we can develop ourself plugin module conveniently.</p>
+
+<p>We can run command <code class="highlighter-rouge">xmake -h</code> to look over some builtin plugins of xmake</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>    Plugins: 
+        l, lua                                 Run the lua script.
+        m, macro                               Run the given macro.
+           doxygen                             Generate the doxygen document.
+           hello                               Hello xmake!
+           project                             Create the project file.
+</code></pre>
+</div>
+
+<ul>
+  <li>lua: Run a given lua script.</li>
+  <li>macro: Record and playback some xmake commands repeatly.</li>
+  <li>doxygen：Generate doxygen document automatically.</li>
+  <li>hello:  The demo plugin and only print: ‘hello xmake!’</li>
+  <li>project：Generate project file for IDE, only generate makefile now and will generate vs, xcode project in the future</li>
+</ul>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/2016/07/08/plugin-hello/"><i class="fa fa-newspaper-o"></i>Read All</a>
+                </div>
+                <hr />
+              </li>
+            
+        </ul>
+
+        <!-- Pagination links -->
+        <div class="pagination">
+          
+            <span class="previous disable"><i class="fa fa-angle-double-left"></i></span>
+            <span class="previous disable"><i class="fa fa-angle-left"></i></span>
+          
+          <span class="page_number ">1/4</span>
+          
+            <a href="/page2" class="next"><i class="fa fa-angle-right"></i></a>
+            <a href="/page4" class="next"><i class="fa fa-angle-double-right"></i></a>
+          
+        </div>
+    </div>
+    <!-- <button class="anchor"><i class="fa fa-anchor"></i></button> -->
+    <div class="right">
+        <div class="wrap">
+            <div class="side">
+                <div>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                    Recent Posts
+                </div>
+                <ul class="content-ul" recent="">
+                    
+                    
+                    
+                    
+                        <li><a href="/2016/07/17/update-v2.0.3/">xmake v2.0.3 update!</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/2016/07/17/demo-build-a-simple-project/">Demo: Build a simple project</a></li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/2016/07/16/how-to-build-a-simple-project/">How to build a simple project quickly</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/2016/07/16/batch-check-functions/">Batch checking library functions</a></li>
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+
+            <!-- Content -->
+            <div class="side ">
+                <div>
+                    <i class="fa fa-th-list"></i>
+                    Categories
+                </div>
+                <ul class="content-ul" cate="">
+                    
+                    <li>
+                        <a href="/category/#tboox" class="categories-list-item" cate="tboox">
+                            <span class="name">
+                                tboox
+                            </span>
+                            <span class="badge">2</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/category/#tbox" class="categories-list-item" cate="tbox">
+                            <span class="name">
+                                tbox
+                            </span>
+                            <span class="badge">15</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/category/#xmake" class="categories-list-item" cate="xmake">
+                            <span class="name">
+                                xmake
+                            </span>
+                            <span class="badge">37</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <div class="side">
+                <div>
+                    <i class="fa fa-tags"></i>
+                    Tags
+                </div>
+                <div class="tags-cloud">
+                    
+                    
+                    
+                    
+
+                    
+
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#tboox" style="font-size: 9.5pt; color: #999;">tboox</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#站点" style="font-size: 9.5pt; color: #999;">站点</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#website" style="font-size: 9.5pt; color: #999;">website</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#tbox" style="font-size: 13pt; color: #555;">tbox</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#c" style="font-size: 12.5pt; color: #555;">c</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#bloom" style="font-size: 9pt; color: #999;">bloom</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#filter" style="font-size: 9pt; color: #999;">filter</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#算法" style="font-size: 9.5pt; color: #888;">算法</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#大数据" style="font-size: 9pt; color: #999;">大数据</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#过滤" style="font-size: 9pt; color: #999;">过滤</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#xmake" style="font-size: 18pt; color: #000;">xmake</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#lua" style="font-size: 17.5pt; color: #000;">lua</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#premake" style="font-size: 9pt; color: #999;">premake</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#排序" style="font-size: 9pt; color: #999;">排序</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#查找" style="font-size: 9pt; color: #999;">查找</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#哈希" style="font-size: 9pt; color: #999;">哈希</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#容器" style="font-size: 9pt; color: #999;">容器</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#迭代器" style="font-size: 9pt; color: #999;">迭代器</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#内存检测" style="font-size: 9pt; color: #999;">内存检测</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#内存池" style="font-size: 9pt; color: #999;">内存池</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#跨平台" style="font-size: 9.5pt; color: #888;">跨平台</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#异常捕获" style="font-size: 9pt; color: #999;">异常捕获</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#windows" style="font-size: 10.5pt; color: #888;">windows</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#linux" style="font-size: 9pt; color: #999;">linux</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#线程池" style="font-size: 9pt; color: #999;">线程池</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#裁剪" style="font-size: 9pt; color: #999;">裁剪</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#编译" style="font-size: 10pt; color: #888;">编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#配置" style="font-size: 9pt; color: #999;">配置</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#stream" style="font-size: 9.5pt; color: #999;">stream</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#流" style="font-size: 9.5pt; color: #999;">流</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#解压缩" style="font-size: 9pt; color: #999;">解压缩</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#静态库" style="font-size: 9pt; color: #999;">静态库</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#模式匹配" style="font-size: 9pt; color: #999;">模式匹配</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#版本更新" style="font-size: 10pt; color: #888;">版本更新</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#version" style="font-size: 9.5pt; color: #999;">version</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#update" style="font-size: 10pt; color: #888;">update</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#进程控制" style="font-size: 9pt; color: #999;">进程控制</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#process" style="font-size: 9pt; color: #999;">process</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#插件" style="font-size: 11.5pt; color: #777;">插件</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#import" style="font-size: 9pt; color: #999;">import</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#类库" style="font-size: 9.5pt; color: #999;">类库</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#自定义脚本" style="font-size: 9.5pt; color: #888;">自定义脚本</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#安装" style="font-size: 9pt; color: #999;">安装</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#打包" style="font-size: 9.5pt; color: #999;">打包</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#android" style="font-size: 9pt; color: #999;">android</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#apk" style="font-size: 9pt; color: #999;">apk</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#jni" style="font-size: 9pt; color: #999;">jni</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#task" style="font-size: 9.5pt; color: #999;">task</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#菜单选项" style="font-size: 9pt; color: #999;">菜单选项</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#hello" style="font-size: 10pt; color: #888;">hello</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#makefile" style="font-size: 9pt; color: #999;">makefile</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#doxygen" style="font-size: 9.5pt; color: #999;">doxygen</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#宏脚本" style="font-size: 9.5pt; color: #888;">宏脚本</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#plugin" style="font-size: 9.5pt; color: #888;">plugin</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#macro" style="font-size: 9pt; color: #999;">macro</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#包管理" style="font-size: 9pt; color: #999;">包管理</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#代码移植编译" style="font-size: 9pt; color: #999;">代码移植编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#example" style="font-size: 9.5pt; color: #999;">example</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#xmake.lua" style="font-size: 9pt; color: #999;">xmake.lua</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#compile" style="font-size: 9pt; color: #999;">compile</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#configure" style="font-size: 9pt; color: #999;">configure</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#create" style="font-size: 9pt; color: #999;">create</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#project" style="font-size: 9.5pt; color: #888;">project</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#template" style="font-size: 9pt; color: #999;">template</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#package" style="font-size: 9pt; color: #999;">package</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#run" style="font-size: 9pt; color: #999;">run</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#xmake.io" style="font-size: 10.5pt; color: #888;">xmake.io</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#scripts" style="font-size: 9pt; color: #999;">scripts</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#头文件依赖" style="font-size: 9pt; color: #999;">头文件依赖</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#增量编译" style="font-size: 9pt; color: #999;">增量编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#终端色彩高亮" style="font-size: 9pt; color: #999;">终端色彩高亮</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#check" style="font-size: 9pt; color: #999;">check</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#batch" style="font-size: 9pt; color: #999;">batch</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#function" style="font-size: 9pt; color: #999;">function</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#交叉编译" style="font-size: 9.5pt; color: #999;">交叉编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#build" style="font-size: 9.5pt; color: #999;">build</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#调试" style="font-size: 9pt; color: #999;">调试</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#运行" style="font-size: 9pt; color: #999;">运行</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#演示" style="font-size: 9pt; color: #999;">演示</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#demo" style="font-size: 9pt; color: #999;">demo</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#协程" style="font-size: 9pt; color: #999;">协程</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#进程等待" style="font-size: 9pt; color: #999;">进程等待</a>
+                    
+                </div>
+            </div>
+
+            <div class="side">
+                <div>
+                    <i class="fa fa-external-link"></i>
+                    Links
+                </div>
+                <ul class="content-ul" links="">
+                  <li><a href="http://github.com/waruqi/tbox">tbox</a></li>
+                  <li><a href="http://www.xmake.io">xmake</a></li>
+                  <li><a href="https://github.com/waruqi">github</a></li>
+                </ul>
+            </div> 
+
+            
+
+        </div>
+    </div>
+</div>
+<!-- <script src="/js/scroll.min.js " charset="utf-8"></script> -->
+<!-- <script src="/js/pageContent.js " charset="utf-8"></script> -->
+
+
+    <footer class="site-footer">
+    <div class="wrapper">
+        <p class="description">
+             Copyright (c) 2016 tboox.org 
+        </p>
+        <p class="contact">
+            
+            <a href="https://github.com/waruqi" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a> 
+             
+            
+            <a href="mailto:waruqi@gmail.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a> 
+            
+            
+            <a href="https://twitter.com/waruqi" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a> 
+            
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="http://pages.coding.me/">Coding Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/Gaohaoyang">HyG</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" class="scroll">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/scroll.min.js " charset="utf-8"></script>
+  </body>
+
+</html>

@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>高级特性之自定义脚本使用</title>
+    <meta name="description" content="xmake提供了自定义打包、安装、运行脚本，可以更加灵活的针对个人实际需求来操作xmake这里用一个例子详细说明下，比如有个需求，我需要自动编译、安装、运行android app工程，并且能够支持jni可以进行如下操作首先创建个基于ant的android app工程，目录结构如下：">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
+    <link rel="stylesheet" href=" /css/main.css ">
+    <link rel="canonical" href="http://tboox.org/cn/2016/06/09/custom-action/">
+    <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?162f1cd478898a0686b0b5d5115e2af2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/cn" class="brand">TBOOX</a>
+        <small>欢迎来到TBOOX开源工程!</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>English
+                    </a>
+                </li>
+
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/project/">
+                        
+                            <i class="fa fa-bookmark"></i>项目
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/archive/">
+                        
+                            <i class="fa fa-archive"></i>归档
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/category/">
+                        
+                            <i class="fa fa-th-list"></i>分类
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/tag/">
+                        
+                            <i class="fa fa-tags"></i>标记
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/donation/">
+                        
+                            <i class="fa fa-heart"></i>捐助
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/about/">
+                        
+                            <i class="fa fa-user"></i>关于
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>高级特性之自定义脚本使用</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2016-06-09
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a-->
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <!--a href="/tag/#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%84%9A%E6%9C%AC" title="Tag: 自定义脚本" rel="tag">自定义脚本</a-->
+        <a href="/tag/#自定义脚本" title="Tag: 自定义脚本" rel="tag">自定义脚本</a>&nbsp;
+    
+        <!--a href="/tag/#%E5%AE%89%E8%A3%85" title="Tag: 安装" rel="tag">安装</a-->
+        <a href="/tag/#安装" title="Tag: 安装" rel="tag">安装</a>&nbsp;
+    
+        <!--a href="/tag/#%E6%89%93%E5%8C%85" title="Tag: 打包" rel="tag">打包</a-->
+        <a href="/tag/#打包" title="Tag: 打包" rel="tag">打包</a>&nbsp;
+    
+        <!--a href="/tag/#android" title="Tag: android" rel="tag">android</a-->
+        <a href="/tag/#android" title="Tag: android" rel="tag">android</a>&nbsp;
+    
+        <!--a href="/tag/#apk" title="Tag: apk" rel="tag">apk</a-->
+        <a href="/tag/#apk" title="Tag: apk" rel="tag">apk</a>&nbsp;
+    
+        <!--a href="/tag/#jni" title="Tag: jni" rel="tag">jni</a-->
+        <a href="/tag/#jni" title="Tag: jni" rel="tag">jni</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <p>xmake提供了自定义打包、安装、运行脚本，可以更加灵活的针对个人实际需求来操作xmake</p>
+
+<p>这里用一个例子详细说明下，比如有个需求，我需要自动编译、安装、运行android app工程，并且能够支持jni
+可以进行如下操作</p>
+
+<p>首先创建个基于ant的android app工程，目录结构如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>    app
+    └── android
+        ├── AndroidManifest.xml
+        ├── ant.properties
+        ├── bin
+        │   └── Demo-debug.apk
+        ├── build.xml
+        ├── jni
+        │   └── demo.c
+        ├── libs
+        │   └── armeabi
+        │       └── libdemo.so
+        ├── local.properties
+        ├── proguard-project.txt
+        ├── project.properties
+        ├── res
+        │   ├── drawable-hdpi
+        │   │   └── ic_launcher.png
+        │   ├── drawable-ldpi
+        │   │   └── ic_launcher.png
+        │   ├── drawable-mdpi
+        │   │   └── ic_launcher.png
+        │   ├── drawable-xhdpi
+        │   │   └── ic_launcher.png
+        │   ├── layout
+        │   │   └── main.xml
+        │   └── values
+        │       └── strings.xml
+        ├── src
+        │   └── com
+        │       └── demo
+        │           └── DemoTest.java
+        └── xmake.lua
+</code></pre>
+</div>
+
+<p>新版本中对自定义脚本进行了重大升级，支持了task机制，以及类库import机制，写法上也更加的精简可读</p>
+
+<p>我们可以对比下新老版本的自定义脚本写法，当然新版的xmake对这些老的api也是向下兼容的，如果还在使用老版本api，也是不影响使用的。。</p>
+
+<p>我们重点讲解下新版的写法：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="c1">-- 定义一个android app的测试demo</span>
+    <span class="n">target</span><span class="p">(</span><span class="s2">"demo"</span><span class="p">)</span>
+
+        <span class="c1">-- 生成动态库：libdemo.so</span>
+        <span class="n">set_kind</span><span class="p">(</span><span class="s2">"shared"</span><span class="p">)</span>
+
+        <span class="c1">-- 设置对象的输出目录，可选</span>
+        <span class="n">set_objectdir</span><span class="p">(</span><span class="s2">"$(buildir)/.objs"</span><span class="p">)</span>
+
+        <span class="c1">-- 每次编译完的libdemo.so的生成目录，设置为app/libs/armeabi</span>
+        <span class="n">set_targetdir</span><span class="p">(</span><span class="s2">"libs/armeabi"</span><span class="p">)</span>
+
+        <span class="c1">-- 添加jni的代码文件</span>
+        <span class="n">add_files</span><span class="p">(</span><span class="s2">"jni/*.c"</span><span class="p">)</span>
+
+        <span class="c1">-- 设置自定义打包脚本，在使用xmake编译完libdemo.so后，执行xmake p进行打包</span>
+        <span class="c1">-- 会自动使用ant将app编译成apk文件</span>
+        <span class="c1">--</span>
+        <span class="n">on_package</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="n">target</span><span class="p">)</span> 
+                
+                        <span class="c1">-- trace</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">"buiding app"</span><span class="p">)</span>
+
+                        <span class="c1">-- 使用ant编译app成apk文件，输出信息重定向到日志文件</span>
+                        <span class="n">os</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"ant debug"</span><span class="p">)</span> 
+                    <span class="k">end</span><span class="p">)</span>
+
+
+        <span class="c1">-- 设置自定义安装脚本，自动安装apk文件</span>
+        <span class="n">on_install</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="n">target</span><span class="p">)</span> 
+
+                        <span class="c1">-- trace</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">"installing app"</span><span class="p">)</span>
+
+                        <span class="c1">-- 使用adb安装打包生成的apk文件</span>
+                        <span class="n">os</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"adb install -r ./bin/Demo-debug.apk"</span><span class="p">)</span>
+                    <span class="k">end</span><span class="p">)</span>
+
+
+        <span class="c1">-- 设置自定义运行脚本，自动运行安装好的app程序，并且自动获取设备输出信息</span>
+        <span class="n">on_run</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="n">target</span><span class="p">)</span> 
+
+                    <span class="c1">-- run it</span>
+                    <span class="n">os</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"adb shell am start -n com.demo/com.demo.DemoTest"</span><span class="p">)</span>
+                    <span class="n">os</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"adb logcat"</span><span class="p">)</span>
+                <span class="k">end</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>修改完xmake.lua后，就可以很方便的使用了：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="c"># 重新编译工程，生成libdemo.so到app/libs/armeabi</span>
+    xmake -r
+
+    <span class="c"># 打包app为apk</span>
+    xmake p
+
+    <span class="c"># 安装apk到设备上</span>
+    xmake i
+
+    <span class="c"># 运行app，并获取日志信息</span>
+    xmake r demo
+</code></pre>
+</div>
+
+<p>如果觉得上面的步骤有点繁琐，可以简化成：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="c"># 安装的时候，会先去自动打包，所以可以省略xmake p</span>
+    xmake -r; xmake i; xmake r demo
+</code></pre>
+</div>
+
+<p>如果是增量编译，不需要重建，可以继续简化：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake i; xmake r demo
+</code></pre>
+</div>
+
+<p>当然，由于是根据自己的实际需求自定义的脚本，可能跨平台性有点弱，像这里只能支持android的编译平台，</p>
+
+<p>我们继续重点说下新版本中这些的api的使用，xmake针对 构建、打包、清除、安装、卸载、运行都提供了对应的自定义脚本入口</p>
+
+<p>下面的on_xxx接口会直接替换内置的实现</p>
+
+<ul>
+  <li>on_build: 自定义构建脚本</li>
+  <li>on_clean: 自定义清除脚本</li>
+  <li>on_package: 自定义打包脚本</li>
+  <li>on_install: 自定义安装脚本</li>
+  <li>on_uninstall: 自定义卸载脚本</li>
+  <li>on_run: 自定义运行脚本</li>
+</ul>
+
+<p>下面的 before_xxx接口，会在on_xxx之前执行</p>
+
+<ul>
+  <li>before_build: 在构建之前执行一些自定义脚本</li>
+  <li>before_clean: 在清除之前执行一些自定义脚本</li>
+  <li>before_package: 在打包之前执行一些自定义脚本</li>
+  <li>before_install: 在安装之前执行一些自定义脚本</li>
+  <li>before_uninstall: 在卸载之前执行一些自定义脚本</li>
+  <li>before_run: 在运行之前执行一些自定义脚本</li>
+</ul>
+
+<p>下面的 after_xxx接口，会在on_xxx之后执行</p>
+
+<ul>
+  <li>after_build: 在构建之后执行一些自定义脚本</li>
+  <li>after_clean: 在清除之后执行一些自定义脚本</li>
+  <li>after_package: 在打包之后执行一些自定义脚本</li>
+  <li>after_install: 在安装之后执行一些自定义脚本</li>
+  <li>after_uninstall: 在卸载之后执行一些自定义脚本</li>
+  <li>after_run: 在运行之后执行一些自定义脚本</li>
+</ul>
+
+<p>这些api的原型都是：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="k">function</span> <span class="p">(</span><span class="n">target</span><span class="p">)</span> 
+    <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>其中的参数就是当前的target，你可以从中获取一些基本信息，例如：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="n">on_run</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+         <span class="c1">-- 显示目标名</span>
+         <span class="nb">print</span><span class="p">(</span><span class="n">target</span><span class="p">:</span><span class="n">name</span><span class="p">())</span>
+
+         <span class="c1">-- 显示目标文件路径</span>
+         <span class="nb">print</span><span class="p">(</span><span class="n">target</span><span class="p">:</span><span class="n">targetfile</span><span class="p">())</span>
+
+         <span class="c1">-- 显示目标的构建类型</span>
+         <span class="nb">print</span><span class="p">(</span><span class="n">target</span><span class="p">:</span><span class="n">get</span><span class="p">(</span><span class="s2">"kind"</span><span class="p">))</span>
+
+         <span class="c1">-- 显示目标的宏定义</span>
+         <span class="nb">print</span><span class="p">(</span><span class="n">target</span><span class="p">:</span><span class="n">get</span><span class="p">(</span><span class="s2">"defines"</span><span class="p">))</span>
+
+         <span class="c1">-- 其他通过 set_/add_接口设置的target信息，都可以通过 target:get("xxx") 来获取</span>
+    <span class="k">end</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>自定义脚本中，其作用域和xmake.lua上层的描述域是不同的，xmake里面有严格的沙盒管理，不会导致互相冲突</p>
+
+<p>而且自定义脚本内部提供了大量内建类库和扩展类库，以供使用，扩展类库可以通过 <a href="/cn/2016/06/09/api-import/">import</a> 进行导入， 例如</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="n">on_run</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="n">target</span><span class="p">)</span>
+       
+        <span class="c1">-- 导入工程类</span>
+        <span class="n">import</span><span class="p">(</span><span class="s2">"core.project.project"</span><span class="p">)</span>
+
+        <span class="c1">-- 获取当前工程目录</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="p">.</span><span class="n">directory</span><span class="p">())</span>
+    <span class="k">end</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>详细的扩展类库使用，见 <a href="/cn/2016/06/09/api-import/">import</a></p>
+
+<p>一些内建类库有：</p>
+
+<ul>
+  <li>os: 系统类库</li>
+  <li>string: 字符串类库</li>
+  <li>path: 路径类库</li>
+  <li>table: table和array处理</li>
+  <li>io: 文件io处理</li>
+  <li>coroutine: 协程类库</li>
+</ul>
+
+<p>一些内建的api有：</p>
+
+<ul>
+  <li>raise：引发异常</li>
+  <li>try/catch/finally: 异常捕获处理</li>
+  <li>print/printf：打印</li>
+  <li>format: 格式化字符串</li>
+</ul>
+
+<p>更多详细类库和内建api介绍，见后续介绍。。。</p>
+
+        </article>
+        <hr>
+
+        
+        
+            
+            
+            
+                
+                    
+                        
+                        <h2 id="similar_posts">相关文章</h2>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/cn/2016/07/18/wait-multi-processes/">多进程等待的跨平台实现
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/cn/2016/07/17/update-v2.0.3/">xmake v2.0.3 更新!
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/cn/2016/07/17/demo-build-a-simple-project/">演示：构建一个简单的程序
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/cn/2016/07/16/run-debug/">利用xmake运行和调试程序
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/cn/2016/07/16/how-to-build-a-simple-project/">如何快速构建一个简单的程序
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/cn/2016/07/14/plugin-print-colors/">插件开发之色彩高亮显示
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+        
+            </ul>
+        
+
+        <h2 id="comments">评论</h2>
+        
+
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+     * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+
+    var disqus_config = function() {
+        this.page.url = 'http://tboox.org/cn/2016/06/09/custom-action/'; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://tboox.org/cn/2016/06/09/custom-action/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document,
+            s = d.createElement('script');
+
+        s.src = '//zh-tboox.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    内容
+                </div>
+                <ul id="content-side" class="content-ul">
+                    <li><a href="#similar_posts">相关文章</a></li>
+                    <li><a href="#comments">评论</a></li>
+                </ul>
+            </div>
+            
+            <br>
+            <div class="side">
+                <div>
+                    <i class="fa fa-external-link"></i>
+                    链接
+                </div>
+                <ul class="content-ul">
+                  <li><a href="http://github.com/waruqi/tbox">tbox</a></li>
+                  <li><a href="http://www.xmake.io">xmake</a></li>
+                  <li><a href="https://github.com/waruqi">github</a></li>
+                </ul>
+            </div> 
+
+            <!-- 其他div框放到这里 -->
+            
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+    <div class="wrapper">
+        <p class="description">
+             Copyright (c) 2016 tboox.org 
+        </p>
+        <p class="contact">
+            
+            <a href="https://github.com/waruqi" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a> 
+             
+            
+            <a href="mailto:waruqi@gmail.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a> 
+            
+            
+            <a href="https://twitter.com/waruqi" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a> 
+            
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="http://pages.coding.me/">Coding Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/Gaohaoyang">HyG</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" class="scroll">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/scroll.min.js " charset="utf-8"></script>
+  </body>
+
+</html>

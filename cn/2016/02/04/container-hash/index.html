@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>哈希容器的使用</title>
+    <meta name="description" content="stl的容器库非常强大，但是为了要兼容各种元素类型，采用了模板进行泛化，这样的好处就是使用非常的方便，但是编译器会对使用到的每种类型都进行一遍实例化，用的类型太多的话不仅影响编译速度而且生成的可执行文件也很冗余。因此，TBOX在设计容器架构的时候，引入tb_item_func_t类型，来设置容器使用的成员类型，这...">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
+    <link rel="stylesheet" href=" /css/main.css ">
+    <link rel="canonical" href="http://tboox.org/cn/2016/02/04/container-hash/">
+    <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?162f1cd478898a0686b0b5d5115e2af2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/cn" class="brand">TBOOX</a>
+        <small>欢迎来到TBOOX开源工程!</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>English
+                    </a>
+                </li>
+
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/project/">
+                        
+                            <i class="fa fa-bookmark"></i>项目
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/archive/">
+                        
+                            <i class="fa fa-archive"></i>归档
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/category/">
+                        
+                            <i class="fa fa-th-list"></i>分类
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/tag/">
+                        
+                            <i class="fa fa-tags"></i>标记
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/donation/">
+                        
+                            <i class="fa fa-heart"></i>捐助
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/about/">
+                        
+                            <i class="fa fa-user"></i>关于
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>哈希容器的使用</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2016-02-04
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#tbox" title="Category: tbox" rel="category">tbox</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a-->
+        <a href="/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a>&nbsp;
+    
+        <!--a href="/tag/#c" title="Tag: c" rel="tag">c</a-->
+        <a href="/tag/#c" title="Tag: c" rel="tag">c</a>&nbsp;
+    
+        <!--a href="/tag/#%E5%93%88%E5%B8%8C" title="Tag: 哈希" rel="tag">哈希</a-->
+        <a href="/tag/#哈希" title="Tag: 哈希" rel="tag">哈希</a>&nbsp;
+    
+        <!--a href="/tag/#%E5%AE%B9%E5%99%A8" title="Tag: 容器" rel="tag">容器</a-->
+        <a href="/tag/#容器" title="Tag: 容器" rel="tag">容器</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <p>stl的容器库非常强大，但是为了要兼容各种元素类型，采用了模板进行泛化，这样的好处就是使用非常的方便，但是编译器会对使用到的每种类型都进行一遍实例化，用的类型太多的话不仅影响编译速度而且生成的可执行文件也很冗余。</p>
+
+<p>因此，TBOX在设计容器架构的时候，引入tb_item_func_t类型，来设置容器使用的成员类型，这样在实现容器通用性的同时，也不会产生过的冗余，而且容器接口操作上，同样相当的便利。</p>
+
+<p>可以先看个简单使用哈希的例子：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="cm">/* 初始化hash, 哈希桶大小8
+     * 键：大小写敏感字符串
+     * 值：long整型
+     */</span>
+    <span class="n">tb_hash_ref_t</span> <span class="n">hash</span> <span class="o">=</span> <span class="n">tb_hash_init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">tb_item_func_str</span><span class="p">(</span><span class="n">tb_true</span><span class="p">),</span> <span class="n">tb_item_func_long</span><span class="p">());</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">hash</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// 设置键值对："key" =&gt; 123
+</span>        <span class="n">tb_hash_set</span><span class="p">(</span><span class="n">hash</span><span class="p">,</span> <span class="s">"key"</span><span class="p">,</span> <span class="p">(</span><span class="n">tb_pointer_t</span><span class="p">)</span><span class="mi">123</span><span class="p">);</span>
+
+        <span class="c1">// 获取值
+</span>        <span class="n">tb_long_t</span> <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_long_t</span><span class="p">)</span><span class="n">tb_hash_get</span><span class="p">(</span><span class="n">hash</span><span class="p">,</span> <span class="s">"key"</span><span class="p">);</span>
+
+        <span class="c1">// 退出hash
+</span>        <span class="n">tb_hash_exit</span><span class="p">(</span><span class="n">hash</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* 初始化hash, 哈希桶大小: TB_HASH_BULK_SIZE_MICRO
+     * 键：tb_struct_xxxx_t 结构体类型，内存数据由hash内部自己维护, 后面两个参数设置成员的释放回调函数
+     * 值：true类型，永远是tb_true, 这种hash相当于stl的set&lt;tb_struct_xxxx_t&gt;，内部会去优化掉value占用的内存
+     */</span>
+    <span class="n">tb_hash_ref_t</span> <span class="n">hash</span> <span class="o">=</span> <span class="n">tb_hash_init</span><span class="p">(</span><span class="n">TB_HASH_BULK_SIZE_MICRO</span><span class="p">,</span> <span class="n">tb_item_func_mem</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">tb_struct_xxxx_t</span><span class="p">),</span> <span class="n">tb_null</span><span class="p">,</span> <span class="n">tb_null</span><span class="p">),</span> <span class="n">tb_item_func_true</span><span class="p">());</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">hash</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// 初始化tb_struct_xxxx_t
+</span>        <span class="n">tb_struct_xxxx_t</span> <span class="n">xxxx</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+        <span class="c1">// 设置键值对：xxxx =&gt; tb_true
+</span>        <span class="n">tb_hash_set</span><span class="p">(</span><span class="n">hash</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">xxxx</span><span class="p">,</span> <span class="p">(</span><span class="n">tb_pointer_t</span><span class="p">)</span><span class="n">tb_true</span><span class="p">);</span>
+
+        <span class="c1">// 判断键是否存在
+</span>        <span class="k">if</span> <span class="p">(</span><span class="n">tb_hash_get</span><span class="p">(</span><span class="n">hash</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">xxxx</span><span class="p">))</span> 
+        <span class="p">{</span>
+            <span class="c1">// ...
+</span>        <span class="p">}</span>
+
+        <span class="c1">// 退出hash
+</span>        <span class="n">tb_hash_exit</span><span class="p">(</span><span class="n">hash</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* 初始化hash, 哈希桶大小使用默认大小: 0
+     * 键：大小写不敏感字符串
+     * 值：uint8整型
+     */</span>
+    <span class="n">tb_hash_ref_t</span> <span class="n">hash</span> <span class="o">=</span> <span class="n">tb_hash_init</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tb_item_func_str</span><span class="p">(</span><span class="n">tb_false</span><span class="p">),</span> <span class="n">tb_item_func_uint8</span><span class="p">());</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">hash</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// 设置键值对："key" =&gt; 123
+</span>        <span class="n">tb_hash_set</span><span class="p">(</span><span class="n">hash</span><span class="p">,</span> <span class="s">"key"</span><span class="p">,</span> <span class="p">(</span><span class="n">tb_pointer_t</span><span class="p">)</span><span class="mi">123</span><span class="p">);</span>
+
+        <span class="c1">// 获取u位整型键值
+</span>        <span class="n">tb_uint8_t</span> <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_uint8_t</span><span class="p">)</span><span class="n">tb_hash_get</span><span class="p">(</span><span class="n">hash</span><span class="p">,</span> <span class="s">"key"</span><span class="p">);</span>
+
+        <span class="c1">// 退出hash
+</span>        <span class="n">tb_hash_exit</span><span class="p">(</span><span class="n">hash</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>怎么样，简单吧。各种类型项都是可以在键值上互用的，而且会去适配<code class="highlighter-rouge">tb_hash_get</code>和<code class="highlighter-rouge">tb_hash_set</code>等容器接口参数。</p>
+
+<p>你也可以很方便的在初始化容器的时候，自定义成员释放函数、成员比较函数、哈希计算函数等，例如：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// 指针成员释放函数
+</span>    <span class="k">static</span> <span class="n">tb_void_t</span> <span class="nf">tb_hash_item_ptr_free</span><span class="p">(</span><span class="n">tb_item_func_t</span><span class="o">*</span> <span class="n">func</span><span class="p">,</span> <span class="n">tb_pointer_t</span> <span class="n">buff</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// 断言检测
+</span>        <span class="n">tb_assert_and_check_return</span><span class="p">(</span><span class="n">func</span> <span class="o">&amp;&amp;</span> <span class="n">buff</span><span class="p">);</span>
+
+        <span class="c1">// 获取用户私有数据
+</span>        <span class="n">tb_pointer_t</span> <span class="n">priv</span> <span class="o">=</span> <span class="n">func</span><span class="o">-&gt;</span><span class="n">priv</span><span class="p">;</span>
+
+        <span class="cm">/* 获取成员数据，这里为tb_pointer_t类型，buff是指向成员数据的指针
+         *
+         * 如果是tb_item_func_str()项类型，数据就是：
+         * tb_char_t* data = *((tb_char_t**)buff);
+         *    
+         * 如果是tb_item_func_mem()项类型，数据就是：
+         * tb_byte_t* data = (tb_byte_t*)buff;
+         *
+         * 因为tb_item_func_mem是吧成员数据的内存都放到了容器里面维护，所以
+         * buff指向的就是成员数据本身的地址
+         *
+         * 而str、ptr只是把指针存到了容器中，所以item指向的是指针的地址，这个需要
+         * 注意的，不然很容易出问题
+         */</span>
+        <span class="n">tb_pointer_t</span> <span class="n">data</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">tb_pointer_t</span><span class="o">*</span><span class="p">)</span><span class="n">buff</span><span class="p">);</span>
+        
+        <span class="c1">// 释放它
+</span>        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="n">tb_free</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+
+        <span class="c1">// 清空成员数据
+</span>        <span class="o">*</span><span class="p">((</span><span class="n">tb_pointer_t</span><span class="o">*</span><span class="p">)</span><span class="n">buff</span><span class="p">)</span> <span class="o">=</span> <span class="n">tb_null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// long 比较函数，改成反序比较
+</span>    <span class="k">static</span> <span class="n">tb_long_t</span> <span class="nf">tb_hash_item_long_comp</span><span class="p">(</span><span class="n">tb_item_func_t</span><span class="o">*</span> <span class="n">func</span><span class="p">,</span> <span class="n">tb_cpointer_t</span> <span class="n">ldata</span><span class="p">,</span> <span class="n">tb_cpointer_t</span> <span class="n">rdata</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">((</span><span class="n">tb_long_t</span><span class="p">)</span><span class="n">ldata</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">tb_long_t</span><span class="p">)</span><span class="n">rdata</span><span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="p">((</span><span class="n">tb_long_t</span><span class="p">)</span><span class="n">ldata</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">tb_long_t</span><span class="p">)</span><span class="n">rdata</span><span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 初始化long整型比较函数
+</span>    <span class="n">tb_item_func_t</span> <span class="n">func</span> <span class="o">=</span> <span class="n">tb_item_func_long</span><span class="p">();</span>
+
+    <span class="c1">// 替换比较函数, ptr有快捷的传入方式，当然也可以这样传
+</span>    <span class="n">func</span><span class="p">.</span><span class="n">comp</span> <span class="o">=</span> <span class="n">tb_hash_item_long_comp</span><span class="p">;</span>
+
+    <span class="c1">// 初始化hash
+</span>    <span class="n">tb_hash_ref_t</span> <span class="n">hash</span> <span class="o">=</span> <span class="n">tb_hash_init</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">tb_item_func_ptr</span><span class="p">(</span><span class="n">tb_hash_item_ptr_free</span><span class="p">,</span> <span class="s">"private data"</span><span class="p">));</span>
+</code></pre>
+</div>
+
+        </article>
+        <hr>
+
+        
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                        
+                        <h2 id="similar_posts">相关文章</h2>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/cn/2016/07/18/wait-multi-processes/">多进程等待的跨平台实现
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+        
+            </ul>
+        
+
+        <h2 id="comments">评论</h2>
+        
+
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+     * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+
+    var disqus_config = function() {
+        this.page.url = 'http://tboox.org/cn/2016/02/04/container-hash/'; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://tboox.org/cn/2016/02/04/container-hash/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document,
+            s = d.createElement('script');
+
+        s.src = '//zh-tboox.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    内容
+                </div>
+                <ul id="content-side" class="content-ul">
+                    <li><a href="#similar_posts">相关文章</a></li>
+                    <li><a href="#comments">评论</a></li>
+                </ul>
+            </div>
+            
+            <br>
+            <div class="side">
+                <div>
+                    <i class="fa fa-external-link"></i>
+                    链接
+                </div>
+                <ul class="content-ul">
+                  <li><a href="http://github.com/waruqi/tbox">tbox</a></li>
+                  <li><a href="http://www.xmake.io">xmake</a></li>
+                  <li><a href="https://github.com/waruqi">github</a></li>
+                </ul>
+            </div> 
+
+            <!-- 其他div框放到这里 -->
+            
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+    <div class="wrapper">
+        <p class="description">
+             Copyright (c) 2016 tboox.org 
+        </p>
+        <p class="contact">
+            
+            <a href="https://github.com/waruqi" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a> 
+             
+            
+            <a href="mailto:waruqi@gmail.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a> 
+            
+            
+            <a href="https://twitter.com/waruqi" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a> 
+            
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="http://pages.coding.me/">Coding Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/Gaohaoyang">HyG</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" class="scroll">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/scroll.min.js " charset="utf-8"></script>
+  </body>
+
+</html>

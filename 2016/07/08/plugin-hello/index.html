@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Plugin development of hello xmake</title>
+    <meta name="description" content="xmake v2.0 has supported the plugin module and we can develop ourself plugin module conveniently.We can run command xmake -h to look over some builtin plugin...">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
+    <link rel="stylesheet" href=" /css/main.css ">
+    <link rel="canonical" href="http://tboox.org/2016/07/08/plugin-hello/">
+    <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?162f1cd478898a0686b0b5d5115e2af2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">TBOOX</a>
+        <small>Welcome to the website for the TBOOX Open Source Project!</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/cn">
+                    
+                        <i class="fa fa-home"></i>中文
+                    </a>
+                </li>
+
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/project/">
+                        
+                            <i class="fa fa-bookmark"></i>Projects
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/archive/">
+                        
+                            <i class="fa fa-archive"></i>Archives
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/category/">
+                        
+                            <i class="fa fa-th-list"></i>Categories
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/tag/">
+                        
+                            <i class="fa fa-tags"></i>Tags
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/donation/">
+                        
+                            <i class="fa fa-heart"></i>Donate
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                     
+                    
+                
+                    
+                     
+                    <li>
+                        
+                        <a href="/about/">
+                        
+                            <i class="fa fa-user"></i>About
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>Plugin development of hello xmake</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2016-07-08
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a-->
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <!--a href="/tag/#plugin" title="Tag: plugin" rel="tag">plugin</a-->
+        <a href="/tag/#plugin" title="Tag: plugin" rel="tag">plugin</a>&nbsp;
+    
+        <!--a href="/tag/#example" title="Tag: example" rel="tag">example</a-->
+        <a href="/tag/#example" title="Tag: example" rel="tag">example</a>&nbsp;
+    
+        <!--a href="/tag/#hello" title="Tag: hello" rel="tag">hello</a-->
+        <a href="/tag/#hello" title="Tag: hello" rel="tag">hello</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <p>xmake v2.0 has supported the plugin module and we can develop ourself plugin module conveniently.</p>
+
+<p>We can run command <code class="highlighter-rouge">xmake -h</code> to look over some builtin plugins of xmake</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>    Plugins: 
+        l, lua                                 Run the lua script.
+        m, macro                               Run the given macro.
+           doxygen                             Generate the doxygen document.
+           hello                               Hello xmake!
+           project                             Create the project file.
+</code></pre>
+</div>
+
+<ul>
+  <li>lua: Run a given lua script.</li>
+  <li>macro: Record and playback some xmake commands repeatly.</li>
+  <li>doxygen：Generate doxygen document automatically.</li>
+  <li>hello:  The demo plugin and only print: ‘hello xmake!’</li>
+  <li>project：Generate project file for IDE, only generate makefile now and will generate vs, xcode project in the future</li>
+</ul>
+
+<p>Next we write a simple plugin demo for printing ‘hello xmake!’</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="c1">-- define a plugin task </span>
+    <span class="n">task</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">)</span>
+
+        <span class="c1">-- set the category for showing it in plugin category menu (optional)</span>
+        <span class="n">set_category</span><span class="p">(</span><span class="s2">"plugin"</span><span class="p">)</span>
+
+        <span class="c1">-- the main entry of the plugin</span>
+        <span class="n">on_run</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span>
+
+            <span class="c1">-- print 'hello xmake!'</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"hello xmake!"</span><span class="p">)</span>
+        <span class="k">end</span><span class="p">)</span>
+
+        <span class="c1">-- set the menu options, but we put empty options now.</span>
+        <span class="n">set_menu</span><span class="p">({</span>
+                        <span class="c1">-- usage</span>
+                        <span class="n">usage</span> <span class="o">=</span> <span class="s2">"xmake hello [options]"</span>
+
+                        <span class="c1">-- description</span>
+                    <span class="p">,</span>   <span class="n">description</span> <span class="o">=</span> <span class="s2">"Hello xmake!"</span>
+
+                        <span class="c1">-- options</span>
+                    <span class="p">,</span>   <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="p">})</span> 
+</code></pre>
+</div>
+
+<p>The file tree of this plugin:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>    hello
+     - xmake.lua
+</code></pre>
+</div>
+
+<p>Now one of the most simple plugin finished, how was it to be xmake detected it, there are three ways:</p>
+
+<ol>
+  <li>Put this plugin directory into xmake/plugins the source codes as the builtin plugin.</li>
+  <li>Put this plugin directory into ~/.xmake/plugins as the global user plugin.</li>
+  <li>Put this plugin directory to anywhere and call <code class="highlighter-rouge">add_plugindirs("./hello")</code> in xmake.lua as the local project plugin.</li>
+</ol>
+
+<p>Next we run this plugin</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="nv">$xmake</span> hello
+</code></pre>
+</div>
+
+<p>The results is</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>    hello xmake!
+</code></pre>
+</div>
+
+<p>Finally, we can also run this plugin in the custom scripts of <code class="highlighter-rouge">xmake.lua</code></p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="n">target</span><span class="p">(</span><span class="s2">"demo"</span><span class="p">)</span>
+        
+        <span class="c1">-- run this plugin after building target</span>
+        <span class="n">after_build</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="n">target</span><span class="p">)</span>
+      
+            <span class="c1">-- import task module</span>
+            <span class="n">import</span><span class="p">(</span><span class="s2">"core.project.task"</span><span class="p">)</span>
+
+            <span class="c1">-- run the plugin task</span>
+            <span class="n">task</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">)</span>
+        <span class="k">end</span><span class="p">)</span>
+</code></pre>
+</div>
+
+        </article>
+        <hr>
+
+        
+        
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <h2 id="similar_posts">Similar Posts</h2>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/2016/07/17/update-v2.0.3/">xmake v2.0.3 update!
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/2016/07/17/demo-build-a-simple-project/">Demo: Build a simple project
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/2016/07/16/how-to-build-a-simple-project/">How to build a simple project quickly
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/2016/07/16/batch-check-functions/">Batch checking library functions
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+        
+            </ul>
+        
+
+        <h2 id="comments">Comments</h2>
+        
+
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+     * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+
+    var disqus_config = function() {
+        this.page.url = 'http://tboox.org/2016/07/08/plugin-hello/'; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://tboox.org/2016/07/08/plugin-hello/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document,
+            s = d.createElement('script');
+
+        s.src = '//zh-tboox.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    Content
+                </div>
+                <ul id="content-side" class="content-ul">
+                    <li><a href="#similar_posts">Similar Posts</a></li>
+                    <li><a href="#comments">Comments</a></li>
+                </ul>
+            </div>
+
+            <br>
+            <div class="side">
+                <div>
+                    <i class="fa fa-external-link"></i>
+                    Links
+                </div>
+                <ul class="content-ul">
+                  <li><a href="http://github.com/waruqi/tbox">tbox</a></li>
+                  <li><a href="http://www.xmake.io">xmake</a></li>
+                  <li><a href="https://github.com/waruqi">github</a></li>
+                </ul>
+            </div> 
+
+            <!-- 其他div框放到这里 -->
+            
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+    <div class="wrapper">
+        <p class="description">
+             Copyright (c) 2016 tboox.org 
+        </p>
+        <p class="contact">
+            
+            <a href="https://github.com/waruqi" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a> 
+             
+            
+            <a href="mailto:waruqi@gmail.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a> 
+            
+            
+            <a href="https://twitter.com/waruqi" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a> 
+            
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="http://pages.coding.me/">Coding Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/Gaohaoyang">HyG</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" class="scroll">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/scroll.min.js " charset="utf-8"></script>
+  </body>
+
+</html>

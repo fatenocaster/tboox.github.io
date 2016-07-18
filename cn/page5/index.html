@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TBOOX</title>
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
+    <link rel="stylesheet" href=" /css/main.css ">
+    <link rel="canonical" href="http://tboox.org/cn/page5/">
+    <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?162f1cd478898a0686b0b5d5115e2af2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/cn" class="brand">TBOOX</a>
+        <small>欢迎来到TBOOX开源工程!</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>English
+                    </a>
+                </li>
+
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/project/">
+                        
+                            <i class="fa fa-bookmark"></i>项目
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/archive/">
+                        
+                            <i class="fa fa-archive"></i>归档
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/category/">
+                        
+                            <i class="fa fa-th-list"></i>分类
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/tag/">
+                        
+                            <i class="fa fa-tags"></i>标记
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/donation/">
+                        
+                            <i class="fa fa-heart"></i>捐助
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/about/">
+                        
+                            <i class="fa fa-user"></i>关于
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" index="">
+    <div class="left">
+        <h1>TBOOX开源工程</h1>
+        <small>专注于跨平台c开发解决方案</small>
+        <hr />
+        <ul>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/03/17/stream-custom/">自定义流的实现和使用</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-03-17
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#tbox" title="Category: tbox" rel="category">tbox</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a>&nbsp;
+    
+        <a href="/tag/#c" title="Tag: c" rel="tag">c</a>&nbsp;
+    
+        <a href="/tag/#stream" title="Tag: stream" rel="tag">stream</a>&nbsp;
+    
+        <a href="/tag/#流" title="Tag: 流" rel="tag">流</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>tbox中提供了常用的一些stream模块，例如：data、file、http、sock等，可以通过指定不同的url，使用相同的接口
+进行数据流的读写，非常的方便。</p>
+
+<p>例如：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// init stream
+</span>    <span class="n">tb_stream_ref_t</span> <span class="n">stream</span> <span class="o">=</span> <span class="n">tb_stream_init_from_url</span><span class="p">(</span><span class="s">"http://www.xxx.com/file.txt"</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// open stream
+</span>        <span class="k">if</span> <span class="p">(</span><span class="n">tb_stream_open</span><span class="p">(</span><span class="n">stream</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="c1">// read line
+</span>            <span class="n">tb_long_t</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="n">tb_char_t</span> <span class="n">line</span><span class="p">[</span><span class="n">TB_STREAM_BLOCK_MAXN</span><span class="p">];</span>
+            <span class="k">while</span> <span class="p">((</span><span class="n">size</span> <span class="o">=</span> <span class="n">tb_stream_bread_line</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">)))</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="c1">// trace
+</span>                <span class="n">tb_trace_i</span><span class="p">(</span><span class="s">"line: %s"</span><span class="p">,</span> <span class="n">line</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// exit stream
+</span>        <span class="n">tb_stream_exit</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>这样的好处是，操作io的模块不需要关心实际的数据流协议，只管从stream中读写数据就行了，实现数据和业务逻辑的解耦。。</p>
+
+<p>但是tbox提供的这些内置stream模块，有时候没法完全咱们的实际需求，例如：</p>
+
+<p>我想读取一个实时数据流的缓存队列，这个数据流一段会不停的送入数据进来，另外一段会不停的读取数据，如果数据不够，就会进入等待</p>
+
+<p>这其实是个很有用的功能，我的很多需求都会用到，例如：流媒体的一些实时数据获取和复用等等。。</p>
+
+<p>那如何实现这样一个stream模块，让tbox的stream接口支持呢，我们只要实现一个自定义的流模块就好，实现起来也不复杂</p>
+
+<p>我们先定义个一个stream类型，例如：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// 用户自定义流类型：实时流
+</span>    <span class="cp">#define TB_STREAM_TYPE_REAL         (TB_STREAM_TYPE_USER + 1)
+</span>
+    <span class="c1">// 定义一个控制流代码，之后tb_stream_ctrl需要
+</span>    <span class="cp">#define TM_STREAM_CTRL_REAL_PUSH    TB_STREAM_CTRL(TM_STREAM_TYPE_REAL, 1)
+</span></code></pre>
+</div>
+
+<p>定义个自定义流的数据结构，用于维护咱们的私有数据</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// 实时流类型
+</span>    <span class="k">typedef</span> <span class="k">struct</span> <span class="n">__tb_stream_real_t</span>
+    <span class="p">{</span>
+        <span class="c1">// 这里定义了一个数据块buffer的队列，用于缓存不断送入的数据
+</span>        <span class="n">tb_queue_ref_t</span>      <span class="n">buffers</span><span class="p">;</span>
+
+        <span class="c1">// 总的数据大小
+</span>        <span class="n">tb_size_t</span>           <span class="n">size</span><span class="p">;</span>
+
+    <span class="p">}</span><span class="n">tb_stream_real_t</span><span class="p">,</span> <span class="o">*</span><span class="n">tb_stream_real_ref_t</span><span class="p">;</span>
+
+    <span class="c1">// 定义一个buffer块类型，用于维护单个数据块
+</span>    <span class="k">typedef</span> <span class="k">struct</span> <span class="n">__tm_real_buffer_t</span>
+    <span class="p">{</span>
+        <span class="c1">// 数据地址
+</span>        <span class="n">tb_byte_t</span><span class="o">*</span>          <span class="n">data</span><span class="p">;</span>
+
+        <span class="c1">// 这个buffer总大小
+</span>        <span class="n">tb_size_t</span>           <span class="n">size</span><span class="p">;</span>
+
+        <span class="c1">// 在这个buffer中，当前读取到的数据
+</span>        <span class="n">tb_size_t</span>           <span class="n">read</span><span class="p">;</span>
+
+    <span class="p">}</span><span class="n">tm_real_buffer_t</span><span class="p">,</span> <span class="o">*</span><span class="n">tm_real_buffer_ref_t</span><span class="p">;</span>
+</code></pre>
+</div>
+
+<p>创建一个stream实例，注册一些需要的回调接口</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// 初始化创建个一个实时流
+</span>    <span class="n">tb_stream_ref_t</span> <span class="nf">tb_stream_init_real</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">tb_stream_init</span><span class="p">(</span>  <span class="n">TB_STREAM_TYPE_REAL</span>
+                            <span class="p">,</span>   <span class="k">sizeof</span><span class="p">(</span><span class="n">tb_stream_real_t</span><span class="p">)</span>
+                            <span class="p">,</span>   <span class="mi">0</span>           <span class="c1">// stream缓存大小（file/sock有用），这里禁用了，因为咱们的流不需要缓存读取
+</span>                            <span class="p">,</span>   <span class="n">tb_stream_real_open</span>
+                            <span class="p">,</span>   <span class="n">tb_stream_real_clos</span>
+                            <span class="p">,</span>   <span class="n">tb_stream_real_exit</span>
+                            <span class="p">,</span>   <span class="n">tb_stream_real_ctrl</span>
+                            <span class="p">,</span>   <span class="n">tb_stream_real_wait</span>
+                            <span class="p">,</span>   <span class="n">tb_stream_real_read</span>
+                            <span class="p">,</span>   <span class="n">tb_null</span>     <span class="c1">// 写回调，这里不需要
+</span>                            <span class="p">,</span>   <span class="n">tb_null</span>     <span class="c1">// seek，我们这里不需要
+</span>                            <span class="p">,</span>   <span class="n">tb_null</span>     <span class="c1">// 刷新写数据，不需要
+</span>                            <span class="p">,</span>   <span class="n">tb_null</span><span class="p">);</span>   <span class="c1">// kill当前的stream，很少用，一般用于中断内部读写
+</span>    <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>下面就是具体的回调接口实现了</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// 实现open回调接口，用于打开stream，tb_stream_open会用到
+</span>    <span class="k">static</span> <span class="n">tb_bool_t</span> <span class="nf">tb_stream_real_open</span><span class="p">(</span><span class="n">tb_stream_ref_t</span> <span class="n">stream</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// check
+</span>        <span class="n">tb_stream_real_ref_t</span> <span class="n">rstream</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_stream_real_ref_t</span><span class="p">)</span><span class="n">stream</span><span class="p">;</span>
+        <span class="n">tb_assert_and_check_return_val</span><span class="p">(</span><span class="n">rstream</span><span class="p">,</span> <span class="n">tb_false</span><span class="p">);</span>
+
+        <span class="c1">// 初始化一个buffer队列，并注册自动释放接口：tb_real_buffer_exit，之后有说明
+</span>        <span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span> <span class="o">=</span> <span class="n">tb_queue_init</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tb_element_mem</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">tb_real_buffer_t</span><span class="p">),</span> <span class="n">tb_real_buffer_exit</span><span class="p">,</span> <span class="n">tb_null</span><span class="p">));</span>
+
+        <span class="c1">// init size
+</span>        <span class="n">rstream</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="c1">// ok
+</span>        <span class="k">return</span> <span class="o">!!</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 实现close回调接口，用于关闭stream，tb_stream_clos会用到
+</span>    <span class="k">static</span> <span class="n">tb_bool_t</span> <span class="nf">tb_stream_real_clos</span><span class="p">(</span><span class="n">tb_stream_ref_t</span> <span class="n">stream</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// check
+</span>        <span class="n">tb_stream_real_ref_t</span> <span class="n">rstream</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_stream_real_ref_t</span><span class="p">)</span><span class="n">stream</span><span class="p">;</span>
+        <span class="n">tb_assert_and_check_return_val</span><span class="p">(</span><span class="n">rstream</span><span class="p">,</span> <span class="n">tb_false</span><span class="p">);</span>
+        
+        <span class="c1">// exit buffers
+</span>        <span class="k">if</span> <span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">)</span> <span class="n">tb_queue_exit</span><span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">);</span>
+        <span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span> <span class="o">=</span> <span class="n">tb_null</span><span class="p">;</span>
+
+        <span class="c1">// ok
+</span>        <span class="k">return</span> <span class="n">tb_true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 实现exit回调接口，用于销毁stream，tb_stream_exit会用到
+</span>    <span class="k">static</span> <span class="n">tb_void_t</span> <span class="nf">tb_stream_real_exit</span><span class="p">(</span><span class="n">tb_stream_ref_t</span> <span class="n">stream</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// check
+</span>        <span class="n">tb_stream_real_ref_t</span> <span class="n">rstream</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_stream_real_ref_t</span><span class="p">)</span><span class="n">stream</span><span class="p">;</span>
+        <span class="n">tb_assert_and_check_return</span><span class="p">(</span><span class="n">rstream</span><span class="p">);</span>
+        
+        <span class="c1">// exit buffers
+</span>        <span class="k">if</span> <span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">)</span> <span class="n">tb_queue_exit</span><span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">);</span>
+        <span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span> <span class="o">=</span> <span class="n">tb_null</span><span class="p">;</span>
+
+        <span class="c1">// clear size
+</span>        <span class="n">rstream</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 实现read回调接口，用于读取数据，tb_stream_read/tb_stream_bread等接口会用到
+</span>    <span class="k">static</span> <span class="n">tb_long_t</span> <span class="nf">tb_stream_real_read</span><span class="p">(</span><span class="n">tb_stream_ref_t</span> <span class="n">stream</span><span class="p">,</span> <span class="n">tb_byte_t</span><span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="n">tb_size_t</span> <span class="n">size</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// check
+</span>        <span class="n">tb_stream_real_ref_t</span> <span class="n">rstream</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_stream_real_ref_t</span><span class="p">)</span><span class="n">stream</span><span class="p">;</span>
+        <span class="n">tb_assert_and_check_return_val</span><span class="p">(</span><span class="n">rstream</span> <span class="o">&amp;&amp;</span> <span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="c1">// check
+</span>        <span class="n">tb_check_return_val</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">tb_check_return_val</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+        <span class="c1">// 依次从队列头部读取每块buffer的数据，直到读满为止
+</span>        <span class="n">tb_long_t</span> <span class="n">read</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">read</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="o">&amp;&amp;</span> <span class="n">tb_queue_size</span><span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="c1">// get buffer
+</span>            <span class="n">tb_real_buffer_ref_t</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">tb_queue_get</span><span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">);</span>
+            <span class="n">tb_assert_and_check_break</span><span class="p">(</span><span class="n">buffer</span> <span class="o">&amp;&amp;</span> <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">&amp;&amp;</span> <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">);</span>
+
+            <span class="c1">// read data
+</span>            <span class="k">if</span> <span class="p">(</span><span class="n">buffer</span><span class="o">-&gt;</span><span class="n">read</span> <span class="o">&lt;</span> <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="c1">// calculate the need size
+</span>                <span class="n">tb_size_t</span> <span class="n">need</span> <span class="o">=</span> <span class="n">tb_min</span><span class="p">(</span><span class="n">size</span> <span class="o">-</span> <span class="n">read</span><span class="p">,</span> <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">-</span> <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">read</span><span class="p">);</span>
+
+                <span class="c1">// copy data
+</span>                <span class="n">tb_memcpy</span><span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="n">read</span><span class="p">,</span> <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">+</span> <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">read</span><span class="p">,</span> <span class="n">need</span><span class="p">);</span>
+
+                <span class="c1">// update the read size for buffer
+</span>                <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">read</span> <span class="o">+=</span> <span class="n">need</span><span class="p">;</span>
+
+                <span class="c1">// update the total read size
+</span>                <span class="n">read</span> <span class="o">+=</span> <span class="n">need</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="c1">// 将读空的buffer释放掉
+</span>            <span class="k">if</span> <span class="p">(</span><span class="n">buffer</span><span class="o">-&gt;</span><span class="n">read</span> <span class="o">==</span> <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">)</span>
+                <span class="n">tb_queue_pop</span><span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// ok?
+</span>        <span class="k">return</span> <span class="n">read</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 实现wait回调接口，用于等待数据，tb_stream_wait/tb_stream_bread等阻塞读取接口会用到
+</span>    <span class="k">static</span> <span class="n">tb_long_t</span> <span class="nf">tb_stream_real_wait</span><span class="p">(</span><span class="n">tb_stream_ref_t</span> <span class="n">stream</span><span class="p">,</span> <span class="n">tb_size_t</span> <span class="n">wait</span><span class="p">,</span> <span class="n">tb_long_t</span> <span class="n">timeout</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// check
+</span>        <span class="n">tb_stream_real_ref_t</span> <span class="n">rstream</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_stream_real_ref_t</span><span class="p">)</span><span class="n">stream</span><span class="p">;</span>
+        <span class="n">tb_assert_and_check_return_val</span><span class="p">(</span><span class="n">rstream</span> <span class="o">&amp;&amp;</span> <span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="c1">// 当前是否有数据可读？
+</span>        <span class="k">return</span> <span class="n">tb_queue_size</span><span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">)</span><span class="o">?</span> <span class="n">TB_STREAM_WAIT_READ</span> <span class="o">:</span> <span class="n">TB_STREAM_WAIT_NONE</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 实现ctrl回调接口，用于设置和获取一些状态，扩展一些自定义的接口，tb_stream_ctrl接口会用到
+</span>    <span class="k">static</span> <span class="n">tb_bool_t</span> <span class="nf">tb_stream_real_ctrl</span><span class="p">(</span><span class="n">tb_stream_ref_t</span> <span class="n">stream</span><span class="p">,</span> <span class="n">tb_size_t</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tb_va_list_t</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// check
+</span>        <span class="n">tb_stream_real_ref_t</span> <span class="n">rstream</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_stream_real_ref_t</span><span class="p">)</span><span class="n">stream</span><span class="p">;</span>
+        <span class="n">tb_assert_and_check_return_val</span><span class="p">(</span><span class="n">rstream</span><span class="p">,</span> <span class="n">tb_false</span><span class="p">);</span>
+
+        <span class="c1">// ctrl
+</span>        <span class="k">switch</span> <span class="p">(</span><span class="n">ctrl</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="k">case</span> <span class="n">TB_STREAM_CTRL_GET_SIZE</span><span class="p">:</span>
+            <span class="p">{</span>
+                <span class="c1">// the psize
+</span>                <span class="n">tb_hong_t</span><span class="o">*</span> <span class="n">psize</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_hong_t</span><span class="o">*</span><span class="p">)</span><span class="n">tb_va_arg</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">tb_hong_t</span><span class="o">*</span><span class="p">);</span>
+                <span class="n">tb_assert_and_check_break</span><span class="p">(</span><span class="n">psize</span><span class="p">);</span>
+
+                <span class="c1">// 获取数据流大小，tb_stream_size有用到
+</span>                <span class="o">*</span><span class="n">psize</span> <span class="o">=</span> <span class="n">rstream</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">;</span>
+
+                <span class="c1">// ok
+</span>                <span class="k">return</span> <span class="n">tb_true</span><span class="p">;</span>
+            <span class="p">}</span>   
+            <span class="c1">// 在另外一端通过tb_stream_ctrl来不断的送入数据块到stream
+</span>        <span class="k">case</span> <span class="n">TB_STREAM_CTRL_REAL_PUSH</span><span class="p">:</span>
+            <span class="p">{</span>
+                <span class="c1">// check
+</span>                <span class="n">tb_assert_and_check_break</span><span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">);</span>
+
+                <span class="c1">// the data and size
+</span>                <span class="n">tb_byte_t</span> <span class="k">const</span><span class="o">*</span>    <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_byte_t</span> <span class="k">const</span><span class="o">*</span><span class="p">)</span><span class="n">tb_va_arg</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">tb_byte_t</span> <span class="k">const</span><span class="o">*</span><span class="p">);</span>
+                <span class="n">tb_size_t</span>           <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_size_t</span><span class="p">)</span><span class="n">tb_va_arg</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">tb_size_t</span><span class="p">);</span>
+                <span class="n">tb_assert_and_check_break</span><span class="p">(</span><span class="n">data</span> <span class="o">&amp;&amp;</span> <span class="n">size</span><span class="p">);</span>
+
+                <span class="c1">// 压入一个数据块
+</span>                <span class="n">tb_real_buffer_t</span> <span class="n">buffer</span><span class="p">;</span>
+                <span class="n">buffer</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tb_memdup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+                <span class="n">buffer</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="p">;</span>
+                <span class="n">buffer</span><span class="p">.</span><span class="n">read</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="n">tb_queue_put</span><span class="p">(</span><span class="n">rstream</span><span class="o">-&gt;</span><span class="n">buffers</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buffer</span><span class="p">);</span>
+
+                <span class="c1">// 更新总的数据大小
+</span>                <span class="n">rstream</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">+=</span> <span class="n">size</span><span class="p">;</span>
+
+                <span class="c1">// ok
+</span>                <span class="k">return</span> <span class="n">tb_true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="nl">default:</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// failed
+</span>        <span class="k">return</span> <span class="n">tb_false</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>通过上面四步， 基本上一个自定义流就实现好了，上面说的<code class="highlighter-rouge">tb_real_buffer_exit</code>主要用于queue维护的buffer的自动释放
+详细说明和使用见容器章节，下面附属相关实现：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="k">static</span> <span class="n">tb_void_t</span> <span class="nf">tb_real_buffer_exit</span><span class="p">(</span><span class="n">tb_element_ref_t</span> <span class="n">element</span><span class="p">,</span> <span class="n">tb_pointer_t</span> <span class="n">buff</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// check
+</span>        <span class="n">tb_real_buffer_ref_t</span> <span class="n">buffer</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_real_buffer_ref_t</span><span class="p">)</span><span class="n">buff</span><span class="p">;</span>
+        <span class="n">tb_assert_and_check_return</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+
+        <span class="c1">// exit it
+</span>        <span class="k">if</span> <span class="p">(</span><span class="n">buffer</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">)</span> <span class="n">tb_free</span><span class="p">(</span><span class="n">buffer</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">);</span>
+        <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">=</span> <span class="n">tb_null</span><span class="p">;</span>
+        <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">buffer</span><span class="o">-&gt;</span><span class="n">read</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>最后，贴下咱们这个自定义stream使用：</p>
+
+<p>接收端</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// init stream
+</span>    <span class="n">tb_stream_ref_t</span> <span class="n">stream</span> <span class="o">=</span> <span class="n">tb_stream_init_real</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// open stream
+</span>        <span class="k">if</span> <span class="p">(</span><span class="n">tb_stream_open</span><span class="p">(</span><span class="n">stream</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="c1">// read line
+</span>            <span class="n">tb_long_t</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="n">tb_char_t</span> <span class="n">line</span><span class="p">[</span><span class="n">TB_STREAM_BLOCK_MAXN</span><span class="p">];</span>
+            <span class="k">while</span> <span class="p">((</span><span class="n">size</span> <span class="o">=</span> <span class="n">tb_stream_bread_line</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">)))</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="c1">// trace
+</span>                <span class="n">tb_trace_i</span><span class="p">(</span><span class="s">"line: %s"</span><span class="p">,</span> <span class="n">line</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// exit stream
+</span>        <span class="n">tb_stream_exit</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>基本上没什么变化，就是换了下stream的初始化创建接口</p>
+
+<p>输入端</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// 将数据不停的送入stream中
+</span>    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// fill data
+</span>        <span class="n">tb_byte_t</span> <span class="n">data</span><span class="p">[</span><span class="mi">8192</span><span class="p">];</span>
+        <span class="n">tb_memset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mh">0xff</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">data</span><span class="p">));</span>
+
+        <span class="c1">// push data
+</span>        <span class="n">tb_stream_ctrl</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">TB_STREAM_CTRL_REAL_PUSH</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">data</span><span class="p">));</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>上面介绍的实现和使用方式，只是个例子，方便理解tbox中stream的机制，具体实现和使用还是需要根据自己的实际需求做调整。</p>
+
+<p>更详细的使用和扩展，可参考源代码来了解。。</p>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/03/17/stream-custom/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/02/25/update-v1.5.2/">tbox v1.5.2 更新!</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-02-25
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#tbox" title="Category: tbox" rel="category">tbox</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a>&nbsp;
+    
+        <a href="/tag/#c" title="Tag: c" rel="tag">c</a>&nbsp;
+    
+        <a href="/tag/#版本更新" title="Tag: 版本更新" rel="tag">版本更新</a>&nbsp;
+    
+        <a href="/tag/#进程控制" title="Tag: 进程控制" rel="tag">进程控制</a>&nbsp;
+    
+        <a href="/tag/#编译" title="Tag: 编译" rel="tag">编译</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <h3 id="section">新特性</h3>
+
+<ul>
+  <li>增加smallest参数配置选项，实现一键配置最小化编译，禁用所有扩展模块和依赖库</li>
+  <li>增加进程创建和控制接口</li>
+</ul>
+
+<h3 id="section-1">改进</h3>
+
+<ul>
+  <li>增强环境变量设置接口</li>
+  <li>修改xmake.lua支持最新版xmake v2.x, 简化编译配置</li>
+</ul>
+
+<h3 id="bugs">Bugs修复</h3>
+
+<ul>
+  <li>修复ltimer定时器不准问题</li>
+  <li>修复asio部分内存泄露问题</li>
+  <li>修复asio/httpd在linux下keepalive模式，响应很慢问题</li>
+  <li>修复windows下路径处理的一些bug</li>
+</ul>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/02/25/update-v1.5.2/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/02/05/update-v1.5.1/">tbox v1.5.1 更新!</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-02-05
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#tbox" title="Category: tbox" rel="category">tbox</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a>&nbsp;
+    
+        <a href="/tag/#c" title="Tag: c" rel="tag">c</a>&nbsp;
+    
+        <a href="/tag/#版本更新" title="Tag: 版本更新" rel="tag">版本更新</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <h3 id="section">新特性</h3>
+
+<ul>
+  <li>自动检测所有系统libc接口，优先使用系统版本</li>
+  <li>支持自定义内存分配器，并且能够在debug模式下，获取每次分配的代码位置信息，用于自定义追踪</li>
+  <li>增加轻量级<code class="highlighter-rouge">static_pool</code>来维护整块buffer的内存分配，适合局部管理部分内存，pool虽然也能维护，但是底层基于<code class="highlighter-rouge">large_pool</code>，比较重量级，适合全局管理内存</li>
+  <li>增加stream快速读取全部数据到string的接口</li>
+  <li>增加adler32 hash算法</li>
+  <li>增加<code class="highlighter-rouge">tb_memmem</code>接口</li>
+  <li>采用pcre/pcre2/posix regex实现正则表达式库</li>
+</ul>
+
+<h3 id="section-1">改进</h3>
+
+<ul>
+  <li>优化stream，支持对字符设备文件的读写</li>
+  <li>修改<code class="highlighter-rouge">tb_init</code>接口，增加allocator自定义内存分配器参数，实现用户的侵入式内存管理</li>
+  <li>重构内存管理，完全采用分配器allocator模式，可以灵活切换内存管理，支持原生系统内存、静态buffer内存、内存池等各种分配方式</li>
+  <li>重定义assert，debug模式遇到assert直接abort执行</li>
+</ul>
+
+<h3 id="bugs">Bugs修复</h3>
+
+<ul>
+  <li>修复android下的一些bug</li>
+  <li>修复stream的seek问题</li>
+</ul>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/02/05/update-v1.5.1/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/02/04/project-compile/">使用xmake编译工程</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-02-04
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#编译" title="Tag: 编译" rel="tag">编译</a>&nbsp;
+    
+        <a href="/tag/#跨平台" title="Tag: 跨平台" rel="tag">跨平台</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>如果你只想编译当前主机环境的平台，例如在windows上编译windows版本，在macosx上编译macosx版本，那么你只需要敲以下命令即可：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake
+</code></pre>
+</div>
+
+<p>因为xmake默认会去检测当前的环境，默认编译当前主机的平台版本，不需要做额外的配置，并且默认编译的是release版本。</p>
+
+<p>如果工程里面有多个目标，那么上面的命令，会去编译所有目标，如果只想编译指定一个目标，例如：test，那么只需执行：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake <span class="nb">test</span>
+</code></pre>
+</div>
+
+<p>如果你想编译debug版本，那么需要做些简单的配置：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake config --mode<span class="o">=</span>debug
+    xmake
+</code></pre>
+</div>
+
+<p>xmake针对每个命令和参数，都提供了简写版本：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake f -m debug
+    xmake
+</code></pre>
+</div>
+
+<p>注：为了提高灵活性，release版本和debug版本的编译选项设置，需要自己在工程描述文件中描述，如果没有设置的话，release和debug版本生成的程序是一样的。</p>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/02/04/project-compile/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/02/04/project-add-files/">xmake中add_files的使用</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-02-04
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#模式匹配" title="Tag: 模式匹配" rel="tag">模式匹配</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>如果你看了<a href="/cn/2016/02/03/project-description/">工程描述入门</a>，那么是否觉得通过 add_files 添加源文件相当的方便？</p>
+
+<p>目前它可以支持<code class="highlighter-rouge">.c/.cpp/.s/.S/.m/.mm/.o/.obj/.a/.lib</code>这些后缀的源代码和库文件，其中通配符*表示匹配当前目录下文件，而**则匹配多级目录下的文件。</p>
+
+<p>例如：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="n">add_files</span><span class="p">(</span><span class="s2">"src/test_*.c"</span><span class="p">)</span>
+    <span class="n">add_files</span><span class="p">(</span><span class="s2">"src/xxx/**.cpp"</span><span class="p">)</span>
+    <span class="n">add_files</span><span class="p">(</span><span class="s2">"src/asm/*.S"</span><span class="p">,</span> <span class="s2">"src/objc/**/hello.m"</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">add_files</code>的使用其实是相当灵活方便的，其匹配模式我借鉴了premake的风格，但是又对其进行了改善和增强。</p>
+
+<p>使得不仅可以匹配文件，还有可以在添加文件同时，过滤排除指定模式的一批文件。。</p>
+
+<p>例如：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="c1">-- 递归添加src下的所有c文件，但是不包括src/impl/下的所有c文件</span>
+    <span class="n">add_files</span><span class="p">(</span><span class="s2">"src/**.c|impl/*.c"</span><span class="p">)</span>
+
+    <span class="c1">-- 添加src下的所有cpp文件，但是不包括src/test.cpp、src/hello.cpp以及src下所有带xx_前缀的cpp文件</span>
+    <span class="n">add_files</span><span class="p">(</span><span class="s2">"src/*.cpp|test.cpp|hello.cpp|xx_*.cpp"</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>其中分隔符之后的都是需要排除的文件，这些文件也同样支持匹配模式，并且可以同时添加多个过滤模式，只要中间用竖线分割就行了。。</p>
+
+<p>注： 为了使得描述上更加的精简, 分隔符之后的过滤描述都是基于起一个模式：src/*.cpp 中 *之前的目录为基础的。</p>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/02/04/project-add-files/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+        </ul>
+
+
+
+        <!-- Pagination links -->
+        <div class="pagination">
+          
+            <a href="/cn/index.html" class="previous"><i class="fa fa-angle-double-left"></i></a>
+            <a href="/cn/page4" class="previous"><i class="fa fa-angle-left"></i></a>
+          
+          <span class="page_number ">5/8</span>
+          
+            <a href="/cn/page6" class="next"><i class="fa fa-angle-right"></i></a>
+            <a href="/cn/page8" class="next"><i class="fa fa-angle-double-right"></i></a>
+          
+        </div>
+    </div>
+    <!-- <button class="anchor"><i class="fa fa-anchor"></i></button> -->
+    <div class="right">
+        <div class="wrap">
+            <div class="side">
+                <div>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                    最近文章
+                </div>
+                <ul class="content-ul" recent="">
+                    
+                    
+                        <li><a href="/cn/2016/07/18/wait-multi-processes/">多进程等待的跨平台实现</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/17/update-v2.0.3/">xmake v2.0.3 更新!</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/17/demo-build-a-simple-project/">演示：构建一个简单的程序</a></li>
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/16/run-debug/">利用xmake运行和调试程序</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/16/how-to-build-a-simple-project/">如何快速构建一个简单的程序</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/14/plugin-print-colors/">插件开发之色彩高亮显示</a></li>
+                    
+                    
+                </ul>
+            </div>
+
+            <!-- Content -->
+            <div class="side ">
+                <div>
+                    <i class="fa fa-th-list"></i>
+                    分类
+                </div>
+                <ul class="content-ul" cate="">
+                    
+                    <li>
+                        <a href="/category/#tboox" class="categories-list-item" cate="tboox">
+                            <span class="name">
+                                tboox
+                            </span>
+                            <span class="badge">2</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/category/#tbox" class="categories-list-item" cate="tbox">
+                            <span class="name">
+                                tbox
+                            </span>
+                            <span class="badge">15</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/category/#xmake" class="categories-list-item" cate="xmake">
+                            <span class="name">
+                                xmake
+                            </span>
+                            <span class="badge">37</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <div class="side">
+                <div>
+                    <i class="fa fa-tags"></i>
+                    标记
+                </div>
+                <div class="tags-cloud">
+                    
+                    
+                    
+                    
+
+                    
+
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#tboox" style="font-size: 9.5pt; color: #999;">tboox</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#站点" style="font-size: 9.5pt; color: #999;">站点</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#website" style="font-size: 9.5pt; color: #999;">website</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#tbox" style="font-size: 13pt; color: #555;">tbox</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#c" style="font-size: 12.5pt; color: #555;">c</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#bloom" style="font-size: 9pt; color: #999;">bloom</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#filter" style="font-size: 9pt; color: #999;">filter</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#算法" style="font-size: 9.5pt; color: #888;">算法</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#大数据" style="font-size: 9pt; color: #999;">大数据</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#过滤" style="font-size: 9pt; color: #999;">过滤</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#xmake" style="font-size: 18pt; color: #000;">xmake</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#lua" style="font-size: 17.5pt; color: #000;">lua</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#premake" style="font-size: 9pt; color: #999;">premake</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#排序" style="font-size: 9pt; color: #999;">排序</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#查找" style="font-size: 9pt; color: #999;">查找</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#哈希" style="font-size: 9pt; color: #999;">哈希</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#容器" style="font-size: 9pt; color: #999;">容器</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#迭代器" style="font-size: 9pt; color: #999;">迭代器</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#内存检测" style="font-size: 9pt; color: #999;">内存检测</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#内存池" style="font-size: 9pt; color: #999;">内存池</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#跨平台" style="font-size: 9.5pt; color: #888;">跨平台</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#异常捕获" style="font-size: 9pt; color: #999;">异常捕获</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#windows" style="font-size: 10.5pt; color: #888;">windows</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#linux" style="font-size: 9pt; color: #999;">linux</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#线程池" style="font-size: 9pt; color: #999;">线程池</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#裁剪" style="font-size: 9pt; color: #999;">裁剪</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#编译" style="font-size: 10pt; color: #888;">编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#配置" style="font-size: 9pt; color: #999;">配置</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#stream" style="font-size: 9.5pt; color: #999;">stream</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#流" style="font-size: 9.5pt; color: #999;">流</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#解压缩" style="font-size: 9pt; color: #999;">解压缩</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#静态库" style="font-size: 9pt; color: #999;">静态库</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#模式匹配" style="font-size: 9pt; color: #999;">模式匹配</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#版本更新" style="font-size: 10pt; color: #888;">版本更新</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#version" style="font-size: 9.5pt; color: #999;">version</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#update" style="font-size: 10pt; color: #888;">update</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#进程控制" style="font-size: 9pt; color: #999;">进程控制</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#process" style="font-size: 9pt; color: #999;">process</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#插件" style="font-size: 11.5pt; color: #777;">插件</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#import" style="font-size: 9pt; color: #999;">import</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#类库" style="font-size: 9.5pt; color: #999;">类库</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#自定义脚本" style="font-size: 9.5pt; color: #888;">自定义脚本</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#安装" style="font-size: 9pt; color: #999;">安装</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#打包" style="font-size: 9.5pt; color: #999;">打包</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#android" style="font-size: 9pt; color: #999;">android</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#apk" style="font-size: 9pt; color: #999;">apk</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#jni" style="font-size: 9pt; color: #999;">jni</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#task" style="font-size: 9.5pt; color: #999;">task</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#菜单选项" style="font-size: 9pt; color: #999;">菜单选项</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#hello" style="font-size: 10pt; color: #888;">hello</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#makefile" style="font-size: 9pt; color: #999;">makefile</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#doxygen" style="font-size: 9.5pt; color: #999;">doxygen</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#宏脚本" style="font-size: 9.5pt; color: #888;">宏脚本</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#plugin" style="font-size: 9.5pt; color: #888;">plugin</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#macro" style="font-size: 9pt; color: #999;">macro</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#包管理" style="font-size: 9pt; color: #999;">包管理</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#代码移植编译" style="font-size: 9pt; color: #999;">代码移植编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#example" style="font-size: 9.5pt; color: #999;">example</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#xmake.lua" style="font-size: 9pt; color: #999;">xmake.lua</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#compile" style="font-size: 9pt; color: #999;">compile</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#configure" style="font-size: 9pt; color: #999;">configure</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#create" style="font-size: 9pt; color: #999;">create</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#project" style="font-size: 9.5pt; color: #888;">project</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#template" style="font-size: 9pt; color: #999;">template</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#package" style="font-size: 9pt; color: #999;">package</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#run" style="font-size: 9pt; color: #999;">run</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#xmake.io" style="font-size: 10.5pt; color: #888;">xmake.io</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#scripts" style="font-size: 9pt; color: #999;">scripts</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#头文件依赖" style="font-size: 9pt; color: #999;">头文件依赖</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#增量编译" style="font-size: 9pt; color: #999;">增量编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#终端色彩高亮" style="font-size: 9pt; color: #999;">终端色彩高亮</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#check" style="font-size: 9pt; color: #999;">check</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#batch" style="font-size: 9pt; color: #999;">batch</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#function" style="font-size: 9pt; color: #999;">function</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#交叉编译" style="font-size: 9.5pt; color: #999;">交叉编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#build" style="font-size: 9.5pt; color: #999;">build</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#调试" style="font-size: 9pt; color: #999;">调试</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#运行" style="font-size: 9pt; color: #999;">运行</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#演示" style="font-size: 9pt; color: #999;">演示</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#demo" style="font-size: 9pt; color: #999;">demo</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#协程" style="font-size: 9pt; color: #999;">协程</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#进程等待" style="font-size: 9pt; color: #999;">进程等待</a>
+                    
+                </div>
+            </div>
+
+            <div class="side">
+                <div>
+                    <i class="fa fa-external-link"></i>
+                    链接
+                </div>
+                <ul class="content-ul" links="">
+                  <li><a href="http://github.com/waruqi/tbox">tbox</a></li>
+                  <li><a href="http://www.xmake.io">xmake</a></li>
+                  <li><a href="https://github.com/waruqi">github</a></li>
+                  <li><a href="http://www.suppore.cn">懒人的小窝</a></li>
+                  <li><a href="http://crackerme.github.io/">愛尚丨輕博客</a></li>
+                  <li><a href="http://blog.a0z.me">Ghosty Core</a></li>
+                </ul>
+            </div> 
+
+            
+        </div>
+    </div>
+</div>
+<!-- <script src="/js/scroll.min.js " charset="utf-8"></script> -->
+<!-- <script src="/js/pageContent.js " charset="utf-8"></script> -->
+
+
+    <footer class="site-footer">
+    <div class="wrapper">
+        <p class="description">
+             Copyright (c) 2016 tboox.org 
+        </p>
+        <p class="contact">
+            
+            <a href="https://github.com/waruqi" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a> 
+             
+            
+            <a href="mailto:waruqi@gmail.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a> 
+            
+            
+            <a href="https://twitter.com/waruqi" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a> 
+            
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="http://pages.coding.me/">Coding Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/Gaohaoyang">HyG</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" class="scroll">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/scroll.min.js " charset="utf-8"></script>
+  </body>
+
+</html>

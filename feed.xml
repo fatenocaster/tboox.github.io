@@ -1,30 +1,1613 @@
----
-layout: null
----
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>{{ site.title | xml_escape }}</title>
-    <description>{{ site.description | xml_escape }}</description>
-    <link>{{ site.url }}{{ site.baseurl }}/</link>
-    <atom:link href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}" rel="self" type="application/rss+xml"/>
-    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
-    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
-    <generator>Jekyll v{{ jekyll.version }}</generator>
-    {% for post in site.posts limit:10 %}
+    <title>TBOOX</title>
+    <description></description>
+    <link>http://tboox.org/</link>
+    <atom:link href="http://tboox.org/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 18 Jul 2016 22:06:54 +0800</pubDate>
+    <lastBuildDate>Mon, 18 Jul 2016 22:06:54 +0800</lastBuildDate>
+    <generator>Jekyll v3.1.1</generator>
+    
       <item>
-        <title>{{ post.title | xml_escape }}</title>
-        <description>{{ post.content | xml_escape }}</description>
-        <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
-        <link>{{ post.url | prepend: site.baseurl | prepend: site.url }}</link>
-        <guid isPermaLink="true">{{ post.url | prepend: site.baseurl | prepend: site.url }}</guid>
-        {% for tag in post.tags %}
-        <category>{{ tag | xml_escape }}</category>
-        {% endfor %}
-        {% for cat in post.categories %}
-        <category>{{ cat | xml_escape }}</category>
-        {% endfor %}
+        <title>多进程等待的跨平台实现</title>
+        <description>&lt;p&gt;最近在&lt;a href=&quot;http://www.xmake.io&quot;&gt;xmake&lt;/a&gt;中，用lua的协程实现了多任务编译，效果还是不错的，不过后来发现一个问题：&lt;/p&gt;
+
+&lt;p&gt;如果所有编译进程都在处理编译，没有退出的时候，xmake的lua主进程会不断地在这些任务间，不停的切换轮询进程的状态，但是有没有机会执行其他任务，导致cpu过高，抢占了编译进程的cpu时间。。&lt;/p&gt;
+
+&lt;p&gt;那如果在等不到完成的进程时候，加入sleep等待呢，又会导致编译速度变慢，没法合理利用cpu。。&lt;/p&gt;
+
+&lt;p&gt;因此，为了解决这个问题，我打算扩展下lua的接口，实现了一个跨平台的多进程等待接口: &lt;code class=&quot;highlighter-rouge&quot;&gt;process.waitlist&lt;/code&gt; 实现多个未完成进程的同时等待，让出xmake主进程的cpu时间，给其他编译进程充分利用&lt;/p&gt;
+
+&lt;p&gt;xmake中的lua代码如下：&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;        &lt;span class=&quot;c1&quot;&gt;-- wait processes&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tasks_finished&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procs_count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procs&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procs_count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;-- wait them&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procinfos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;waitlist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ifelse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procs_count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procinfo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;ipairs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procinfos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+                
+                &lt;span class=&quot;c1&quot;&gt;-- the process info&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;proc&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procinfo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procid&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procinfo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procinfo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+                &lt;span class=&quot;c1&quot;&gt;-- check&lt;/span&gt;
+                &lt;span class=&quot;nb&quot;&gt;assert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;proc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+                &lt;span class=&quot;c1&quot;&gt;-- resume this task&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;job_task&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tasks&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;job_proc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;coroutine.resume&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;job_task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+                &lt;span class=&quot;c1&quot;&gt;-- the other process is pending for this task?&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;coroutine.status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;job_task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;~=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;dead&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+
+                    &lt;span class=&quot;c1&quot;&gt;-- check&lt;/span&gt;
+                    &lt;span class=&quot;nb&quot;&gt;assert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;job_proc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+                    &lt;span class=&quot;c1&quot;&gt;-- update the pending process&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;procs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;job_proc&lt;/span&gt;
+
+                &lt;span class=&quot;c1&quot;&gt;-- this task has been finised?&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
+
+                    &lt;span class=&quot;c1&quot;&gt;-- mark this task as finised&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;tasks_finished&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;os.exec&lt;/code&gt;运行进程的接口实现中，如果当前进程没有立即退出，就通过协程切换出去，知道上面的多进程等待，获取到实际的退出进程后，直接定向切换到退出进程的&lt;code class=&quot;highlighter-rouge&quot;&gt;os.exec&lt;/code&gt;中，继续完成后续操作，这样就不会有冗余切换问题：&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;-- execute shell &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;exec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cmd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;errfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;-- open command&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;proc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cmd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;errfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;proc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;~=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;-- wait process&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;waitok&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; 
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;coroutine.running&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;-- save the current directory&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;curdir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;curdir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;-- wait it&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;repeat&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;-- poll it&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;waitok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;waitok&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+                    &lt;span class=&quot;c1&quot;&gt;-- 外面的多进程等待到实际的状态值后，直接进行处理&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;waitok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;coroutine.yield&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;until&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;waitok&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;~=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;-- resume the current directory&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;curdir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;waitok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;-- get status&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;waitok&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;-- close process&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;-- ok?&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;lua的上层调用有了，那怎么去实现这个跨平台的多进程等待呢？&lt;/p&gt;
+
+&lt;p&gt;在windows上我们能想到就是&lt;code class=&quot;highlighter-rouge&quot;&gt;WaitForMultipleObjects&lt;/code&gt;这个接口了，我把它封装到了&lt;a href=&quot;https://github.com/waruqi/tbox&quot;&gt;tbox&lt;/a&gt;里面具体实现如下：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;tb_process_waitlist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_process_waitinfo_ref_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infomaxn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// check
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;tb_assert_and_check_return_val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infomaxn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// make the process list
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;tb_size_t&lt;/span&gt;               &lt;span class=&quot;n&quot;&gt;procsize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;HANDLE&lt;/span&gt;                  &lt;span class=&quot;n&quot;&gt;proclist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tb_process_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procsize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_arrayn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proclist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;proclist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tb_assertf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procsize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_arrayn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proclist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;too much waited processes!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+
+    &lt;span class=&quot;c1&quot;&gt;// wait processes
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;DWORD&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;exitcode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;DWORD&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_kernel32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WaitForMultipleObjects&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;proclist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INFINITE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DWORD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WAIT_TIMEOUT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WAIT_FAILED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nl&quot;&gt;default:&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;// the process index
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;DWORD&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WAIT_OBJECT_0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;// the process
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;tb_process_t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;tb_assert_and_check_return_val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;// save process info
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_kernel32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GetExitCodeProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exitcode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exitcode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  
+            &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;// close thread handle
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;tb_kernel32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CloseHandle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hThread&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hThread&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INVALID_HANDLE_VALUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;// close process
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;tb_kernel32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CloseHandle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hProcess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INVALID_HANDLE_VALUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;// next index
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// attempt to wait next process
+&lt;/span&gt;                &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_kernel32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WaitForMultipleObjects&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;procsize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;proclist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WAIT_TIMEOUT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                    &lt;span class=&quot;c1&quot;&gt;// no more, exit loop
+&lt;/span&gt;                    &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;procsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WAIT_FAILED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;nl&quot;&gt;default:&lt;/span&gt;
+                    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                        &lt;span class=&quot;c1&quot;&gt;// the process index
+&lt;/span&gt;                        &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WAIT_OBJECT_0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+                        &lt;span class=&quot;c1&quot;&gt;// the process
+&lt;/span&gt;                        &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;tb_assert_and_check_return_val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+                        &lt;span class=&quot;c1&quot;&gt;// save process info
+&lt;/span&gt;                        &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_kernel32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GetExitCodeProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exitcode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exitcode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  
+                        &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+                        &lt;span class=&quot;c1&quot;&gt;// close thread handle
+&lt;/span&gt;                        &lt;span class=&quot;n&quot;&gt;tb_kernel32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CloseHandle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hThread&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hThread&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INVALID_HANDLE_VALUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+                        &lt;span class=&quot;c1&quot;&gt;// close process
+&lt;/span&gt;                        &lt;span class=&quot;n&quot;&gt;tb_kernel32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CloseHandle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hProcess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hProcess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INVALID_HANDLE_VALUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+                        &lt;span class=&quot;c1&quot;&gt;// next index
+&lt;/span&gt;                        &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// ok?
+&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;如果在linux以及其他posix系统上，可以使用&lt;code class=&quot;highlighter-rouge&quot;&gt;wait&lt;/code&gt;或者&lt;code class=&quot;highlighter-rouge&quot;&gt;waitpid&lt;/code&gt; 接口，其实&lt;code class=&quot;highlighter-rouge&quot;&gt;wait&lt;/code&gt;也就是相当于调用了 &lt;code class=&quot;highlighter-rouge&quot;&gt;waitpid(-1, &amp;amp;status, ..)&lt;/code&gt;，所以我这里就直接使用&lt;code class=&quot;highlighter-rouge&quot;&gt;waitpid&lt;/code&gt;来实现了。。&lt;/p&gt;
+
+&lt;p&gt;它跟windows的&lt;code class=&quot;highlighter-rouge&quot;&gt;WaitForMultipleObjects&lt;/code&gt;有些不同，不能传递指定需要等待哪些进程句柄，想要等待多个进程，只能传递-1，表示等待所有子进程&lt;/p&gt;
+
+&lt;p&gt;不过我们在封装接口的时候，可以还是传入多个要等待的子进程列表，如果获取到的子进程不在这个列表里面，就直接忽略掉，有的话就返回出来，这样的话，行为上就跟windows的差不多了。。&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;tb_process_waitlist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_process_waitinfo_ref_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infomaxn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// check
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;tb_assert_and_check_return_val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infomaxn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// done
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tb_hong_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_mclock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// wait it
+&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;tb_int_t&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;waitpid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WNOHANG&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WUNTRACED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;tb_check_return_val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;// exited?
+&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;// find this process 
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;tb_process_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;// found?
+&lt;/span&gt;            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// save process info
+&lt;/span&gt;                &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WIFEXITED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WEXITSTATUS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+                &lt;span class=&quot;c1&quot;&gt;// attempt to wait other processes
+&lt;/span&gt;                &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infomaxn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;c1&quot;&gt;// attempt to wait it
+&lt;/span&gt;                    &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;waitpid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WNOHANG&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WUNTRACED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+                    &lt;span class=&quot;c1&quot;&gt;// error or timeout? end
+&lt;/span&gt;                    &lt;span class=&quot;n&quot;&gt;tb_check_break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+                    &lt;span class=&quot;c1&quot;&gt;// find this process 
+&lt;/span&gt;                    &lt;span class=&quot;n&quot;&gt;tb_process_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+                    &lt;span class=&quot;c1&quot;&gt;// found?
+&lt;/span&gt;                    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                        &lt;span class=&quot;c1&quot;&gt;// save process info
+&lt;/span&gt;                        &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprocess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WIFEXITED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WEXITSTATUS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+                &lt;span class=&quot;c1&quot;&gt;// end
+&lt;/span&gt;                &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;// wait some time
+&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_msleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_mclock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_hong_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// ok?
+&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;最后贴下这个跨平台接口的是如何使用的，这里给了一个比较完整的demo&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;c1&quot;&gt;// init processes
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;tb_size_t&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;count1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processes1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processes2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;processes1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_process_init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_char_t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;tb_assert_and_check_break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// ok?
+&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// trace
+&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;tb_trace_i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;waiting: %ld&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;// wait processes
+&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;tb_long_t&lt;/span&gt;               &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;tb_process_waitinfo_t&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_process_waitlist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_arrayn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;tb_size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infosize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// trace
+&lt;/span&gt;                &lt;span class=&quot;n&quot;&gt;tb_trace_i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;process(%ld:%p) exited: %ld&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+                &lt;span class=&quot;c1&quot;&gt;// exit process
+&lt;/span&gt;                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_process_exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+                &lt;span class=&quot;c1&quot;&gt;// remove this process
+&lt;/span&gt;                &lt;span class=&quot;n&quot;&gt;processes1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infolist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;// update processes
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;tb_size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processes2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processes1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;tb_memcpy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processes1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processes2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tb_process_ref_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;processes1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tb_null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;count1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Mon, 18 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/cn/2016/07/18/wait-multi-processes/</link>
+        <guid isPermaLink="true">http://tboox.org/cn/2016/07/18/wait-multi-processes/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>tbox</category>
+        
+        <category>windows</category>
+        
+        <category>协程</category>
+        
+        <category>进程等待</category>
+        
+        <category>跨平台</category>
+        
+        
+        <category>xmake</category>
+        
       </item>
-    {% endfor %}
+    
+      <item>
+        <title>xmake v2.0.3 update!</title>
+        <description>&lt;p&gt;&lt;a href=&quot;http://www.xmake.io&quot;&gt;Website&lt;/a&gt;
+&lt;a href=&quot;https://github.com/waruqi/xmake&quot;&gt;Sources&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;changelog&quot;&gt;Changelog&lt;/h1&gt;
+
+&lt;h3 id=&quot;new-features&quot;&gt;New features&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Add check includes dependence automatically&lt;/li&gt;
+  &lt;li&gt;Add print colors&lt;/li&gt;
+  &lt;li&gt;Add debugger support, .e.g &lt;code class=&quot;highlighter-rouge&quot;&gt;xmake run -d program ...&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;changes&quot;&gt;Changes&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Improve the interfaces of run shell&lt;/li&gt;
+  &lt;li&gt;Upgrade luajit to v2.0.4&lt;/li&gt;
+  &lt;li&gt;Improve to generate makefile plugin&lt;/li&gt;
+  &lt;li&gt;Optimizate the multitasking compiling speed&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;bugs-fixed&quot;&gt;Bugs fixed&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Fix install directory bug&lt;/li&gt;
+  &lt;li&gt;Fix the root directory error for &lt;code class=&quot;highlighter-rouge&quot;&gt;import&lt;/code&gt; interface&lt;/li&gt;
+  &lt;li&gt;Fix check visual stdio error on windows&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Sun, 17 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/2016/07/17/update-v2.0.3/</link>
+        <guid isPermaLink="true">http://tboox.org/2016/07/17/update-v2.0.3/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>update</category>
+        
+        <category>xmake.io</category>
+        
+        <category>windows</category>
+        
+        
+        <category>xmake</category>
+        
+      </item>
+    
+      <item>
+        <title>xmake v2.0.3 更新!</title>
+        <description>&lt;p&gt;&lt;a href=&quot;http://www.xmake.io/cn&quot;&gt;主页&lt;/a&gt;
+&lt;a href=&quot;https://github.com/waruqi/xmake&quot;&gt;源码&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;section&quot;&gt;更新内容&lt;/h1&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;新特性&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;增加头文件依赖自动检测和增量编译，提高编译速度&lt;/li&gt;
+  &lt;li&gt;在终端中进行颜色高亮提示&lt;/li&gt;
+  &lt;li&gt;添加调试器支持，&lt;code class=&quot;highlighter-rouge&quot;&gt;xmake run -d program ...&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;section-2&quot;&gt;改进&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;增强运行shell的系列接口&lt;/li&gt;
+  &lt;li&gt;更新luajit到v2.0.4版本&lt;/li&gt;
+  &lt;li&gt;改进makefile生成插件，移除对xmake的依赖，并且支持&lt;code class=&quot;highlighter-rouge&quot;&gt;windows/linux/macosx&lt;/code&gt;等大部分pc平台&lt;/li&gt;
+  &lt;li&gt;优化多任务编译速度，在windows下编译提升较为明显&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;bugs&quot;&gt;Bugs修复&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;修复安装目录错误问题&lt;/li&gt;
+  &lt;li&gt;修复&lt;code class=&quot;highlighter-rouge&quot;&gt;import&lt;/code&gt;根目录错误问题&lt;/li&gt;
+  &lt;li&gt;修复在多版本vs同时存在的情况下，检测vs环境失败问题&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Sun, 17 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/cn/2016/07/17/update-v2.0.3/</link>
+        <guid isPermaLink="true">http://tboox.org/cn/2016/07/17/update-v2.0.3/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>版本更新</category>
+        
+        <category>xmake.io</category>
+        
+        <category>windows</category>
+        
+        
+        <category>xmake</category>
+        
+      </item>
+    
+      <item>
+        <title>Demo: Build a simple project</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://asciinema.org/a/79998&quot;&gt;&lt;img src=&quot;https://asciinema.org/a/79998.png&quot; alt=&quot;asciicast&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 17 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/2016/07/17/demo-build-a-simple-project/</link>
+        <guid isPermaLink="true">http://tboox.org/2016/07/17/demo-build-a-simple-project/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>demo</category>
+        
+        <category>build</category>
+        
+        <category>project</category>
+        
+        <category>hello</category>
+        
+        
+        <category>xmake</category>
+        
+      </item>
+    
+      <item>
+        <title>演示：构建一个简单的程序</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://asciinema.org/a/79998&quot;&gt;&lt;img src=&quot;https://asciinema.org/a/79998.png&quot; alt=&quot;asciicast&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sun, 17 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/cn/2016/07/17/demo-build-a-simple-project/</link>
+        <guid isPermaLink="true">http://tboox.org/cn/2016/07/17/demo-build-a-simple-project/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>演示</category>
+        
+        <category>编译</category>
+        
+        <category>交叉编译</category>
+        
+        
+        <category>xmake</category>
+        
+      </item>
+    
+      <item>
+        <title>利用xmake运行和调试程序</title>
+        <description>&lt;p&gt;xmake默认在编译完程序后，可以通过以下命令运行指定目标程序：&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;nv&quot;&gt;$xmake&lt;/span&gt; run &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;target] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;arguments] ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;并且在linux/macosx下面，目前已经支持关联调试器，去直接调试指定目标了，只需要加上&lt;code class=&quot;highlighter-rouge&quot;&gt;-d/--debug&lt;/code&gt;参数选项：&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;nv&quot;&gt;$xmake&lt;/span&gt; run -d &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;target] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;arguments] ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;默认情况下，xmake在macosx下用的是lldb，在linux下用的是gdb，调试器xmake会在配置的时候去自动检测，如果需要指定调试器路径，可以手动去配置它：&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;nv&quot;&gt;$xmake&lt;/span&gt; f --debugger&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/bin/gdb
+    &lt;span class=&quot;nv&quot;&gt;$xmake&lt;/span&gt; run -d demo 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;需要注意的是，目前windows上还没有支持，不过已经在计划中了，后续不久就会去支持它。。&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 16 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/cn/2016/07/16/run-debug/</link>
+        <guid isPermaLink="true">http://tboox.org/cn/2016/07/16/run-debug/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>调试</category>
+        
+        <category>运行</category>
+        
+        
+        <category>xmake</category>
+        
+      </item>
+    
+      <item>
+        <title>How to build a simple project quickly</title>
+        <description>&lt;p&gt;We create an empty console project first:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake create -P ./hello
+
+create hello ...
+create ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And xmake will generate some files:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ./hello
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;tree .
+
+.
+├── src
+│   └── main.c
+└── xmake.lua
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It is a simple console program only for printing &lt;code class=&quot;highlighter-rouge&quot;&gt;hello xmake!&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;cat ./src/main.c 
+
+&lt;span class=&quot;c&quot;&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+int main&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;int argc, char&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt; argv&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;hello xmake!&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;;
+    &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;0;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The content of &lt;code class=&quot;highlighter-rouge&quot;&gt;xmake.lua&lt;/code&gt; is very simple:&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xmake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lua&lt;/span&gt; 
+
+&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;set_kind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;binary&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;add_files&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;src/*.c&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We build it now.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... x86_64
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the Xcode SDK version &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;macosx ... 10.11
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the target minimal version ... 10.11
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the objc compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;mm&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the objc++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;mxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the swift compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx swiftc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the debugger &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dd&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx lldb
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx ar&quot;&lt;/span&gt;
+,   ccache &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ccache&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx ar&quot;&lt;/span&gt;
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang++&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;x86_64&quot;&lt;/span&gt;
+,   mxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang++&quot;&lt;/span&gt;
+,   xcode_dir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Applications/Xcode.app&quot;&lt;/span&gt;
+,   target_minver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.11&quot;&lt;/span&gt;
+,   sc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx swiftc&quot;&lt;/span&gt;
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   make &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;make&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   dd &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx lldb&quot;&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang++&quot;&lt;/span&gt;
+,   xcode_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.11&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+,   mm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+clean ok!
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: ccache compiling.release src/main.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello
+build ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And we run this program:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake run hello
+
+hello world!
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Or we can debug it.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake run -d hello 
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;lldb]&lt;span class=&quot;nv&quot;&gt;$target&lt;/span&gt; create &lt;span class=&quot;s2&quot;&gt;&quot;build/hello&quot;&lt;/span&gt;
+Current executable &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;to &lt;span class=&quot;s1&quot;&gt;&#39;build/hello&#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;x86_64&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;.
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;lldb]&lt;span class=&quot;nv&quot;&gt;$b&lt;/span&gt; main
+Breakpoint 1: where &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; hello&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;main, address &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0x0000000100000f50
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;lldb]&lt;span class=&quot;nv&quot;&gt;$r&lt;/span&gt;
+Process 7509 launched: &lt;span class=&quot;s1&quot;&gt;&#39;/private/tmp/hello/build/hello&#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;x86_64&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Process 7509 stopped
+&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; thread &lt;span class=&quot;c&quot;&gt;#1: tid = 0x435a2, 0x0000000100000f50 hello`main, queue = &#39;com.apple.main-thread&#39;, stop reason = breakpoint 1.1&lt;/span&gt;
+    frame &lt;span class=&quot;c&quot;&gt;#0: 0x0000000100000f50 hello`main&lt;/span&gt;
+hello&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;main:
+&lt;span class=&quot;gp&quot;&gt;-&amp;gt;  &lt;/span&gt;0x100000f50 &amp;lt;+0&amp;gt;:  pushq  %rbp
+    0x100000f51 &amp;lt;+1&amp;gt;:  movq   %rsp, %rbp
+    0x100000f54 &amp;lt;+4&amp;gt;:  leaq   0x2b&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rip&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, %rdi          ; &lt;span class=&quot;s2&quot;&gt;&quot;hello world!&quot;&lt;/span&gt;
+    0x100000f5b &amp;lt;+11&amp;gt;: callq  0x100000f64               ; symbol stub &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;: puts
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;lldb]&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Next we build it for android.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake f -p android --ndk&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;~/files/android-ndk-r10e/
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... armv7-a
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the SDK version of NDK ... android-21
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-gcc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-gcc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-g++
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-ar&quot;&lt;/span&gt;
+,   ccache &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ccache&quot;&lt;/span&gt;
+,   ndk &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~/files/android-ndk-r10e/&quot;&lt;/span&gt;
+,   sc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx swiftc&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-ar&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-g++&quot;&lt;/span&gt;
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-gcc&quot;&lt;/span&gt;
+,   toolchains &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;armv7-a&quot;&lt;/span&gt;
+,   mxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang++&quot;&lt;/span&gt;
+,   xcode_dir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Applications/Xcode.app&quot;&lt;/span&gt;
+,   target_minver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.11&quot;&lt;/span&gt;
+,   ndk_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 21
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-gcc&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-g++&quot;&lt;/span&gt;
+,   make &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;make&quot;&lt;/span&gt;
+,   dd &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx lldb&quot;&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-g++&quot;&lt;/span&gt;
+,   xcode_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.11&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;android&quot;&lt;/span&gt;
+,   mm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+
+clean ok!
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: ccache compiling.release src/main.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello
+build ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Or we build it for iphoneos.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake f -p iphoneos
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... armv7
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the Xcode SDK version &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;iphoneos ... 9.2
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the target minimal version ... 9.2
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the objc compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;mm&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the objc++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;mxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... gas-preprocessor.pl xcrun -sdk iphoneos clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the swift compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos swiftc
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos ar&quot;&lt;/span&gt;
+,   ccache &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ccache&quot;&lt;/span&gt;
+,   ndk &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~/files/android-ndk-r10e/&quot;&lt;/span&gt;
+,   sc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos swiftc&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos ar&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang++&quot;&lt;/span&gt;
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   xcode_dir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Applications/Xcode.app&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/share/xmake/tools/utils/gas-preprocessor.pl xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+,   toolchains &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;armv7&quot;&lt;/span&gt;
+,   mxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang++&quot;&lt;/span&gt;
+,   ndk_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 21
+,   target_minver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;9.2&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+,   make &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;make&quot;&lt;/span&gt;
+,   dd &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx lldb&quot;&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang++&quot;&lt;/span&gt;
+,   xcode_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;9.2&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;iphoneos&quot;&lt;/span&gt;
+,   mm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+ 
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: ccache compiling.release src/main.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello
+build ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Last, we attempt to build it for mingw.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake f -p mingw --sdk&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/local/i386-mingw32-4.3.0/
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... i386
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-gcc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-gcc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the swift compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... no
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-ar&quot;&lt;/span&gt;
+,   ccache &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ccache&quot;&lt;/span&gt;
+,   ndk &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~/files/android-ndk-r10e/&quot;&lt;/span&gt;
+,   sc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos swiftc&quot;&lt;/span&gt;
+,   sdk &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-gcc&quot;&lt;/span&gt;
+,   ndk_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 21
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mingw&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-gcc&quot;&lt;/span&gt;
+,   toolchains &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;i386&quot;&lt;/span&gt;
+,   mxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang++&quot;&lt;/span&gt;
+,   xcode_dir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Applications/Xcode.app&quot;&lt;/span&gt;
+,   target_minver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;9.2&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-g++&quot;&lt;/span&gt;
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-g++&quot;&lt;/span&gt;
+,   make &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;make&quot;&lt;/span&gt;
+,   dd &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx lldb&quot;&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-ar&quot;&lt;/span&gt;
+,   xcode_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;9.2&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-g++&quot;&lt;/span&gt;
+,   mm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: ccache compiling.release src/main.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello.exe
+build ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;xmake can build project directly on cmd if your system is windows and it will check your vs tools automatically.&lt;/p&gt;
+
+&lt;p&gt;.e.g&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... x86
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the Microsoft Visual Studio version ... 2008
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... cl.exe
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... cl.exe
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... ml.exe
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... link.exe
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... link.exe -lib
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... link.exe -dll
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... lib.exe
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;lib.exe&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;link.exe -dll&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;windows&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;link.exe -lib&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ml.exe&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;windows&quot;&lt;/span&gt;
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;x86&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;cl.exe&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;cl.exe&quot;&lt;/span&gt;
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   clean &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;link.exe&quot;&lt;/span&gt;
+,   vs &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;2008&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: compiling.release src&lt;span class=&quot;se&quot;&gt;\m&lt;/span&gt;ain.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello.exe
+build ok!
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Sat, 16 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/2016/07/16/how-to-build-a-simple-project/</link>
+        <guid isPermaLink="true">http://tboox.org/2016/07/16/how-to-build-a-simple-project/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>build</category>
+        
+        <category>project</category>
+        
+        <category>hello</category>
+        
+        
+        <category>xmake</category>
+        
+      </item>
+    
+      <item>
+        <title>如何快速构建一个简单的程序</title>
+        <description>&lt;p&gt;首先我们通过内置的工程模板创建一个空工程:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake create -P ./hello
+
+create hello ...
+create ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;这个时候xmake将会产生一些工程文件，如下:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ./hello
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;tree .
+
+.
+├── src
+│   └── main.c
+└── xmake.lua
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;这个简单的程序仅仅只是为了打印输出： &lt;code class=&quot;highlighter-rouge&quot;&gt;hello xmake!&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;cat ./src/main.c 
+
+&lt;span class=&quot;c&quot;&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+int main&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;int argc, char&lt;span class=&quot;k&quot;&gt;**&lt;/span&gt; argv&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;hello xmake!&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;;
+    &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;0;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;xmake.lua&lt;/code&gt;是基于lua语法的工程描述文件，它很简单：&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xmake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lua&lt;/span&gt; 
+
+&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;set_kind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;binary&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;add_files&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;src/*.c&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;现在我们开始编译这个程序&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... x86_64
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the Xcode SDK version &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;macosx ... 10.11
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the target minimal version ... 10.11
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the objc compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;mm&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the objc++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;mxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the swift compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx swiftc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the debugger &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dd&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk macosx lldb
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx ar&quot;&lt;/span&gt;
+,   ccache &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ccache&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx ar&quot;&lt;/span&gt;
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang++&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;x86_64&quot;&lt;/span&gt;
+,   mxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang++&quot;&lt;/span&gt;
+,   xcode_dir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Applications/Xcode.app&quot;&lt;/span&gt;
+,   target_minver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.11&quot;&lt;/span&gt;
+,   sc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx swiftc&quot;&lt;/span&gt;
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   make &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;make&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   dd &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx lldb&quot;&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang++&quot;&lt;/span&gt;
+,   xcode_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.11&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+,   mm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+clean ok!
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: ccache compiling.release src/main.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello
+build ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;接着运行它:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake run hello
+
+hello world!
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;或者进行调试&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake run -d hello 
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;lldb]&lt;span class=&quot;nv&quot;&gt;$target&lt;/span&gt; create &lt;span class=&quot;s2&quot;&gt;&quot;build/hello&quot;&lt;/span&gt;
+Current executable &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;to &lt;span class=&quot;s1&quot;&gt;&#39;build/hello&#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;x86_64&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;.
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;lldb]&lt;span class=&quot;nv&quot;&gt;$b&lt;/span&gt; main
+Breakpoint 1: where &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; hello&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;main, address &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0x0000000100000f50
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;lldb]&lt;span class=&quot;nv&quot;&gt;$r&lt;/span&gt;
+Process 7509 launched: &lt;span class=&quot;s1&quot;&gt;&#39;/private/tmp/hello/build/hello&#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;x86_64&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Process 7509 stopped
+&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; thread &lt;span class=&quot;c&quot;&gt;#1: tid = 0x435a2, 0x0000000100000f50 hello`main, queue = &#39;com.apple.main-thread&#39;, stop reason = breakpoint 1.1&lt;/span&gt;
+    frame &lt;span class=&quot;c&quot;&gt;#0: 0x0000000100000f50 hello`main&lt;/span&gt;
+hello&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;main:
+&lt;span class=&quot;gp&quot;&gt;-&amp;gt;  &lt;/span&gt;0x100000f50 &amp;lt;+0&amp;gt;:  pushq  %rbp
+    0x100000f51 &amp;lt;+1&amp;gt;:  movq   %rsp, %rbp
+    0x100000f54 &amp;lt;+4&amp;gt;:  leaq   0x2b&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rip&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, %rdi          ; &lt;span class=&quot;s2&quot;&gt;&quot;hello world!&quot;&lt;/span&gt;
+    0x100000f5b &amp;lt;+11&amp;gt;: callq  0x100000f64               ; symbol stub &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;: puts
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;lldb]&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;接着我们尝试构建一个android版本，这个时候得设置ndk路径，当然也能配置到全局配置中，一劳永逸&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake f -p android --ndk&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;~/files/android-ndk-r10e/
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... armv7-a
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the SDK version of NDK ... android-21
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-gcc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-gcc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... arm-linux-androideabi-g++
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-ar&quot;&lt;/span&gt;
+,   ccache &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ccache&quot;&lt;/span&gt;
+,   ndk &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~/files/android-ndk-r10e/&quot;&lt;/span&gt;
+,   sc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx swiftc&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-ar&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-g++&quot;&lt;/span&gt;
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-gcc&quot;&lt;/span&gt;
+,   toolchains &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;armv7-a&quot;&lt;/span&gt;
+,   mxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang++&quot;&lt;/span&gt;
+,   xcode_dir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Applications/Xcode.app&quot;&lt;/span&gt;
+,   target_minver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.11&quot;&lt;/span&gt;
+,   ndk_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 21
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-gcc&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-g++&quot;&lt;/span&gt;
+,   make &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;make&quot;&lt;/span&gt;
+,   dd &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx lldb&quot;&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-g++&quot;&lt;/span&gt;
+,   xcode_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.11&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;android&quot;&lt;/span&gt;
+,   mm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx clang&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+
+clean ok!
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: ccache compiling.release src/main.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello
+build ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;或者我们编一个iphoneos的版本，例如：&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake f -p iphoneos
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... armv7
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the Xcode SDK version &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;iphoneos ... 9.2
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the target minimal version ... 9.2
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the objc compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;mm&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the objc++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;mxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... gas-preprocessor.pl xcrun -sdk iphoneos clang
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos clang++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the swift compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... xcrun -sdk iphoneos swiftc
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos ar&quot;&lt;/span&gt;
+,   ccache &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ccache&quot;&lt;/span&gt;
+,   ndk &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~/files/android-ndk-r10e/&quot;&lt;/span&gt;
+,   sc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos swiftc&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos ar&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang++&quot;&lt;/span&gt;
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   xcode_dir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Applications/Xcode.app&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/share/xmake/tools/utils/gas-preprocessor.pl xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+,   toolchains &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;armv7&quot;&lt;/span&gt;
+,   mxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang++&quot;&lt;/span&gt;
+,   ndk_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 21
+,   target_minver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;9.2&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+,   make &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;make&quot;&lt;/span&gt;
+,   dd &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx lldb&quot;&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang++&quot;&lt;/span&gt;
+,   xcode_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;9.2&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;iphoneos&quot;&lt;/span&gt;
+,   mm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+ 
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: ccache compiling.release src/main.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello
+build ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;最后我们尝试为mingw平台进行编译，sdk指定交叉工具链目录，交叉编译linux平台也可以这么用哦。。&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake f -p mingw --sdk&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/local/i386-mingw32-4.3.0/
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... i386
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-gcc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-gcc
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-ar
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... i386-mingw32-g++
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the swift compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... no
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-ar&quot;&lt;/span&gt;
+,   ccache &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ccache&quot;&lt;/span&gt;
+,   ndk &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~/files/android-ndk-r10e/&quot;&lt;/span&gt;
+,   sc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos swiftc&quot;&lt;/span&gt;
+,   sdk &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-gcc&quot;&lt;/span&gt;
+,   ndk_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 21
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mingw&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-gcc&quot;&lt;/span&gt;
+,   toolchains &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Users/ruki/files/android-ndk-r10e/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;i386&quot;&lt;/span&gt;
+,   mxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang++&quot;&lt;/span&gt;
+,   xcode_dir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/Applications/Xcode.app&quot;&lt;/span&gt;
+,   target_minver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;9.2&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-g++&quot;&lt;/span&gt;
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;macosx&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-g++&quot;&lt;/span&gt;
+,   make &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;make&quot;&lt;/span&gt;
+,   dd &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk macosx lldb&quot;&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-ar&quot;&lt;/span&gt;
+,   xcode_sdkver &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;9.2&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/usr/local/i386-mingw32-4.3.0/bin/i386-mingw32-g++&quot;&lt;/span&gt;
+,   mm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;xcrun -sdk iphoneos clang&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: ccache compiling.release src/main.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello.exe
+build ok!👌
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;xmake还能直接在windows的cmd终端下，进行直接编译windows的程序，它会去自动检测当前系统装的vs环境，调用里面的cl.exe编译器进行编译，一切都是自动化的，我们不需要额外配置什么，只需要执行：&lt;code class=&quot;highlighter-rouge&quot;&gt;xmake&lt;/code&gt; 就行了。。&lt;/p&gt;
+
+&lt;p&gt;例如：&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;xmake
+
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the architecture ... x86
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the Microsoft Visual Studio version ... 2008
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cc&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... cl.exe
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the c++ compiler &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cxx&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... cl.exe
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the assember &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;as&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... ml.exe
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ld&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... link.exe
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library archiver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ar&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... link.exe -lib
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the shared library linker &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... link.exe -dll
+checking &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the static library extractor &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ex&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ... lib.exe
+configure
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    ex &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;lib.exe&quot;&lt;/span&gt;
+,   sh &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;link.exe -dll&quot;&lt;/span&gt;
+,   host &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;windows&quot;&lt;/span&gt;
+,   ar &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;link.exe -lib&quot;&lt;/span&gt;
+,   as &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ml.exe&quot;&lt;/span&gt;
+,   plat &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;windows&quot;&lt;/span&gt;
+,   buildir &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;
+,   arch &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;x86&quot;&lt;/span&gt;
+,   cc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;cl.exe&quot;&lt;/span&gt;
+,   cxx &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;cl.exe&quot;&lt;/span&gt;
+,   mode &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;release&quot;&lt;/span&gt;
+,   clean &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
+,   kind &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;static&quot;&lt;/span&gt;
+,   ld &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;link.exe&quot;&lt;/span&gt;
+,   vs &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;2008&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+configure ok!
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;00%]: compiling.release src&lt;span class=&quot;se&quot;&gt;\m&lt;/span&gt;ain.c
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;100%]: linking.release hello.exe
+build ok!
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;顺便说一下，在windows下编译，xmake是完全支持多任务的哦，默认就是自动多任务构建的，比起以前在msys, cygwin里面用 gmake来编译快多了，因为windows下的gmake就算你启用了&lt;code class=&quot;highlighter-rouge&quot;&gt;-j 4&lt;/code&gt; 也没啥效果，非常非常得慢。。。&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 16 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/cn/2016/07/16/how-to-build-a-simple-project/</link>
+        <guid isPermaLink="true">http://tboox.org/cn/2016/07/16/how-to-build-a-simple-project/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>编译</category>
+        
+        <category>交叉编译</category>
+        
+        
+        <category>xmake</category>
+        
+      </item>
+    
+      <item>
+        <title>Batch checking library functions</title>
+        <description>&lt;p&gt;xmake provides some api, which can detect whether exist some library functions.&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;test&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;-- checks some libc functions from the header files: wchar.h and stdlib.h&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;add_cfuncs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;libc&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;wchar.h&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;stdlib.h&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;            &lt;span class=&quot;s2&quot;&gt;&quot;wcscat&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcsncat&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcscpy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcsncpy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcslcpy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcslen&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcsnlen&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcsstr&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcscasestr&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcscmp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcscasecmp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcsncmp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcsncasecmp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;wcstombs&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                                                        &lt;span class=&quot;s2&quot;&gt;&quot;mbstowcs&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;-- checks the interfaces: pthread_mutex_init, pthread_create in the pthread&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;-- the first argument is the library alias name&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;add_cfuncs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;posix&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;        &lt;span class=&quot;s2&quot;&gt;&quot;pthread.h&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;                        &lt;span class=&quot;s2&quot;&gt;&quot;pthread_mutex_init&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;pthread_create&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;-- checks the pthread interfaces and attempt to links it using flags: -lpthread&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;add_cfuncs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;posix&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;pthread&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;s2&quot;&gt;&quot;pthread.h&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;                        &lt;span class=&quot;s2&quot;&gt;&quot;pthread_mutex_init&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;pthread_create&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We can run &lt;code class=&quot;highlighter-rouge&quot;&gt;xmake f -v&lt;/code&gt; to get the verbose info:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;checking for the c include string.h ... ok
+checking for the c include stdlib.h ... ok
+checking for the c function strlen ... ok
+checking for the c function sincosf ... no
+checking for the c include wchar.h ... ok
+checking for the c function wcscmp ... ok
+checking for the c function wcsncat ... ok
+checking for the c include dlfcn.h ... ok
+checking for the c function dlopen ... ok
+checking for the links polarssl ... ok
+checking for the c include polarssl/polarssl.h ... ok
+checking for the c function strcat ... ok
+checking for the c function wcsstr ... ok
+checking for the c function wcscat ... ok
+checking for the c function sincos ... no
+checking for the c function memcpy ... ok
+checking for the c function sqrtf ... ok
+checking for the c function wcsnlen ... ok
+checking for the c function acosf ... ok
+checking for the links pthread, dl, m, c ... ok
+checking for the c include sys/stat.h ... ok
+checking for the c function open ... ok
+checking for the c function strnlen ... ok
+checking for the c function system ... ok
+checking for the links z ... ok
+checking for the c include zlib/zlib.h ... ok
+checking for the c function strncat ... ok
+checking for the c function wcsncpy ... ok
+checking for the c function gmtime ... ok
+checking for the c include signal.h ... ok
+checking for the c include setjmp.h ... ok
+checking for the c function sigsetjmp ... ok
+checking for the c function sinf ... ok
+checking for the c function strncmp ... ok
+checking for the c function memmove ... ok
+checking for the c function strncasecmp ... ok
+checking for the c function strlcpy ... ok
+checking for the links sqlite3 ... ok
+checking for the c include sqlite3/sqlite3.h ... ok
+checking for the c include sys/sem.h ... ok
+checking for the c include sys/ipc.h ... ok
+checking for the c function semtimedop ... no
+checking for the c function wcscpy ... ok
+checking for the c function sqrt ... ok
+checking for the c function strcmp ... ok
+checking for the c function strcasecmp ... ok
+checking for the c function semget ... ok
+checking for the c include unistd.h ... ok
+checking for the c function sysconf ... ok
+checking for the c function memset ... ok
+checking for the c function getpagesize ... ok
+checking for the c include semaphore.h ... ok
+checking for the c function sem_init ... ok
+checking for the c function strncpy ... ok
+checking for the c function localtime ... ok
+checking for the c include ifaddrs.h ... ok
+checking for the c function getifaddrs ... ok
+checking for the c function strcpy ... ok
+checking for the c function gethostname ... ok
+checking for the c function wcslcpy ... ok
+checking for the c include dirent.h ... ok
+checking for the c function opendir ... ok
+checking for the c function wcslen ... ok
+checking for the c function cos ... ok
+checking for the c include sys/time.h ... ok
+checking for the c function gettimeofday ... ok
+checking for the c function signal ... ok
+checking for the c function strstr ... ok
+checking for the c function exp ... ok
+checking for the c function log2f ... ok
+checking for the c function sin ... ok
+checking for the c function log2 ... ok
+checking for the c function cosf ... ok
+checking for the c include pthread.h ... ok
+checking for the c function pthread_mutex_init ... ok
+checking for the c function fmodf ... ok
+checking for the c function wcstombs ... ok
+checking for the c function fmod ... ok
+checking for the c function memcmp ... ok
+checking for the c function atan2f ... ok
+checking for the c function atan2 ... ok
+checking for the c function atanf ... ok
+checking for the c function atan ... ok
+checking for the c function powf ... ok
+checking for the c function pow ... ok
+checking for the c function asinf ... ok
+checking for the c function asin ... ok
+checking for the c function pthread_create ... ok
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;xmake will generate the results into the config.h after checking if the config file has been enabled.&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;test&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;-- set the auto-generated config.h&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;set_config_h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;$(buildir)/tbox/tbox.config.h&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;set_config_h_prefix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;TB_CONFIG&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And the content of config.h is:&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#define TB_CONFIG_LIBC_HAVE_MEMCPY
+#define TB_CONFIG_LIBC_HAVE_MEMSET
+#define TB_CONFIG_LIBC_HAVE_MEMMOVE
+#define TB_CONFIG_LIBC_HAVE_MEMCMP
+#define TB_CONFIG_LIBC_HAVE_MEMMEM
+#define TB_CONFIG_LIBC_HAVE_STRCAT
+#define TB_CONFIG_LIBC_HAVE_STRNCAT
+#define TB_CONFIG_LIBC_HAVE_STRCPY
+#define TB_CONFIG_LIBC_HAVE_STRNCPY
+#define TB_CONFIG_LIBC_HAVE_STRLCPY
+#define TB_CONFIG_LIBC_HAVE_STRLEN
+#define TB_CONFIG_LIBC_HAVE_STRNLEN
+#define TB_CONFIG_LIBC_HAVE_STRSTR
+#define TB_CONFIG_LIBC_HAVE_STRCASESTR
+#define TB_CONFIG_LIBC_HAVE_STRCMP
+#define TB_CONFIG_LIBC_HAVE_STRCASECMP
+#define TB_CONFIG_LIBC_HAVE_STRNCMP
+#define TB_CONFIG_LIBC_HAVE_STRNCASECMP
+#define TB_CONFIG_LIBC_HAVE_WCSCAT
+#define TB_CONFIG_LIBC_HAVE_WCSNCAT
+#define TB_CONFIG_LIBC_HAVE_WCSCPY
+#define TB_CONFIG_LIBC_HAVE_WCSNCPY
+#define TB_CONFIG_LIBC_HAVE_WCSLCPY
+#define TB_CONFIG_LIBC_HAVE_WCSLEN
+#define TB_CONFIG_LIBC_HAVE_WCSNLEN
+#define TB_CONFIG_LIBC_HAVE_WCSSTR
+#define TB_CONFIG_LIBC_HAVE_WCSCMP
+#define TB_CONFIG_LIBC_HAVE_WCSCASECMP
+#define TB_CONFIG_LIBC_HAVE_WCSNCMP
+#define TB_CONFIG_LIBC_HAVE_WCSNCASECMP
+#define TB_CONFIG_LIBC_HAVE_WCSTOMBS
+#define TB_CONFIG_LIBC_HAVE_MBSTOWCS
+#define TB_CONFIG_LIBC_HAVE_GMTIME
+#define TB_CONFIG_LIBC_HAVE_MKTIME
+#define TB_CONFIG_LIBC_HAVE_LOCALTIME
+#define TB_CONFIG_LIBC_HAVE_GETTIMEOFDAY
+#define TB_CONFIG_LIBC_HAVE_SIGNAL
+#define TB_CONFIG_LIBC_HAVE_SETJMP
+#define TB_CONFIG_LIBC_HAVE_SIGSETJMP
+#define TB_CONFIG_LIBC_HAVE_BACKTRACE
+#define TB_CONFIG_LIBC_HAVE_SYSTEM
+#define TB_CONFIG_LIBM_HAVE_LOG2
+#define TB_CONFIG_LIBM_HAVE_LOG2F
+#define TB_CONFIG_LIBM_HAVE_SQRT
+#define TB_CONFIG_LIBM_HAVE_SQRTF
+#define TB_CONFIG_LIBM_HAVE_ACOS
+#define TB_CONFIG_LIBM_HAVE_ACOSF
+#define TB_CONFIG_LIBM_HAVE_ASIN
+#define TB_CONFIG_LIBM_HAVE_ASINF
+#define TB_CONFIG_LIBM_HAVE_POW
+#define TB_CONFIG_LIBM_HAVE_POWF
+#define TB_CONFIG_LIBM_HAVE_FMOD
+#define TB_CONFIG_LIBM_HAVE_FMODF
+#define TB_CONFIG_LIBM_HAVE_ATAN
+#define TB_CONFIG_LIBM_HAVE_ATANF
+#define TB_CONFIG_LIBM_HAVE_ATAN2
+#define TB_CONFIG_LIBM_HAVE_ATAN2F
+#define TB_CONFIG_LIBM_HAVE_COS
+#define TB_CONFIG_LIBM_HAVE_COSF
+#define TB_CONFIG_LIBM_HAVE_SIN
+#define TB_CONFIG_LIBM_HAVE_SINF
+#define TB_CONFIG_LIBM_HAVE_EXP
+#define TB_CONFIG_LIBM_HAVE_EXPF
+#define TB_CONFIG_POSIX_HAVE_POLL
+#define TB_CONFIG_POSIX_HAVE_PTHREAD_MUTEX_INIT
+#define TB_CONFIG_POSIX_HAVE_PTHREAD_CREATE
+#define TB_CONFIG_POSIX_HAVE_SOCKET
+#define TB_CONFIG_POSIX_HAVE_OPENDIR
+#define TB_CONFIG_POSIX_HAVE_DLOPEN
+#define TB_CONFIG_POSIX_HAVE_OPEN
+#define TB_CONFIG_POSIX_HAVE_GETHOSTNAME
+#define TB_CONFIG_POSIX_HAVE_GETIFADDRS
+#define TB_CONFIG_POSIX_HAVE_SEM_INIT
+#define TB_CONFIG_POSIX_HAVE_GETPAGESIZE
+#define TB_CONFIG_POSIX_HAVE_SYSCONF
+#define TB_CONFIG_POSIX_HAVE_SCHED_YIELD
+#define TB_CONFIG_SYSTEMV_HAVE_SEMGET
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Please use the following api if we want to check the c++ function in the static library.&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;add_cxxfuncs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Sat, 16 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/2016/07/16/batch-check-functions/</link>
+        <guid isPermaLink="true">http://tboox.org/2016/07/16/batch-check-functions/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>check</category>
+        
+        <category>batch</category>
+        
+        <category>function</category>
+        
+        
+        <category>xmake</category>
+        
+      </item>
+    
+      <item>
+        <title>插件开发之色彩高亮显示</title>
+        <description>&lt;p&gt;xmake在开发插件脚本的时候，除了可以使用lua内置的print进行终端输出外，还可以通过另外一个接口：&lt;code class=&quot;highlighter-rouge&quot;&gt;cprint&lt;/code&gt;实现终端的色彩高亮输出&lt;/p&gt;
+
+&lt;p&gt;例如：&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;cprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;${bright}hello xmake&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;${red}hello xmake&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;${bright green}hello ${clear}xmake&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;${blue onyellow underline}hello xmake${clear}&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;${red}hello ${magenta}xmake&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;${cyan}hello ${dim yellow}xmake&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;显示结果如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/static/img/xmake/cprint_colors.png&quot; alt=&quot;cprint_colors&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;跟颜色相关的描述，都放置在 &lt;code class=&quot;highlighter-rouge&quot;&gt;${  }&lt;/code&gt; 里面，可以同时设置多个不同的属性，例如：&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bright&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;underline&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;onyellow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;表示：高亮红色，背景黄色，并且带下滑线&lt;/p&gt;
+
+&lt;p&gt;所有这些描述，都会影响后面一整行字符，如果只想显示部分颜色的文字，可以在结束位置，插入&lt;code class=&quot;highlighter-rouge&quot;&gt;${clear}&lt;/code&gt;清楚前面颜色描述&lt;/p&gt;
+
+&lt;p&gt;例如：&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hello&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clear&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xmake&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;这样的话，仅仅hello是显示红色，其他还是正常默认黑色显示。&lt;/p&gt;
+
+&lt;p&gt;其他颜色属于，我这里就不一一介绍，直接贴上xmake代码里面的属性列表吧：&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;colors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;keys&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;-- 属性&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;reset&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;-- 重置属性&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;clear&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;-- 清楚属性&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;default&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;-- 默认属性&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;bright&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;-- 高亮&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;dim&lt;/span&gt;         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;-- 暗色&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;underline&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;-- 下划线&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;blink&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;-- 闪烁&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;reverse&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;-- 反转颜色&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;hidden&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;-- 隐藏文字&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;-- 前景色 &lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;black&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;red&lt;/span&gt;         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;31&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;green&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;yellow&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;33&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;34&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;magenta&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;35&lt;/span&gt; 
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;cyan&lt;/span&gt;        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;37&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;-- 背景色 &lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;onblack&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;onred&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;41&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;ongreen&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;onyellow&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;43&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;onblue&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;44&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;onmagenta&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;45&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;oncyan&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;46&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;onwhite&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;47&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;除了可以色彩高亮显示外，如果你的终端是在macosx下，lion以上的系统，xmake还可以支持emoji表情的显示哦，对于不支持系统，会
+忽略显示，例如：&lt;/p&gt;
+
+&lt;div class=&quot;language-lua highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;cprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;hello xmake${beer}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;hello${ok_hand} xmake&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;上面两行代码，我打印了一个homebrew里面经典的啤酒符号，下面那行打印了一个ok的手势符号，是不是很炫哈。。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/static/img/xmake/cprint_emoji.png&quot; alt=&quot;cprint_emoji&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;所有的emoji表情，以及xmake里面对应的key，都可以通过&lt;a href=&quot;http://www.emoji-cheat-sheet.com/&quot;&gt;emoji符号&lt;/a&gt;里面找到。。&lt;/p&gt;
+
+&lt;p&gt;最后再来张，高亮版本的xmake主菜单界面，嘿嘿。。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/static/img/xmake/mainmenu.png&quot; alt=&quot;mainmenu&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 14 Jul 2016 00:00:00 +0800</pubDate>
+        <link>http://tboox.org/cn/2016/07/14/plugin-print-colors/</link>
+        <guid isPermaLink="true">http://tboox.org/cn/2016/07/14/plugin-print-colors/</guid>
+        
+        <category>xmake</category>
+        
+        <category>lua</category>
+        
+        <category>插件</category>
+        
+        <category>终端色彩高亮</category>
+        
+        
+        <category>xmake</category>
+        
+      </item>
+    
   </channel>
 </rss>

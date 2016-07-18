@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TBOOX</title>
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
+    <link rel="stylesheet" href=" /css/main.css ">
+    <link rel="canonical" href="http://tboox.org/cn/page2/">
+    <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?162f1cd478898a0686b0b5d5115e2af2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/cn" class="brand">TBOOX</a>
+        <small>欢迎来到TBOOX开源工程!</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>English
+                    </a>
+                </li>
+
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/project/">
+                        
+                            <i class="fa fa-bookmark"></i>项目
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/archive/">
+                        
+                            <i class="fa fa-archive"></i>归档
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/category/">
+                        
+                            <i class="fa fa-th-list"></i>分类
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/tag/">
+                        
+                            <i class="fa fa-tags"></i>标记
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/donation/">
+                        
+                            <i class="fa fa-heart"></i>捐助
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                    
+                    <li>
+                        
+                        <a href="/cn/about/">
+                        
+                            <i class="fa fa-user"></i>关于
+                        </a>
+                    </li>
+                    
+                    
+                
+                    
+                    
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" index="">
+    <div class="left">
+        <h1>TBOOX开源工程</h1>
+        <small>专注于跨平台c开发解决方案</small>
+        <hr />
+        <ul>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/07/14/plugin-print-colors/">插件开发之色彩高亮显示</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-14
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#插件" title="Tag: 插件" rel="tag">插件</a>&nbsp;
+    
+        <a href="/tag/#终端色彩高亮" title="Tag: 终端色彩高亮" rel="tag">终端色彩高亮</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>xmake在开发插件脚本的时候，除了可以使用lua内置的print进行终端输出外，还可以通过另外一个接口：<code class="highlighter-rouge">cprint</code>实现终端的色彩高亮输出</p>
+
+<p>例如：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="n">cprint</span><span class="p">(</span><span class="s1">'${bright}hello xmake'</span><span class="p">)</span>
+    <span class="n">cprint</span><span class="p">(</span><span class="s1">'${red}hello xmake'</span><span class="p">)</span>
+    <span class="n">cprint</span><span class="p">(</span><span class="s1">'${bright green}hello ${clear}xmake'</span><span class="p">)</span>
+    <span class="n">cprint</span><span class="p">(</span><span class="s1">'${blue onyellow underline}hello xmake${clear}'</span><span class="p">)</span>
+    <span class="n">cprint</span><span class="p">(</span><span class="s1">'${red}hello ${magenta}xmake'</span><span class="p">)</span>
+    <span class="n">cprint</span><span class="p">(</span><span class="s1">'${cyan}hello ${dim yellow}xmake'</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>显示结果如下：</p>
+
+<p><img src="/static/img/xmake/cprint_colors.png" alt="cprint_colors" /></p>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/07/14/plugin-print-colors/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/07/12/includes-check/">头文件自动依赖检测和构建</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-12
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#头文件依赖" title="Tag: 头文件依赖" rel="tag">头文件依赖</a>&nbsp;
+    
+        <a href="/tag/#增量编译" title="Tag: 增量编译" rel="tag">增量编译</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>为了进一步提升构建效率，减少没必要的重建，xmake新增了对头文件的依赖检测，以及自动构建仅仅需要重新编译的源文件，提升编译速度，并且完全支持windows、linux、macosx等大部分平台。。</p>
+
+<p>由于检测过程本身也会有一些性能损耗，因此xmake对此进行了深度优化，实现极速依赖检测：</p>
+
+<ul>
+  <li>
+    <p>对依赖头文件进行过滤，如果是系统头文件，非自身项目的第三方头文件，自动忽略，这些头文件基本上不会再开发项目的时候，经常变动，所以没必要去每次检测他们，如果真有变动，手动重建下就行了</p>
+  </li>
+  <li>
+    <p>针对每个头文件的检测结果进行缓存，直接应用到下一个源文件上，减少重复检测的次数</p>
+  </li>
+  <li>
+    <p>其他一些细节优化</p>
+  </li>
+</ul>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/07/12/includes-check/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/07/07/plugin-modules/">xmake插件开发之类库使用</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-07
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#插件" title="Tag: 插件" rel="tag">插件</a>&nbsp;
+    
+        <a href="/tag/#类库" title="Tag: 类库" rel="tag">类库</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>xmake通过import接口，可以在自定义脚本中导入各种内置类库和扩展类库模块，使得xmake的插件开发具有更多的灵活性，提供更丰富的功能。</p>
+
+<p>我们先看下，目前xmake提供的一些类库：</p>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/07/07/plugin-modules/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/07/07/plugin-lua/">插件使用之加载自定义lua脚本</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-07
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#plugin" title="Tag: plugin" rel="tag">plugin</a>&nbsp;
+    
+        <a href="/tag/#scripts" title="Tag: scripts" rel="tag">scripts</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p>xmake里面的lua脚本加载插件，可以让你方便调试和编写一些自定义的lua脚本，这个时候xmake就是一个纯lua的加载引擎。。</p>
+
+<p>例如，我想写个简单的<code class="highlighter-rouge">hello xmake!</code>的lua脚本，可以自己建个 <code class="highlighter-rouge">hello.lua</code> 文件，编写如下脚本：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="k">function</span> <span class="nf">main</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"hello xmake!"</span><span class="p">)</span>
+    <span class="k">end</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">main</code>是入口函数，就跟平常写c类似，然后加载执行下这个lua脚本就行了：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>        xmake lua /home/xxx/hello.lua
+    or  xmake l /tmp/hello.lua
+</code></pre>
+</div>
+
+<p>下面在来个稍微高级点的，我要传递参数进来，可以这么写：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="k">function</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+        <span class="c1">-- 打印所有参数值</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="k">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span> <span class="k">do</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">end</span>
+
+        <span class="c1">-- 或者可以直接dump所有</span>
+        <span class="n">table</span><span class="p">.</span><span class="n">dump</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+    <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>然后我们执行下，试试：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake lua /tmp/hello.lua hello xmake
+</code></pre>
+</div>
+
+<p>简单吧，当然除了lua内置的大部分模块，例如：<code class="highlighter-rouge">os, string, table, ...</code> 等等，xmake的lua加载器还提供其他更丰富的模块类库
+可以通过 <code class="highlighter-rouge">import</code> 导入后使用，所有导入的模块支持跟插件开发中使用的类库是一样的，具体类库的使用，请参考：<a href="/cn/2016/07/07/plugin-modules/">插件开发之类库使用</a></p>
+
+<p>下面我主要介绍下，<code class="highlighter-rouge">xmake lua</code>插件提供的一些内置shell脚本，这些脚本是linux下的一些shell工具子集，用于实现跨平台执行，例如：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake lua cat
+    xmake lua cp
+    xmake lua <span class="nb">echo
+    </span>xmake lua mv
+    xmake lua rm
+    xmake lua rmdir
+    xmake lua mkdir
+</code></pre>
+</div>
+
+<p>现在提供的工具不是很多，但是以后可以慢慢扩充，扩展起来还是很方便的，只需要把对应脚本：<code class="highlighter-rouge">cat.lua</code> 放到 <code class="highlighter-rouge">xmake lua</code>插件目录的 scripts 目录下就行了。。</p>
+
+<p>例如我想要跨平台运行 cat 命令，可以这么执行：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>        xmake lua cat /tmp/a
+    or  xmake l cat c:<span class="se">\\</span>a.txt
+</code></pre>
+</div>
+
+<p>等以后工具扩充的越来越多，相当于在各个平台下，有了一套完善的linux的shell工具，方便日常开发使用</p>
+
+<p>如果你想要看下xmake当前版本支持了哪些内置的shell工具，可以执行：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>        xmake lua -l
+    or  xmake lua --list
+</code></pre>
+</div>
+
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/07/07/plugin-lua/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+              <li>
+                <h2>
+                  <a class="post-link" href="/cn/2016/07/06/update-v2.0.2/">xmake v2.0.2 更新!</a>
+                </h2>
+                <div class="label">
+                    <div class="label-card">
+                        <i class="fa fa-calendar"></i>2016-07-06
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+                    <div class="label-card">
+                        
+                    </div>
+
+                    <div class="label-card">
+                    
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+                    </div>
+
+                    <div class="label-card">
+                    
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+    
+        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+    
+        <a href="/tag/#版本更新" title="Tag: 版本更新" rel="tag">版本更新</a>&nbsp;
+    
+        <a href="/tag/#xmake.io" title="Tag: xmake.io" rel="tag">xmake.io</a>&nbsp;
+    
+        <a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a>
+    
+  
+
+</span>
+
+                    </div>
+                </div>
+                <div class="excerpt">
+                    <p><a href="http://xmake.io/cn">主页</a>
+<a href="https://github.com/waruqi/xmake">源码</a></p>
+
+<h1 id="section">更新内容</h1>
+
+<p>此版本，主要修复一些bug和稳定性改善</p>
+
+<h3 id="section-1">改进</h3>
+
+<ul>
+  <li>修改安装和卸载的action处理</li>
+  <li>更新工程模板</li>
+  <li>增强函数检测</li>
+</ul>
+
+<h3 id="bugs">Bugs修复</h3>
+
+<ul>
+  <li><a href="https://github.com/waruqi/xmake/issues/7">#7</a>: 修复用模板创建工程后，target名不对问题：’[targetname]’</li>
+  <li><a href="https://github.com/waruqi/xmake/issues/9">#9</a>: 修复clang不支持c++11的问题</li>
+  <li>修复api作用域泄露问题</li>
+  <li>修复在windows上的一些路径问题</li>
+  <li>修复检测宏函数失败问题</li>
+  <li>修复检测工具链失败问题</li>
+  <li>修复windows上编译android版本失败</li>
+</ul>
+
+                </div>
+                <div class="read-all">
+                    <a href="/cn/2016/07/06/update-v2.0.2/"><i class="fa fa-newspaper-o"></i>阅读全文</a>
+                </div>
+                <hr />
+              </li>
+            
+        </ul>
+
+
+
+        <!-- Pagination links -->
+        <div class="pagination">
+          
+            <a href="/cn/index.html" class="previous"><i class="fa fa-angle-double-left"></i></a>
+            <a href="/cn/" class="previous"><i class="fa fa-angle-left"></i></a>
+          
+          <span class="page_number ">2/8</span>
+          
+            <a href="/cn/page3" class="next"><i class="fa fa-angle-right"></i></a>
+            <a href="/cn/page8" class="next"><i class="fa fa-angle-double-right"></i></a>
+          
+        </div>
+    </div>
+    <!-- <button class="anchor"><i class="fa fa-anchor"></i></button> -->
+    <div class="right">
+        <div class="wrap">
+            <div class="side">
+                <div>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                    最近文章
+                </div>
+                <ul class="content-ul" recent="">
+                    
+                    
+                        <li><a href="/cn/2016/07/18/wait-multi-processes/">多进程等待的跨平台实现</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/17/update-v2.0.3/">xmake v2.0.3 更新!</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/17/demo-build-a-simple-project/">演示：构建一个简单的程序</a></li>
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/16/run-debug/">利用xmake运行和调试程序</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/16/how-to-build-a-simple-project/">如何快速构建一个简单的程序</a></li>
+                    
+                    
+                    
+                    
+                    
+                        <li><a href="/cn/2016/07/14/plugin-print-colors/">插件开发之色彩高亮显示</a></li>
+                    
+                    
+                </ul>
+            </div>
+
+            <!-- Content -->
+            <div class="side ">
+                <div>
+                    <i class="fa fa-th-list"></i>
+                    分类
+                </div>
+                <ul class="content-ul" cate="">
+                    
+                    <li>
+                        <a href="/category/#tboox" class="categories-list-item" cate="tboox">
+                            <span class="name">
+                                tboox
+                            </span>
+                            <span class="badge">2</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/category/#tbox" class="categories-list-item" cate="tbox">
+                            <span class="name">
+                                tbox
+                            </span>
+                            <span class="badge">15</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/category/#xmake" class="categories-list-item" cate="xmake">
+                            <span class="name">
+                                xmake
+                            </span>
+                            <span class="badge">37</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <div class="side">
+                <div>
+                    <i class="fa fa-tags"></i>
+                    标记
+                </div>
+                <div class="tags-cloud">
+                    
+                    
+                    
+                    
+
+                    
+
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#tboox" style="font-size: 9.5pt; color: #999;">tboox</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#站点" style="font-size: 9.5pt; color: #999;">站点</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#website" style="font-size: 9.5pt; color: #999;">website</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#tbox" style="font-size: 13pt; color: #555;">tbox</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#c" style="font-size: 12.5pt; color: #555;">c</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#bloom" style="font-size: 9pt; color: #999;">bloom</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#filter" style="font-size: 9pt; color: #999;">filter</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#算法" style="font-size: 9.5pt; color: #888;">算法</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#大数据" style="font-size: 9pt; color: #999;">大数据</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#过滤" style="font-size: 9pt; color: #999;">过滤</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#xmake" style="font-size: 18pt; color: #000;">xmake</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#lua" style="font-size: 17.5pt; color: #000;">lua</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#premake" style="font-size: 9pt; color: #999;">premake</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#排序" style="font-size: 9pt; color: #999;">排序</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#查找" style="font-size: 9pt; color: #999;">查找</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#哈希" style="font-size: 9pt; color: #999;">哈希</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#容器" style="font-size: 9pt; color: #999;">容器</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#迭代器" style="font-size: 9pt; color: #999;">迭代器</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#内存检测" style="font-size: 9pt; color: #999;">内存检测</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#内存池" style="font-size: 9pt; color: #999;">内存池</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#跨平台" style="font-size: 9.5pt; color: #888;">跨平台</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#异常捕获" style="font-size: 9pt; color: #999;">异常捕获</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#windows" style="font-size: 10.5pt; color: #888;">windows</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#linux" style="font-size: 9pt; color: #999;">linux</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#线程池" style="font-size: 9pt; color: #999;">线程池</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#裁剪" style="font-size: 9pt; color: #999;">裁剪</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#编译" style="font-size: 10pt; color: #888;">编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#配置" style="font-size: 9pt; color: #999;">配置</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#stream" style="font-size: 9.5pt; color: #999;">stream</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#流" style="font-size: 9.5pt; color: #999;">流</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#解压缩" style="font-size: 9pt; color: #999;">解压缩</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#静态库" style="font-size: 9pt; color: #999;">静态库</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#模式匹配" style="font-size: 9pt; color: #999;">模式匹配</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#版本更新" style="font-size: 10pt; color: #888;">版本更新</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#version" style="font-size: 9.5pt; color: #999;">version</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#update" style="font-size: 10pt; color: #888;">update</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#进程控制" style="font-size: 9pt; color: #999;">进程控制</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#process" style="font-size: 9pt; color: #999;">process</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#插件" style="font-size: 11.5pt; color: #777;">插件</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#import" style="font-size: 9pt; color: #999;">import</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#类库" style="font-size: 9.5pt; color: #999;">类库</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#自定义脚本" style="font-size: 9.5pt; color: #888;">自定义脚本</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#安装" style="font-size: 9pt; color: #999;">安装</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#打包" style="font-size: 9.5pt; color: #999;">打包</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#android" style="font-size: 9pt; color: #999;">android</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#apk" style="font-size: 9pt; color: #999;">apk</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#jni" style="font-size: 9pt; color: #999;">jni</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#task" style="font-size: 9.5pt; color: #999;">task</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#菜单选项" style="font-size: 9pt; color: #999;">菜单选项</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#hello" style="font-size: 10pt; color: #888;">hello</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#makefile" style="font-size: 9pt; color: #999;">makefile</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#doxygen" style="font-size: 9.5pt; color: #999;">doxygen</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#宏脚本" style="font-size: 9.5pt; color: #888;">宏脚本</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#plugin" style="font-size: 9.5pt; color: #888;">plugin</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#macro" style="font-size: 9pt; color: #999;">macro</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#包管理" style="font-size: 9pt; color: #999;">包管理</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#代码移植编译" style="font-size: 9pt; color: #999;">代码移植编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#example" style="font-size: 9.5pt; color: #999;">example</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#xmake.lua" style="font-size: 9pt; color: #999;">xmake.lua</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#compile" style="font-size: 9pt; color: #999;">compile</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#configure" style="font-size: 9pt; color: #999;">configure</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#create" style="font-size: 9pt; color: #999;">create</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#project" style="font-size: 9.5pt; color: #888;">project</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#template" style="font-size: 9pt; color: #999;">template</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#package" style="font-size: 9pt; color: #999;">package</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#run" style="font-size: 9pt; color: #999;">run</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#xmake.io" style="font-size: 10.5pt; color: #888;">xmake.io</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#scripts" style="font-size: 9pt; color: #999;">scripts</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#头文件依赖" style="font-size: 9pt; color: #999;">头文件依赖</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#增量编译" style="font-size: 9pt; color: #999;">增量编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#终端色彩高亮" style="font-size: 9pt; color: #999;">终端色彩高亮</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#check" style="font-size: 9pt; color: #999;">check</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#batch" style="font-size: 9pt; color: #999;">batch</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#function" style="font-size: 9pt; color: #999;">function</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#交叉编译" style="font-size: 9.5pt; color: #999;">交叉编译</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#build" style="font-size: 9.5pt; color: #999;">build</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#调试" style="font-size: 9pt; color: #999;">调试</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#运行" style="font-size: 9pt; color: #999;">运行</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#演示" style="font-size: 9pt; color: #999;">演示</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#demo" style="font-size: 9pt; color: #999;">demo</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#协程" style="font-size: 9pt; color: #999;">协程</a>
+                    
+                      
+                      
+                      
+                      
+                      
+                      <a href="/tag/#进程等待" style="font-size: 9pt; color: #999;">进程等待</a>
+                    
+                </div>
+            </div>
+
+            <div class="side">
+                <div>
+                    <i class="fa fa-external-link"></i>
+                    链接
+                </div>
+                <ul class="content-ul" links="">
+                  <li><a href="http://github.com/waruqi/tbox">tbox</a></li>
+                  <li><a href="http://www.xmake.io">xmake</a></li>
+                  <li><a href="https://github.com/waruqi">github</a></li>
+                  <li><a href="http://www.suppore.cn">懒人的小窝</a></li>
+                  <li><a href="http://crackerme.github.io/">愛尚丨輕博客</a></li>
+                  <li><a href="http://blog.a0z.me">Ghosty Core</a></li>
+                </ul>
+            </div> 
+
+            
+        </div>
+    </div>
+</div>
+<!-- <script src="/js/scroll.min.js " charset="utf-8"></script> -->
+<!-- <script src="/js/pageContent.js " charset="utf-8"></script> -->
+
+
+    <footer class="site-footer">
+    <div class="wrapper">
+        <p class="description">
+             Copyright (c) 2016 tboox.org 
+        </p>
+        <p class="contact">
+            
+            <a href="https://github.com/waruqi" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a> 
+             
+            
+            <a href="mailto:waruqi@gmail.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a> 
+            
+            
+            <a href="https://twitter.com/waruqi" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a> 
+            
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="http://pages.coding.me/">Coding Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/Gaohaoyang">HyG</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" class="scroll">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/scroll.min.js " charset="utf-8"></script>
+  </body>
+
+</html>
