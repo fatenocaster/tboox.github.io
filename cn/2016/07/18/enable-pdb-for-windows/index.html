@@ -6,14 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>插件使用之加载自定义lua脚本</title>
-    <meta name="description" content="xmake里面的lua脚本加载插件，可以让你方便调试和编写一些自定义的lua脚本，这个时候xmake就是一个纯lua的加载引擎。。例如，我想写个简单的hello xmake!的lua脚本，可以自己建个 hello.lua 文件，编写如下脚本：    function main()        print("he...">
+    <title>如何为windows编译启用pdb支持</title>
+    <meta name="description" content="xmake默认情况下是不会去生成pdb文件，就算是debug编译，启用了调试符号：set_symbols("debug")也是不会生成额外的pdb文件，它会把所有调试符号内置到程序里面，如果要独立生成pdb文件，可以对xmake.lua进行如下修改：-- 先禁用内置的调试符号开关--set_symbols("de...">
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://tboox.org/cn/2016/07/07/plugin-lua/">
+    <link rel="canonical" href="http://tboox.org/cn/2016/07/18/enable-pdb-for-windows/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
 
 
@@ -182,11 +182,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>插件使用之加载自定义lua脚本</h1>
+        <h1>如何为windows编译启用pdb支持</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-07-07
+                <i class="fa fa-calendar"></i>2016-07-18
             </div>
 
             <div class="label-card">
@@ -229,11 +229,14 @@
         <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
         <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
     
-        <!--a href="/tag/#plugin" title="Tag: plugin" rel="tag">plugin</a-->
-        <a href="/tag/#plugin" title="Tag: plugin" rel="tag">plugin</a>&nbsp;
+        <!--a href="/tag/#pdb" title="Tag: pdb" rel="tag">pdb</a-->
+        <a href="/tag/#pdb" title="Tag: pdb" rel="tag">pdb</a>&nbsp;
     
-        <!--a href="/tag/#scripts" title="Tag: scripts" rel="tag">scripts</a-->
-        <a href="/tag/#scripts" title="Tag: scripts" rel="tag">scripts</a>
+        <!--a href="/tag/#%E8%B0%83%E8%AF%95%E7%AC%A6%E5%8F%B7" title="Tag: 调试符号" rel="tag">调试符号</a-->
+        <a href="/tag/#调试符号" title="Tag: 调试符号" rel="tag">调试符号</a>&nbsp;
+    
+        <!--a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a-->
+        <a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a>
     
   
 
@@ -244,81 +247,55 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>xmake里面的lua脚本加载插件，可以让你方便调试和编写一些自定义的lua脚本，这个时候xmake就是一个纯lua的加载引擎。。</p>
+        <p>xmake默认情况下是不会去生成pdb文件，就算是debug编译，启用了调试符号：</p>
 
-<p>例如，我想写个简单的<code class="highlighter-rouge">hello xmake!</code>的lua脚本，可以自己建个 <code class="highlighter-rouge">hello.lua</code> 文件，编写如下脚本：</p>
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="n">set_symbols</span><span class="p">(</span><span class="s2">"debug"</span><span class="p">)</span>
+</code></pre>
+</div>
 
-<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="k">function</span> <span class="nf">main</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"hello xmake!"</span><span class="p">)</span>
+<p>也是不会生成额外的pdb文件，它会把所有调试符号内置到程序里面，如果要独立生成pdb文件，可以对<code class="highlighter-rouge">xmake.lua</code>进行如下修改：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>
+<span class="c1">-- 先禁用内置的调试符号开关</span>
+<span class="c1">--set_symbols("debug")</span>
+   
+<span class="c1">-- 静态库目标</span>
+<span class="n">target</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>
+
+    <span class="n">set_kind</span><span class="p">(</span><span class="s2">"static"</span><span class="p">)</span>
+
+    <span class="c1">-- 仅针对windows平台</span>
+    <span class="k">if</span> <span class="n">is_plat</span><span class="p">(</span><span class="s2">"windows"</span><span class="p">)</span> <span class="k">then</span>
+
+        <span class="c1">-- 启用pdb生成</span>
+        <span class="n">add_cxflags</span><span class="p">(</span><span class="s2">"-ZI"</span><span class="p">,</span> <span class="s2">"-Fd$(buildir)\\test.pdb"</span><span class="p">)</span>
+        <span class="n">add_ldflags</span><span class="p">(</span><span class="s2">"-pdb:$(buildir)\\test.pdb"</span><span class="p">)</span>
+        <span class="n">add_arflags</span><span class="p">(</span><span class="s2">"-pdb:$(buildir)\\test.pdb"</span><span class="p">)</span>
+    <span class="k">end</span>
+
+<span class="c1">-- 可执行目标</span>
+<span class="n">target</span><span class="p">(</span><span class="s2">"demo"</span><span class="p">)</span>
+
+    <span class="n">set_kind</span><span class="p">(</span><span class="s2">"binary"</span><span class="p">)</span>
+    <span class="n">add_deps</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>
+    <span class="n">add_links</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>
+
+    <span class="c1">-- 仅针对windows平台</span>
+    <span class="k">if</span> <span class="n">is_plat</span><span class="p">(</span><span class="s2">"windows"</span><span class="p">)</span> <span class="k">then</span>
+
+        <span class="c1">-- 启用pdb生成</span>
+        <span class="n">add_cxflags</span><span class="p">(</span><span class="s2">"-ZI"</span><span class="p">,</span> <span class="s2">"-Fd$(buildir)\\demo.pdb"</span><span class="p">)</span>
+        <span class="n">add_ldflags</span><span class="p">(</span><span class="s2">"-pdb:$(buildir)\\demo.pdb"</span><span class="p">)</span>
     <span class="k">end</span>
 </code></pre>
 </div>
-
-<p><code class="highlighter-rouge">main</code>是入口函数，就跟平常写c类似，然后加载执行下这个lua脚本就行了：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>        xmake lua /home/xxx/hello.lua
-    or  xmake l /tmp/hello.lua
-</code></pre>
-</div>
-
-<p>下面在来个稍微高级点的，我要传递参数进来，可以这么写：</p>
-
-<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="k">function</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
-        <span class="c1">-- 打印所有参数值</span>
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="k">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span> <span class="k">do</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">end</span>
-
-        <span class="c1">-- 或者可以直接dump所有</span>
-        <span class="n">table</span><span class="p">.</span><span class="n">dump</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
-    <span class="k">end</span>
-</code></pre>
-</div>
-
-<p>然后我们执行下，试试：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake lua /tmp/hello.lua hello xmake
-</code></pre>
-</div>
-
-<p>简单吧，当然除了lua内置的大部分模块，例如：<code class="highlighter-rouge">os, string, table, ...</code> 等等，xmake的lua加载器还提供其他更丰富的模块类库
-可以通过 <code class="highlighter-rouge">import</code> 导入后使用，所有导入的模块支持跟插件开发中使用的类库是一样的，具体类库的使用，请参考：<a href="/cn/2016/07/07/plugin-modules/">插件开发之类库使用</a></p>
-
-<p>下面我主要介绍下，<code class="highlighter-rouge">xmake lua</code>插件提供的一些内置shell脚本，这些脚本是linux下的一些shell工具子集，用于实现跨平台执行，例如：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake lua cat
-    xmake lua cp
-    xmake lua <span class="nb">echo
-    </span>xmake lua mv
-    xmake lua rm
-    xmake lua rmdir
-    xmake lua mkdir
-</code></pre>
-</div>
-
-<p>现在提供的工具不是很多，但是以后可以慢慢扩充，扩展起来还是很方便的，只需要把对应脚本：<code class="highlighter-rouge">cat.lua</code> 放到 <code class="highlighter-rouge">xmake lua</code>插件目录的 scripts 目录下就行了。。</p>
-
-<p>例如我想要跨平台运行 cat 命令，可以这么执行：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>        xmake lua cat /tmp/a
-    or  xmake l cat c:<span class="se">\\</span>a.txt
-</code></pre>
-</div>
-
-<p>等以后工具扩充的越来越多，相当于在各个平台下，有了一套完善的linux的shell工具，方便日常开发使用</p>
-
-<p>如果你想要看下xmake当前版本支持了哪些内置的shell工具，可以执行：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>        xmake lua -l
-    or  xmake lua --list
-</code></pre>
-</div>
-
 
         </article>
         <hr>
 
         
+        
+            
         
             
             
@@ -328,72 +305,6 @@
                         
                         <h2 id="similar_posts">相关文章</h2>
                         <ul>
-                        
-                        <li class="relatedPost">
-                            <a href="http://tboox.org/cn/2016/07/18/enable-pdb-for-windows/">如何为windows编译启用pdb支持
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-        
-            
-            
-            
-                
-                    
                         
                         <li class="relatedPost">
                             <a href="http://tboox.org/cn/2016/07/18/builtinvar-and-shell/">内置变量与原生shell脚本运行
@@ -410,14 +321,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
@@ -430,6 +333,20 @@
                 
                     
                 
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -440,7 +357,11 @@
                 
                     
                 
+                    
+                
             
+                
+                    
                 
                     
                 
@@ -474,27 +395,11 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
                 
                     
-                
-                    
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -514,6 +419,20 @@
                 
                     
                 
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -524,7 +443,23 @@
                 
                     
                 
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
                 
                     
                 
@@ -560,14 +495,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
@@ -580,6 +507,20 @@
                 
                     
                 
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -590,7 +531,11 @@
                 
                     
                 
+                    
+                
             
+                
+                    
                 
                     
                 
@@ -626,14 +571,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
@@ -646,6 +583,20 @@
                 
                     
                 
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -656,7 +607,11 @@
                 
                     
                 
+                    
+                
             
+                
+                    
                 
                     
                 
@@ -690,14 +645,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
@@ -710,7 +657,23 @@
                 
                     
                 
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
                 
                     
                 
@@ -723,6 +686,68 @@
             
             
         
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/cn/2016/07/16/how-to-build-a-simple-project/">如何快速构建一个简单的程序
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
             
         
         
@@ -741,8 +766,8 @@
      */
 
     var disqus_config = function() {
-        this.page.url = 'http://tboox.org/cn/2016/07/07/plugin-lua/'; // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://tboox.org/cn/2016/07/07/plugin-lua/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = 'http://tboox.org/cn/2016/07/18/enable-pdb-for-windows/'; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://tboox.org/cn/2016/07/18/enable-pdb-for-windows/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 
     (function() { // DON'T EDIT BELOW THIS LINE

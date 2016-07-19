@@ -6,14 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>插件使用之加载自定义lua脚本</title>
-    <meta name="description" content="xmake里面的lua脚本加载插件，可以让你方便调试和编写一些自定义的lua脚本，这个时候xmake就是一个纯lua的加载引擎。。例如，我想写个简单的hello xmake!的lua脚本，可以自己建个 hello.lua 文件，编写如下脚本：    function main()        print("he...">
+    <title>内置变量与原生shell脚本运行</title>
+    <meta name="description" content="xmake在xmake.lua中提供了 $(varname) 的语法，来支持内置变量的获取，例如：add_cxflags("-I$(buildir)")它将会在在实际编译的时候，将内置的 buildir 变量转换为实际的构建输出目录：-I./build并且这些变量在自定义脚本中，也是可以支持的，例如：target...">
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://tboox.org/cn/2016/07/07/plugin-lua/">
+    <link rel="canonical" href="http://tboox.org/cn/2016/07/18/builtinvar-and-shell/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
 
 
@@ -182,11 +182,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>插件使用之加载自定义lua脚本</h1>
+        <h1>内置变量与原生shell脚本运行</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-07-07
+                <i class="fa fa-calendar"></i>2016-07-18
             </div>
 
             <div class="label-card">
@@ -229,11 +229,14 @@
         <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
         <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
     
-        <!--a href="/tag/#plugin" title="Tag: plugin" rel="tag">plugin</a-->
-        <a href="/tag/#plugin" title="Tag: plugin" rel="tag">plugin</a>&nbsp;
+        <!--a href="/tag/#shell" title="Tag: shell" rel="tag">shell</a-->
+        <a href="/tag/#shell" title="Tag: shell" rel="tag">shell</a>&nbsp;
     
-        <!--a href="/tag/#scripts" title="Tag: scripts" rel="tag">scripts</a-->
-        <a href="/tag/#scripts" title="Tag: scripts" rel="tag">scripts</a>
+        <!--a href="/tag/#%E5%86%85%E7%BD%AE%E5%8F%98%E9%87%8F" title="Tag: 内置变量" rel="tag">内置变量</a-->
+        <a href="/tag/#内置变量" title="Tag: 内置变量" rel="tag">内置变量</a>&nbsp;
+    
+        <!--a href="/tag/#pkg-config" title="Tag: pkg-config" rel="tag">pkg-config</a-->
+        <a href="/tag/#pkg-config" title="Tag: pkg-config" rel="tag">pkg-config</a>
     
   
 
@@ -244,75 +247,77 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>xmake里面的lua脚本加载插件，可以让你方便调试和编写一些自定义的lua脚本，这个时候xmake就是一个纯lua的加载引擎。。</p>
+        <p>xmake在xmake.lua中提供了 <code class="highlighter-rouge">$(varname)</code> 的语法，来支持内置变量的获取，例如：</p>
 
-<p>例如，我想写个简单的<code class="highlighter-rouge">hello xmake!</code>的lua脚本，可以自己建个 <code class="highlighter-rouge">hello.lua</code> 文件，编写如下脚本：</p>
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="n">add_cxflags</span><span class="p">(</span><span class="s2">"-I$(buildir)"</span><span class="p">)</span>
+</code></pre>
+</div>
 
-<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="k">function</span> <span class="nf">main</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"hello xmake!"</span><span class="p">)</span>
+<p>它将会在在实际编译的时候，将内置的 <code class="highlighter-rouge">buildir</code> 变量转换为实际的构建输出目录：<code class="highlighter-rouge">-I./build</code></p>
+
+<p>并且这些变量在自定义脚本中，也是可以支持的，例如：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="n">target</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>
+    <span class="n">after_build</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"build ok for $(plat)!"</span><span class="p">)</span>
     <span class="k">end</span>
 </code></pre>
 </div>
 
-<p><code class="highlighter-rouge">main</code>是入口函数，就跟平常写c类似，然后加载执行下这个lua脚本就行了：</p>
+<p>这将会在编译完后，输出：</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>        xmake lua /home/xxx/hello.lua
-    or  xmake l /tmp/hello.lua
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="n">build</span> <span class="n">ok</span> <span class="k">for</span> <span class="n">macosx</span><span class="err">!</span>
 </code></pre>
 </div>
 
-<p>下面在来个稍微高级点的，我要传递参数进来，可以这么写：</p>
+<p>这些内置变量，大部分都是通过配置的时候，缓存的配置参数中获取，例如：</p>
 
-<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="k">function</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
-        <span class="c1">-- 打印所有参数值</span>
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="k">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span> <span class="k">do</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">end</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake config --plat<span class="o">=</span>macosx
+</code></pre>
+</div>
 
-        <span class="c1">-- 或者可以直接dump所有</span>
-        <span class="n">table</span><span class="p">.</span><span class="n">dump</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+<p>也有些内置变量，不需要通过配置中获取到，例如：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="nb">print</span><span class="p">(</span><span class="s2">"$(os)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"$(host)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"$(tmpdir)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"$(curdir)"</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>等等，这些都是为了让xmake的语法更加简洁，例如操作文件复制的时候，只需要：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="n">os</span><span class="p">.</span><span class="n">cp</span><span class="p">(</span><span class="s2">"$(projectdir)/file"</span><span class="p">,</span> <span class="s2">"$(tmpdir)"</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>而不需要：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="c1">-- 导入工程模块</span>
+<span class="n">import</span><span class="p">(</span><span class="s2">"core.project.project"</span><span class="p">)</span>
+
+<span class="c1">-- 复制文件</span>
+<span class="n">os</span><span class="p">.</span><span class="n">cp</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">project</span><span class="p">.</span><span class="n">directory</span><span class="p">(),</span> <span class="s2">"file"</span><span class="p">),</span> <span class="n">os</span><span class="p">.</span><span class="n">tmpdir</span><span class="p">())</span>
+</code></pre>
+</div>
+
+<p>这样比较繁琐下，但是有些复杂功能，可能还是得这么处理比较灵活，这就得看具体需求了。。</p>
+
+<p>除了内置的变量处理，xmake还支持原生shell的运行，来处理一些xmake内置不支持的功能</p>
+
+<p>例如，现在有个需求，我想用在编译linux程序时，调用<code class="highlighter-rouge">pkg-config</code>获取到实际的第三方链接库名，可以这么做：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="n">target</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>
+    <span class="n">set_kind</span><span class="p">(</span><span class="s2">"binary"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_plat</span><span class="p">(</span><span class="s2">"linux"</span><span class="p">)</span> <span class="k">then</span>
+        <span class="n">add_ldflags</span><span class="p">(</span><span class="s2">"$(shell pkg-config --libs sqlite3)"</span><span class="p">)</span>
     <span class="k">end</span>
 </code></pre>
 </div>
 
-<p>然后我们执行下，试试：</p>
+<p>当然，xmake有自己的自动化第三库检测机制，一般情况下不需要这么麻烦，而且lua自身的脚本化已经很不错了。。</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake lua /tmp/hello.lua hello xmake
-</code></pre>
-</div>
-
-<p>简单吧，当然除了lua内置的大部分模块，例如：<code class="highlighter-rouge">os, string, table, ...</code> 等等，xmake的lua加载器还提供其他更丰富的模块类库
-可以通过 <code class="highlighter-rouge">import</code> 导入后使用，所有导入的模块支持跟插件开发中使用的类库是一样的，具体类库的使用，请参考：<a href="/cn/2016/07/07/plugin-modules/">插件开发之类库使用</a></p>
-
-<p>下面我主要介绍下，<code class="highlighter-rouge">xmake lua</code>插件提供的一些内置shell脚本，这些脚本是linux下的一些shell工具子集，用于实现跨平台执行，例如：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake lua cat
-    xmake lua cp
-    xmake lua <span class="nb">echo
-    </span>xmake lua mv
-    xmake lua rm
-    xmake lua rmdir
-    xmake lua mkdir
-</code></pre>
-</div>
-
-<p>现在提供的工具不是很多，但是以后可以慢慢扩充，扩展起来还是很方便的，只需要把对应脚本：<code class="highlighter-rouge">cat.lua</code> 放到 <code class="highlighter-rouge">xmake lua</code>插件目录的 scripts 目录下就行了。。</p>
-
-<p>例如我想要跨平台运行 cat 命令，可以这么执行：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>        xmake lua cat /tmp/a
-    or  xmake l cat c:<span class="se">\\</span>a.txt
-</code></pre>
-</div>
-
-<p>等以后工具扩充的越来越多，相当于在各个平台下，有了一套完善的linux的shell工具，方便日常开发使用</p>
-
-<p>如果你想要看下xmake当前版本支持了哪些内置的shell工具，可以执行：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>        xmake lua -l
-    or  xmake lua --list
-</code></pre>
-</div>
+<p>但是这个例子可以说明，xmake是完全可以通过原生shell，来与一些第三方的工具进行配合使用。。</p>
 
 
         </article>
@@ -344,14 +349,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
@@ -364,6 +361,20 @@
                 
                     
                 
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -374,7 +385,11 @@
                 
                     
                 
+                    
+                
             
+                
+                    
                 
                     
                 
@@ -387,70 +402,6 @@
             
             
         
-            
-        
-            
-            
-            
-                
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="http://tboox.org/cn/2016/07/18/builtinvar-and-shell/">内置变量与原生shell脚本运行
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
             
         
             
@@ -474,27 +425,11 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
                 
                     
-                
-                    
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -514,6 +449,20 @@
                 
                     
                 
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -524,7 +473,23 @@
                 
                     
                 
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
                 
                     
                 
@@ -560,14 +525,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
@@ -580,6 +537,20 @@
                 
                     
                 
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -590,7 +561,11 @@
                 
                     
                 
+                    
+                
             
+                
+                    
                 
                     
                 
@@ -626,14 +601,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
@@ -646,6 +613,20 @@
                 
                     
                 
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -656,7 +637,11 @@
                 
                     
                 
+                    
+                
             
+                
+                    
                 
                     
                 
@@ -690,14 +675,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
@@ -710,7 +687,23 @@
                 
                     
                 
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
                 
                     
                 
@@ -723,6 +716,68 @@
             
             
         
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/cn/2016/07/16/how-to-build-a-simple-project/">如何快速构建一个简单的程序
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
             
         
         
@@ -741,8 +796,8 @@
      */
 
     var disqus_config = function() {
-        this.page.url = 'http://tboox.org/cn/2016/07/07/plugin-lua/'; // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://tboox.org/cn/2016/07/07/plugin-lua/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = 'http://tboox.org/cn/2016/07/18/builtinvar-and-shell/'; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://tboox.org/cn/2016/07/18/builtinvar-and-shell/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 
     (function() { // DON'T EDIT BELOW THIS LINE
