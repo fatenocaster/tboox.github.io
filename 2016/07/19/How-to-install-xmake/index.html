@@ -6,14 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Package target</title>
-    <meta name="description" content="Packages all targets for the current platform:    $xmake p    $xmake packagePackages the target test to the output directory: /tmp    $xmake p -o /tmp test  ...">
+    <title>How to install xmake</title>
+    <meta name="description" content="Install on windows  Download xmake source codes  Enter the source code directory  Run install.bat  Select the installed directory and enter into this directo...">
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://tboox.org/2016/06/26/package-target/">
+    <link rel="canonical" href="http://tboox.org/2016/07/19/How-to-install-xmake/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
 
 
@@ -184,11 +184,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>Package target</h1>
+        <h1>How to install xmake</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-06-26
+                <i class="fa fa-calendar"></i>2016-07-19
             </div>
 
             <div class="label-card">
@@ -231,8 +231,20 @@
         <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
         <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
     
-        <!--a href="/tag/#package" title="Tag: package" rel="tag">package</a-->
-        <a href="/tag/#package" title="Tag: package" rel="tag">package</a>
+        <!--a href="/tag/#install" title="Tag: install" rel="tag">install</a-->
+        <a href="/tag/#install" title="Tag: install" rel="tag">install</a>&nbsp;
+    
+        <!--a href="/tag/#linux" title="Tag: linux" rel="tag">linux</a-->
+        <a href="/tag/#linux" title="Tag: linux" rel="tag">linux</a>&nbsp;
+    
+        <!--a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a-->
+        <a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a>&nbsp;
+    
+        <!--a href="/tag/#macosx" title="Tag: macosx" rel="tag">macosx</a-->
+        <a href="/tag/#macosx" title="Tag: macosx" rel="tag">macosx</a>&nbsp;
+    
+        <!--a href="/tag/#homebrew" title="Tag: homebrew" rel="tag">homebrew</a-->
+        <a href="/tag/#homebrew" title="Tag: homebrew" rel="tag">homebrew</a>
     
   
 
@@ -243,37 +255,35 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>Packages all targets for the current platform:</p>
+        <h3 id="install-on-windows">Install on windows</h3>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="nv">$xmake</span> p
-    <span class="nv">$xmake</span> package
+<ol>
+  <li>Download xmake source codes</li>
+  <li>Enter the source code directory</li>
+  <li>Run <code class="highlighter-rouge">install.bat</code></li>
+  <li>Select the installed directory and enter into this directory</li>
+  <li>Please wait some mintues</li>
+</ol>
+
+<h3 id="install-from-source-codes-on-linux-and-macosx">Install from source codes on linux and macosx</h3>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>git clone git@github.com:waruqi/xmake.git
+<span class="gp">$ </span><span class="nb">cd</span> ./xmake
+<span class="gp">$ </span>sudo ./install
 </code></pre>
 </div>
 
-<p>Packages the target test to the output directory: /tmp</p>
+<h3 id="install-using-homebrew-on-macosx">Install using homebrew on macosx</h3>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="nv">$xmake</span> p -o /tmp <span class="nb">test</span>
-    <span class="nv">$xmake</span> p --output<span class="o">=</span>/tmp <span class="nb">test</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>ruby -e <span class="s2">"</span><span class="k">$(</span>curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install<span class="k">)</span><span class="s2">"</span>
+<span class="gp">$ </span>sudo brew install xmake
 </code></pre>
 </div>
 
-<p>Packages targets for the iphoneos platform.</p>
+<h3 id="install-using-homebrew-on-linux">Install using homebrew on linux</h3>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="nv">$xmake</span> f -p iphoneos
-    <span class="nv">$xmake</span> p 
-</code></pre>
-</div>
-
-<p>We can uses the macro plugin to package all architectures of the given platform.</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="c"># packages targets for all architectures of the current platform</span>
-    <span class="nv">$xmake</span> macro package 
-
-    <span class="c"># packages targets for all architectures of the iphoneos platform</span>
-    <span class="nv">$xmake</span> m package -p iphoneos
-
-    <span class="c"># packages targets with debug version for all architectures of the iphoneos platform and output to the directory: /tmp/output</span>
-    <span class="nv">$xmake</span> m package -p iphoneos -f <span class="s2">"-m debug"</span> -o /tmp/output
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>ruby -e <span class="s2">"</span><span class="k">$(</span>curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install<span class="k">)</span><span class="s2">"</span>
+<span class="gp">$ </span>sudo brew install xmake
 </code></pre>
 </div>
 
@@ -304,15 +314,7 @@
                 
                     
                 
-            
-                
                     
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -328,7 +330,55 @@
                 
                     
                 
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
                 
                     
                 
@@ -339,76 +389,6 @@
             
             
         
-            
-        
-            
-            
-            
-                
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="http://tboox.org/2016/07/19/How-to-install-xmake/">How to install xmake
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-            
             
         
             
@@ -432,15 +412,7 @@
                 
                     
                 
-            
-                
                     
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -456,7 +428,55 @@
                 
                     
                 
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
                 
                     
                 
@@ -490,15 +510,7 @@
                 
                     
                 
-            
-                
                     
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -514,7 +526,55 @@
                 
                     
                 
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
                 
                     
                 
@@ -546,15 +606,7 @@
                 
                     
                 
-            
-                
                     
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -570,15 +622,7 @@
                 
                     
                 
-            
-                
                     
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -587,6 +631,72 @@
                     
                 
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
             
         
         
@@ -605,8 +715,8 @@
      */
 
     var disqus_config = function() {
-        this.page.url = 'http://tboox.org/2016/06/26/package-target/'; // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://tboox.org/2016/06/26/package-target/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = 'http://tboox.org/2016/07/19/How-to-install-xmake/'; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://tboox.org/2016/07/19/How-to-install-xmake/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 
     (function() { // DON'T EDIT BELOW THIS LINE
