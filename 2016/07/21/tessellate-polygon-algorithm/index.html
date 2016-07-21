@@ -6,14 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>tbox v1.5.2 update!</title>
-    <meta name="description" content="New features  Add smallest configure option  Add process operation interfacesChanges  Improve envirnoment interfaces  Modify xmake.lua for supporting xmake v...">
+    <title>The tessellate polygon algorithm</title>
+    <meta name="description" content="The algorithm is based on libtess2 here and we optimizated some implementation and fixed some bugs.The differents between our algorithm and libtess2’s algori...">
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://tboox.org/2016/02/25/update-v1.5.2/">
+    <link rel="canonical" href="http://tboox.org/2016/07/21/tessellate-polygon-algorithm/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
 
 
@@ -184,11 +184,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>tbox v1.5.2 update!</h1>
+        <h1>The tessellate polygon algorithm</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-02-25
+                <i class="fa fa-calendar"></i>2016-07-21
             </div>
 
             <div class="label-card">
@@ -208,7 +208,7 @@
   <i class="fa fa-th-list"></i>
   
     
-        <a href="/category/#tbox" title="Category: tbox" rel="category">tbox</a>
+        <a href="/category/#gbox" title="Category: gbox" rel="category">gbox</a>
     
   
 
@@ -225,20 +225,26 @@
   <i class="fa fa-tags"></i>
   
     
-        <!--a href="/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a-->
-        <a href="/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a>&nbsp;
+        <!--a href="/tag/#gbox" title="Tag: gbox" rel="tag">gbox</a-->
+        <a href="/tag/#gbox" title="Tag: gbox" rel="tag">gbox</a>&nbsp;
     
         <!--a href="/tag/#c" title="Tag: c" rel="tag">c</a-->
         <a href="/tag/#c" title="Tag: c" rel="tag">c</a>&nbsp;
     
-        <!--a href="/tag/#version" title="Tag: version" rel="tag">version</a-->
-        <a href="/tag/#version" title="Tag: version" rel="tag">version</a>&nbsp;
+        <!--a href="/tag/#tessellate" title="Tag: tessellate" rel="tag">tessellate</a-->
+        <a href="/tag/#tessellate" title="Tag: tessellate" rel="tag">tessellate</a>&nbsp;
     
-        <!--a href="/tag/#update" title="Tag: update" rel="tag">update</a-->
-        <a href="/tag/#update" title="Tag: update" rel="tag">update</a>&nbsp;
+        <!--a href="/tag/#polygon" title="Tag: polygon" rel="tag">polygon</a-->
+        <a href="/tag/#polygon" title="Tag: polygon" rel="tag">polygon</a>&nbsp;
     
-        <!--a href="/tag/#process" title="Tag: process" rel="tag">process</a-->
-        <a href="/tag/#process" title="Tag: process" rel="tag">process</a>
+        <!--a href="/tag/#algorithm" title="Tag: algorithm" rel="tag">algorithm</a-->
+        <a href="/tag/#algorithm" title="Tag: algorithm" rel="tag">algorithm</a>&nbsp;
+    
+        <!--a href="/tag/#monotone" title="Tag: monotone" rel="tag">monotone</a-->
+        <a href="/tag/#monotone" title="Tag: monotone" rel="tag">monotone</a>&nbsp;
+    
+        <!--a href="/tag/#triangulation" title="Tag: triangulation" rel="tag">triangulation</a-->
+        <a href="/tag/#triangulation" title="Tag: triangulation" rel="tag">triangulation</a>
     
   
 
@@ -249,28 +255,120 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <h3 id="new-features">New features</h3>
+        <p>The algorithm is based on libtess2 here and we optimizated some implementation and fixed some bugs.</p>
+
+<p>The differents between our algorithm and libtess2’s algorithm:</p>
 
 <ul>
-  <li>Add smallest configure option</li>
-  <li>Add process operation interfaces</li>
+  <li>We change the coordinate system and the sweep direction (sweep line by horizontal here).</li>
+  <li>We need not project the vertices because our graphic engine is 2d,
+so our algorithm will be faster.</li>
+  <li>We processed more cases of the intersection with some numerical errors, 
+so our algorithm will be more stable.</li>
+  <li>We change the algorithm of comparing the active edge and make it more stable for numerical errors.</li>
+  <li>We optimizate the algorithm of merging into the convex polygon from the triangulated mesh.</li>
+  <li>We have not counted the vertices for each region, so it will be faster than libtess2.</li>
 </ul>
 
-<h3 id="changes">Changes</h3>
+<p>(you can see <a href="https://github.com/memononen/libtess2/blob/master/alg_outline.md">libtess2/alg_outline.md</a> if want to known more details of algorithm.)</p>
 
-<ul>
-  <li>Improve envirnoment interfaces</li>
-  <li>Modify xmake.lua for supporting xmake v2.x</li>
-</ul>
+<p>There are four stages to the algorithm:</p>
 
-<h3 id="bugs-fixed">Bugs fixed</h3>
+<ol>
+  <li>Build a mesh (DCEL, be similar to quad-edge) from polygon.</li>
+  <li>Tessellate the mesh into the monotone regions if the polygon is concave.</li>
+  <li>Triangulate the monotone regions.</li>
+  <li>Merge the triangulated regions into the convex regions.</li>
+</ol>
 
-<ul>
-  <li>Fix ltimer bug</li>
-  <li>Fix asio memory leaks bug</li>
-  <li>Fix asio httpd response bug on linux</li>
-  <li>Fix path bug for windows</li>
-</ul>
+<p>There are seven stages to the tessellation algorithm:</p>
+
+<ol>
+  <li>Simplify the mesh and process some degenerate cases.</li>
+  <li>Build a vertex event queue and sort it (uses the priority queue with min-heap).</li>
+  <li>Build an active edge region list and sort it (uses the partial insertion sort).</li>
+  <li>Sweep all events from the event queue using the Bentley-Ottman line-sweep algorithm and calculate the intersection and winding number.</li>
+  <li>We need fix it if the intersection with numerical errors violate the mesh topology or active edge list ordering.</li>
+  <li>Process some degenerate cases for the mesh faces which were generated when we fixed some cases.</li>
+  <li>Get the monotone regions with the left face marked “inside”</li>
+</ol>
+
+<p>The triangulation test result:</p>
+
+<p><img src="/static/img/gbox/test_triangulation1.png" alt="test_triangulation1" />
+<img src="/static/img/gbox/test_triangulation2.png" alt="test_triangulation2" /></p>
+
+<p>The drawing result with opengl(60 fps on my mac pro):</p>
+
+<p><img src="/static/img/gbox/draw_tiger.png" alt="draw_tiger" /></p>
+
+<p>Please refer to the source code <a href="https://github.com/waruqi/gbox/blob/master/src/gbox/utils/impl/tessellator/monotone.c">monotone.c</a> if you want to know more verbose monotone algorithm implementation.</p>
+
+<p>And the tessellator interfaces usage from <a href="https://github.com/waruqi/gbox/blob/master/src/gbox/core/device/gl/render.c">gbox/gl/render.c</a>:</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="k">static</span> <span class="n">tb_void_t</span> <span class="nf">gb_gl_render_fill_convex</span><span class="p">(</span><span class="n">gb_point_ref_t</span> <span class="n">points</span><span class="p">,</span> <span class="n">tb_uint16_t</span> <span class="n">count</span><span class="p">,</span> <span class="n">tb_cpointer_t</span> <span class="n">priv</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// check
+</span>        <span class="n">tb_assert</span><span class="p">(</span><span class="n">priv</span> <span class="o">&amp;&amp;</span> <span class="n">points</span> <span class="o">&amp;&amp;</span> <span class="n">count</span><span class="p">);</span>
+
+        <span class="c1">// apply it
+</span>        <span class="n">gb_gl_render_apply_vertices</span><span class="p">((</span><span class="n">gb_gl_device_ref_t</span><span class="p">)</span><span class="n">priv</span><span class="p">,</span> <span class="n">points</span><span class="p">);</span>
+
+<span class="cp">#ifndef GB_GL_TESSELLATOR_TEST_ENABLE
+</span>        <span class="c1">// draw it
+</span>        <span class="n">gb_glDrawArrays</span><span class="p">(</span><span class="n">GB_GL_TRIANGLE_FAN</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">gb_GLint_t</span><span class="p">)</span><span class="n">count</span><span class="p">);</span>
+<span class="cp">#else
+</span>        <span class="c1">// the device 
+</span>        <span class="n">gb_gl_device_ref_t</span> <span class="n">device</span> <span class="o">=</span> <span class="p">(</span><span class="n">gb_gl_device_ref_t</span><span class="p">)</span><span class="n">priv</span><span class="p">;</span>
+
+        <span class="c1">// make crc32
+</span>        <span class="n">tb_uint32_t</span> <span class="n">crc32</span> <span class="o">=</span> <span class="mh">0xffffffff</span> <span class="o">^</span> <span class="n">tb_crc_encode</span><span class="p">(</span><span class="n">TB_CRC_MODE_32_IEEE_LE</span><span class="p">,</span> <span class="mh">0xffffffff</span><span class="p">,</span> <span class="p">(</span><span class="n">tb_byte_t</span> <span class="k">const</span><span class="o">*</span><span class="p">)</span><span class="n">points</span><span class="p">,</span> <span class="n">count</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">gb_point_t</span><span class="p">));</span>
+
+        <span class="c1">// make color
+</span>        <span class="n">gb_color_t</span> <span class="n">color</span><span class="p">;</span>
+        <span class="n">color</span><span class="p">.</span><span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_byte_t</span><span class="p">)</span><span class="n">crc32</span><span class="p">;</span>
+        <span class="n">color</span><span class="p">.</span><span class="n">g</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_byte_t</span><span class="p">)(</span><span class="n">crc32</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">);</span>
+        <span class="n">color</span><span class="p">.</span><span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_byte_t</span><span class="p">)(</span><span class="n">crc32</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">);</span>
+        <span class="n">color</span><span class="p">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">128</span><span class="p">;</span>
+
+        <span class="c1">// enable blend
+</span>        <span class="n">gb_glEnable</span><span class="p">(</span><span class="n">GB_GL_BLEND</span><span class="p">);</span>
+        <span class="n">gb_glBlendFunc</span><span class="p">(</span><span class="n">GB_GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">GB_GL_ONE_MINUS_SRC_ALPHA</span><span class="p">);</span>
+
+        <span class="c1">// apply color
+</span>        <span class="k">if</span> <span class="p">(</span><span class="n">device</span><span class="o">-&gt;</span><span class="n">version</span> <span class="o">&gt;=</span> <span class="mh">0x20</span><span class="p">)</span> <span class="n">gb_glVertexAttrib4f</span><span class="p">(</span><span class="n">gb_gl_program_location</span><span class="p">(</span><span class="n">device</span><span class="o">-&gt;</span><span class="n">program</span><span class="p">,</span> <span class="n">GB_GL_PROGRAM_LOCATION_COLORS</span><span class="p">),</span> <span class="p">(</span><span class="n">gb_GLfloat_t</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="n">r</span> <span class="o">/</span> <span class="mh">0xff</span><span class="p">,</span> <span class="p">(</span><span class="n">gb_GLfloat_t</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="n">g</span> <span class="o">/</span> <span class="mh">0xff</span><span class="p">,</span> <span class="p">(</span><span class="n">gb_GLfloat_t</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="n">b</span> <span class="o">/</span> <span class="mh">0xff</span><span class="p">,</span> <span class="p">(</span><span class="n">gb_GLfloat_t</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="n">a</span> <span class="o">/</span> <span class="mh">0xff</span><span class="p">);</span>
+        <span class="k">else</span> <span class="n">gb_glColor4f</span><span class="p">((</span><span class="n">gb_GLfloat_t</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="n">r</span> <span class="o">/</span> <span class="mh">0xff</span><span class="p">,</span> <span class="p">(</span><span class="n">gb_GLfloat_t</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="n">g</span> <span class="o">/</span> <span class="mh">0xff</span><span class="p">,</span> <span class="p">(</span><span class="n">gb_GLfloat_t</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="n">b</span> <span class="o">/</span> <span class="mh">0xff</span><span class="p">,</span> <span class="p">(</span><span class="n">gb_GLfloat_t</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="n">a</span> <span class="o">/</span> <span class="mh">0xff</span><span class="p">);</span>
+
+        <span class="c1">// draw the edges of the filled contour
+</span>        <span class="n">gb_glDrawArrays</span><span class="p">(</span><span class="n">GB_GL_TRIANGLE_FAN</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">gb_GLint_t</span><span class="p">)</span><span class="n">count</span><span class="p">);</span>
+
+        <span class="c1">// disable blend
+</span>        <span class="n">gb_glEnable</span><span class="p">(</span><span class="n">GB_GL_BLEND</span><span class="p">);</span>
+<span class="cp">#endif
+</span>    <span class="p">}</span>
+    <span class="k">static</span> <span class="n">tb_void_t</span> <span class="nf">gb_gl_render_fill_polygon</span><span class="p">(</span><span class="n">gb_gl_device_ref_t</span> <span class="n">device</span><span class="p">,</span> <span class="n">gb_polygon_ref_t</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">gb_rect_ref_t</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">tb_size_t</span> <span class="n">rule</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// check
+</span>        <span class="n">tb_assert</span><span class="p">(</span><span class="n">device</span> <span class="o">&amp;&amp;</span> <span class="n">device</span><span class="o">-&gt;</span><span class="n">tessellator</span><span class="p">);</span>
+
+<span class="cp">#ifdef GB_GL_TESSELLATOR_TEST_ENABLE
+</span>        <span class="c1">// set mode
+</span>        <span class="n">gb_tessellator_mode_set</span><span class="p">(</span><span class="n">device</span><span class="o">-&gt;</span><span class="n">tessellator</span><span class="p">,</span> <span class="n">GB_TESSELLATOR_MODE_TRIANGULATION</span><span class="p">);</span>
+<span class="c1">//      gb_tessellator_mode_set(device-&gt;tessellator, GB_TESSELLATOR_MODE_MONOTONE);
+</span><span class="cp">#endif
+</span>
+        <span class="c1">// set rule
+</span>        <span class="n">gb_tessellator_rule_set</span><span class="p">(</span><span class="n">device</span><span class="o">-&gt;</span><span class="n">tessellator</span><span class="p">,</span> <span class="n">rule</span><span class="p">);</span>
+
+        <span class="c1">// set func
+</span>        <span class="n">gb_tessellator_func_set</span><span class="p">(</span><span class="n">device</span><span class="o">-&gt;</span><span class="n">tessellator</span><span class="p">,</span> <span class="n">gb_gl_render_fill_convex</span><span class="p">,</span> <span class="n">device</span><span class="p">);</span>
+
+        <span class="c1">// done tessellator
+</span>        <span class="n">gb_tessellator_done</span><span class="p">(</span><span class="n">device</span><span class="o">-&gt;</span><span class="n">tessellator</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">bounds</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
+
 
         </article>
         <hr>
@@ -278,44 +376,14 @@
         
         
             
+        
             
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
                 
                     
-                        
-                        <h2 id="similar_posts">Similar Posts</h2>
-                        <ul>
-                        
-                        <li class="relatedPost">
-                            <a href="http://tboox.org/2016/07/21/tessellate-polygon-algorithm/">The tessellate polygon algorithm
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -339,14 +407,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -363,7 +423,31 @@
                 
                     
                 
+                    
+                
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
                 
                     
                 
@@ -394,14 +478,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -411,14 +487,6 @@
                     
                 
                     
-                
-                    
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -442,26 +510,15 @@
                 
                     
                 
-            
-            
-        
-            
-        
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
                     
                 
             
+                
+                    
+                
+                    
                 
                     
                 
@@ -485,14 +542,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -509,19 +558,15 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
                     
                 
             
+                
+                    
+                
+                    
                 
                     
                 
@@ -552,14 +597,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -576,6 +613,26 @@
                 
                     
                 
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -588,7 +645,15 @@
                 
                     
                 
+                    
+                
+                    
+                
             
+                
+                    
+                
+                    
                 
                     
                 
@@ -621,35 +686,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="http://tboox.org/2016/07/17/update-v2.0.3/">xmake v2.0.3 update!
-                            
-                            </a>
-                        </li>
-                        
-                        
                     
                 
                     
@@ -666,7 +702,47 @@
                 
                     
                 
+                    
+                
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
                 
                     
                 
@@ -681,8 +757,8 @@
             
             
         
+            
         
-            </ul>
         
 
         <h2 id="comments">Comments</h2>
@@ -700,8 +776,8 @@
      */
 
     var disqus_config = function() {
-        this.page.url = 'http://tboox.org/2016/02/25/update-v1.5.2/'; // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://tboox.org/2016/02/25/update-v1.5.2/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = 'http://tboox.org/2016/07/21/tessellate-polygon-algorithm/'; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://tboox.org/2016/07/21/tessellate-polygon-algorithm/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 
     (function() { // DON'T EDIT BELOW THIS LINE
