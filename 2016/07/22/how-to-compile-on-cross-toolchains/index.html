@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>How to configure for compiling</title>
-    <meta name="description" content="xmake will automatically detect the system environment and create the most appropriate configuration to compile project when building a programUsually we onl...">
+    <title>How to complie project using the cross toolchains</title>
+    <meta name="description" content="xmake provides a convenient and flexible cross-compiling support, in most cases, we need not to configure complex toolchains prefix, for example: arm-linux-A...">
 
     
-    <meta name="keywords" content="xmake,lua,configure,android,auto-detection,tboox" /> 
+    <meta name="keywords" content="xmake,lua,交叉编译,tboox" /> 
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://tboox.org/2016/07/19/config-description/">
+    <link rel="canonical" href="http://tboox.org/2016/07/22/how-to-compile-on-cross-toolchains/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX" href="http://tboox.org /feed.xml ">
 
 
@@ -189,11 +189,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>How to configure for compiling</h1>
+        <h1>How to complie project using the cross toolchains</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-07-19
+                <i class="fa fa-calendar"></i>2016-07-22
             </div>
 
             <div class="label-card">
@@ -236,14 +236,8 @@
         <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
         <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
     
-        <!--a href="/tag/#configure" title="Tag: configure" rel="tag">configure</a-->
-        <a href="/tag/#configure" title="Tag: configure" rel="tag">configure</a>&nbsp;
-    
-        <!--a href="/tag/#android" title="Tag: android" rel="tag">android</a-->
-        <a href="/tag/#android" title="Tag: android" rel="tag">android</a>&nbsp;
-    
-        <!--a href="/tag/#auto-detection" title="Tag: auto-detection" rel="tag">auto-detection</a-->
-        <a href="/tag/#auto-detection" title="Tag: auto-detection" rel="tag">auto-detection</a>
+        <!--a href="/tag/#%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91" title="Tag: 交叉编译" rel="tag">交叉编译</a-->
+        <a href="/tag/#交叉编译" title="Tag: 交叉编译" rel="tag">交叉编译</a>
     
   
 
@@ -254,75 +248,54 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>xmake will automatically detect the system environment and create the most appropriate configuration to compile project when building a program</p>
+        <p>xmake provides a convenient and flexible cross-compiling support, in most cases, we need not to configure complex toolchains prefix, for example: <code class="highlighter-rouge">arm-linux-</code></p>
 
-<p>Usually we only need to run:</p>
+<p>As long as this toolchains meet the following directory structure:</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake
+<div class="highlighter-rouge"><pre class="highlight"><code>/home/toolchains_sdkdir
+   - bin
+       - arm-linux-gcc
+       - arm-linux-ld
+       - ...
+   - lib
+       - libxxx.a
+   - include
+       - xxx.h
 </code></pre>
 </div>
 
-<p>And it will not re-generate configuration if the project description has not changed.</p>
+<p>Then，we can only configure the sdk directory and build it.</p>
 
-<p>But we can also modify configuration manually.</p>
-
-<p>e.g</p>
-
-<p>We want to build android program on macosx:</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -p android --ndk<span class="o">=</span>~/file/android-ndk
-</code></pre>
-</div>
-
-<p>Or</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake config --plat<span class="o">=</span>android --ndk<span class="o">=</span>~/file/android-ndk
-</code></pre>
-</div>
-
-<p>Next we build it.</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake
-</code></pre>
-</div>
-
-<p>We need add argument <code class="highlighter-rouge">-c</code> to clear the cached configuration and recheck it when some caching problem occurs</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -c
-</code></pre>
-</div>
-
-<p>The project configuration was storaged in the following directory:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>projectdir/.xmake
-</code></pre>
-</div>
-
-<p>We can also use the global configuration to simplify our works.</p>
-
-<p>.e.g</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake global --ndk<span class="o">=</span>~/file/android-ndk
-</code></pre>
-</div>
-
-<p>Or</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake g --ndk<span class="o">=</span>~/file/android-ndk
-</code></pre>
-</div>
-
-<p>Now we only run the following command to build project without the ndk argument each time. : )</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -p android
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -p linux --sdk<span class="o">=</span>/home/toolchains_sdkdir
 <span class="gp">$ </span>xmake
 </code></pre>
 </div>
 
-<p>Lastly，we can run xmake with <code class="highlighter-rouge">--help</code> to know more argument usages.</p>
+<p>xmake will detect the prefix: <code class="highlighter-rouge">arm-linux-</code> and add the include and library search directory automatically.</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -h
-<span class="gp">$ </span>xmake g -h
+<div class="highlighter-rouge"><pre class="highlight"><code>-I/home/toolchains_sdkdir/include -L/home/toolchains_sdkdir/lib
+</code></pre>
+</div>
+
+<p>However, we need set it manually if the toolchains <code class="highlighter-rouge">/bin</code> directory is in other places.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -p linux --sdk<span class="o">=</span>/home/toolchains_sdkdir --toolchains<span class="o">=</span>/usr/opt/bin
+<span class="gp">$ </span>xmake
+</code></pre>
+</div>
+
+<p>Or we need configure all options for compiling successfully if this toolchains has completely differen directory structure.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -p linux --sdk<span class="o">=</span>/home/toolchains_sdkdir --toolchains<span class="o">=</span>/usr/opt/bin --cxflags<span class="o">=</span><span class="s2">"-I/usr/xxx/include"</span> --ldflags<span class="o">=</span><span class="s2">"-L/usr/zzz/lib"</span>
+<span class="gp">$ </span>xmake
+</code></pre>
+</div>
+
+<p>We can also set the prefix using the argument <code class="highlighter-rouge">--cross=</code> manually.</p>
+
+<p>.e.g</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -p linux --cross<span class="o">=</span>arm-linux- --sdk<span class="o">=</span>/home/toolchains_sdkdir ...
 </code></pre>
 </div>
 
@@ -332,6 +305,71 @@
         
         
             
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
             
             
                 
@@ -339,149 +377,6 @@
                         
                         <h2 id="similar_posts">Similar Posts</h2>
                         <ul>
-                        
-                        <li class="relatedPost">
-                            <a href="http://tboox.org/2016/07/22/how-to-compile-on-cross-toolchains/">How to complie project using the cross toolchains
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-        
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-        
-            
-            
-            
-                
-                    
                         
                         <li class="relatedPost">
                             <a href="http://tboox.org/2016/07/19/how-to-install-xmake/">How to install xmake
@@ -496,27 +391,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
                 
                     
                 
@@ -532,6 +407,10 @@
                 
                     
                 
+            
+                
+                    
+                
                     
                 
                     
@@ -544,6 +423,10 @@
                 
                     
                 
+            
+                
+                    
+                
                     
                 
                     
@@ -556,6 +439,24 @@
                 
                     
                 
+            
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://tboox.org/2016/07/19/config-description/">How to configure for compiling
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
                     
                 
                     
@@ -565,6 +466,26 @@
                     
                 
                     
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
                 
                     
                 
@@ -598,27 +519,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
                 
                     
                 
@@ -634,15 +535,15 @@
                 
                     
                 
-                    
-                
-                    
-                
             
                 
                     
                 
                     
+                
+                    
+                
+            
                 
                     
                 
@@ -676,8 +577,8 @@
      */
 
     var disqus_config = function() {
-        this.page.url = 'http://tboox.org/2016/07/19/config-description/'; // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://tboox.org/2016/07/19/config-description/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = 'http://tboox.org/2016/07/22/how-to-compile-on-cross-toolchains/'; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://tboox.org/2016/07/22/how-to-compile-on-cross-toolchains/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 
     (function() { // DON'T EDIT BELOW THIS LINE
