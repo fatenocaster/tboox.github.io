@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>插件使用之批量打包</title>
-    <meta name="description" content="xmake提供了一些比较实用的内置宏脚本，比如 批量打包宏脚本 xmake macro package这个宏脚本可以批量打包指定平台的所有架构，例如：    # 批量打包当前平台的所有架构    xmake macro package     # 批量打包iphoneos平台的所有架构    xmake macr...">
+    <title>Running and debugging program using xmake</title>
+    <meta name="description" content="xmake can run and debug the given target program now.We only need configure the debug mode to compile this target and run it.e.g.-- enable debug symbolsif is...">
 
     
-    <meta name="keywords" content="xmake,lua,插件,宏脚本,打包,tboox" /> 
+    <meta name="keywords" content="xmake,lua,symbolfile,run,debug,windbg,ollydbg,windows,tboox" /> 
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://www.tboox.org/cn/2016/06/09/plugin-macro-package/">
+    <link rel="canonical" href="http://www.tboox.org/2016/07/25/support-debugger-on-windows/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX Open Source Project" href="http://www.tboox.org /feed.xml ">
 
 
@@ -39,128 +39,128 @@
 
     <header id="top">
     <div class="wrapper">
-        <a href="/cn" class="brand">TBOOX</a>
+        <a href="/" class="brand">TBOOX</a>
         <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
         <nav id="headerNav">
             <ul>
                 <li>
                     
-                    <a href="/">
+                    <a href="/cn">
                     
-                        <i class="fa fa-home"></i>English
+                        <i class="fa fa-home"></i>中文
                     </a>
                 </li>
 
                 
                     
+                     
                     
+                
+                    
+                     
                     <li>
                         
-                        <a href="/cn/project/">
+                        <a href="/project/">
                         
-                            <i class="fa fa-bookmark"></i>项目
+                            <i class="fa fa-bookmark"></i>Projects
                         </a>
                     </li>
                     
                     
                 
                     
-                    
+                     
                     
                 
                     
-                    
+                     
                     <li>
                         
-                        <a href="/cn/archive/">
+                        <a href="/archive/">
                         
-                            <i class="fa fa-archive"></i>归档
+                            <i class="fa fa-archive"></i>Archives
                         </a>
                     </li>
                     
                     
                 
                     
-                    
+                     
                     
                 
                     
-                    
+                     
                     <li>
                         
-                        <a href="/cn/category/">
+                        <a href="/category/">
                         
-                            <i class="fa fa-th-list"></i>分类
+                            <i class="fa fa-th-list"></i>Categories
                         </a>
                     </li>
                     
                     
                 
                     
-                    
+                     
                     
                 
                     
-                    
+                     
                     <li>
                         
-                        <a href="/cn/tag/">
+                        <a href="/tag/">
                         
-                            <i class="fa fa-tags"></i>标记
+                            <i class="fa fa-tags"></i>Tags
                         </a>
                     </li>
                     
                     
                 
                     
-                    
+                     
                     
                 
                     
-                    
+                     
                     <li>
                         
-                        <a href="/cn/book/">
+                        <a href="/book/">
                         
-                            <i class="fa fa-book"></i>书柜
+                            <i class="fa fa-book"></i>Books
                         </a>
                     </li>
                     
                     
                 
                     
-                    
+                     
                     
                 
                     
-                    
+                     
                     <li>
                         
-                        <a href="/cn/donation/">
+                        <a href="/donation/">
                         
-                            <i class="fa fa-heart"></i>捐助
+                            <i class="fa fa-heart"></i>Donate
                         </a>
                     </li>
                     
                     
                 
                     
-                    
+                     
                     
                 
                     
-                    
+                     
                     <li>
                         
-                        <a href="/cn/about/">
+                        <a href="/about/">
                         
-                            <i class="fa fa-user"></i>关于
+                            <i class="fa fa-user"></i>About
                         </a>
                     </li>
-                    
-                    
-                
-                    
                     
                     
                 
@@ -206,11 +206,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>插件使用之批量打包</h1>
+        <h1>Running and debugging program using xmake</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-06-09
+                <i class="fa fa-calendar"></i>2016-07-25
             </div>
 
             <div class="label-card">
@@ -253,14 +253,23 @@
         <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
         <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
     
-        <!--a href="/tag/#%E6%8F%92%E4%BB%B6" title="Tag: 插件" rel="tag">插件</a-->
-        <a href="/tag/#插件" title="Tag: 插件" rel="tag">插件</a>&nbsp;
+        <!--a href="/tag/#symbolfile" title="Tag: symbolfile" rel="tag">symbolfile</a-->
+        <a href="/tag/#symbolfile" title="Tag: symbolfile" rel="tag">symbolfile</a>&nbsp;
     
-        <!--a href="/tag/#%E5%AE%8F%E8%84%9A%E6%9C%AC" title="Tag: 宏脚本" rel="tag">宏脚本</a-->
-        <a href="/tag/#宏脚本" title="Tag: 宏脚本" rel="tag">宏脚本</a>&nbsp;
+        <!--a href="/tag/#run" title="Tag: run" rel="tag">run</a-->
+        <a href="/tag/#run" title="Tag: run" rel="tag">run</a>&nbsp;
     
-        <!--a href="/tag/#%E6%89%93%E5%8C%85" title="Tag: 打包" rel="tag">打包</a-->
-        <a href="/tag/#打包" title="Tag: 打包" rel="tag">打包</a>
+        <!--a href="/tag/#debug" title="Tag: debug" rel="tag">debug</a-->
+        <a href="/tag/#debug" title="Tag: debug" rel="tag">debug</a>&nbsp;
+    
+        <!--a href="/tag/#windbg" title="Tag: windbg" rel="tag">windbg</a-->
+        <a href="/tag/#windbg" title="Tag: windbg" rel="tag">windbg</a>&nbsp;
+    
+        <!--a href="/tag/#ollydbg" title="Tag: ollydbg" rel="tag">ollydbg</a-->
+        <a href="/tag/#ollydbg" title="Tag: ollydbg" rel="tag">ollydbg</a>&nbsp;
+    
+        <!--a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a-->
+        <a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a>
     
   
 
@@ -271,24 +280,60 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>xmake提供了一些比较实用的内置宏脚本，比如 批量打包宏脚本 <code class="highlighter-rouge">xmake macro package</code></p>
+        <p>xmake can run and debug the given target program now.</p>
 
-<p>这个宏脚本可以批量打包指定平台的所有架构，例如：</p>
+<p>We only need configure the debug mode to compile this target and run it.</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="c"># 批量打包当前平台的所有架构</span>
-    xmake macro package 
+<p>e.g.</p>
 
-    <span class="c"># 批量打包iphoneos平台的所有架构</span>
-    xmake macro package -p iphoneos
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>
+<span class="c1">-- enable debug symbols</span>
+<span class="k">if</span> <span class="n">is_mode</span><span class="p">(</span><span class="s2">"debug"</span><span class="p">)</span>
+    <span class="n">set_symbols</span><span class="p">(</span><span class="s2">"debug"</span><span class="p">)</span>
+<span class="k">end</span>
 
-    <span class="c"># 批量打包iphoneos平台的所有架构，并且传入"-m debug"给 `xmake config` 进行打包debug版本，包输出到/tmp/output目录</span>
-    xmake macro package -p iphoneos -f <span class="s2">"-m debug"</span> -o /tmp/output
+<span class="c1">-- define target</span>
+<span class="n">target</span><span class="p">(</span><span class="s2">"demo"</span><span class="p">)</span>
+    <span class="n">set_kind</span><span class="p">(</span><span class="s2">"kind"</span><span class="p">)</span>
+    <span class="n">add_files</span><span class="p">(</span><span class="s2">"src/*.c"</span><span class="p">)</span>
 </code></pre>
 </div>
 
-<p>这个打包宏针对iphoneos平台，还会自动将所有arch的包打成一个universal包。</p>
+<p>And we compile and run this program with the debug symbols.</p>
 
-<p>针对这个宏的详细使用说明，可以参看：<code class="highlighter-rouge">xmake macro package --help</code></p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -m debug
+<span class="gp">$ </span>xmake r -d demo
+</code></pre>
+</div>
+
+<p>It will generate pdb debug symbol files and detect the default debugger automatically on windows. (.e.g vsjitdebugger, windbg, ollydbg …)</p>
+
+<p><img src="/static/img/xmake/vsjitdebugger.png" alt="vsjitdebugger" /></p>
+
+<p><img src="/static/img/xmake/ollydbg.png" alt="ollydbg" /></p>
+
+<p>And we can set the given third-party debugger manually.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f --dd<span class="o">=</span><span class="s2">"C:</span><span class="se">\P</span><span class="s2">rogram Files</span><span class="se">\D</span><span class="s2">ebugging Tools for Windows (x86)</span><span class="se">\w</span><span class="s2">indbg.exe"</span>
+<span class="gp">$ </span>xmake r -d demo 
+</code></pre>
+</div>
+
+<p>Or we set it to the global configuration.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake g --dd<span class="o">=</span><span class="s2">"C:</span><span class="se">\P</span><span class="s2">rogram Files</span><span class="se">\D</span><span class="s2">ebugging Tools for Windows (x86)</span><span class="se">\w</span><span class="s2">indbg.exe"</span>
+</code></pre>
+</div>
+
+<p>xmake will load the debugger (lldb or gdb ..) to debug program in default case on macosx and linux.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake r -d demo
+
+<span class="gp">$ </span><span class="o">[</span>lldb]<span class="nv">$target</span> create <span class="s2">"build/demo"</span>
+  Current executable <span class="nb">set </span>to <span class="s1">'build/demo'</span> <span class="o">(</span>x86_64<span class="o">)</span>.
+<span class="gp">$ </span><span class="o">[</span>lldb]<span class="err">$</span>
+</code></pre>
+</div>
 
         </article>
         <hr>
@@ -298,16 +343,20 @@
             
         
             
+        
+            
+        
+            
             
             
                 
                     
                         
-                        <h2 id="similar_posts">相关文章</h2>
+                        <h2 id="similar_posts">Similar Posts</h2>
                         <ul>
                         
                         <li class="relatedPost">
-                            <a href="http://www.tboox.org/cn/2016/07/24/support-debugger-on-windows/">在windows下支持调试运行
+                            <a href="http://www.tboox.org/2016/07/22/how-to-compile-on-cross-toolchains/">How to complie project using the cross-toolchains
                             
                             </a>
                         </li>
@@ -323,24 +372,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -359,6 +390,12 @@
                 
                     
                 
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -371,7 +408,19 @@
                 
                     
                 
+                    
+                
+                    
+                
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
                 
                     
                 
@@ -387,103 +436,16 @@
             
         
             
-            
-            
-                
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="http://www.tboox.org/cn/2016/07/24/enable-pdb-on-windows/">xmake默认启用pdb符号文件
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
         
             
             
             
                 
                     
-                        
-                        <li class="relatedPost">
-                            <a href="http://www.tboox.org/cn/2016/07/23/condition-and-select-compile/">xmake工程描述编写之选择性编译
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
                 
                     
                 
                     
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -507,6 +469,30 @@
                 
                     
                 
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -519,6 +505,12 @@
                 
                     
                 
+                    
+                
+                    
+                
+                    
+                
             
                 
                     
@@ -531,7 +523,37 @@
                 
                     
                 
+                    
+                
+                    
+                
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
                 
                     
                 
@@ -555,7 +577,7 @@
                     
                         
                         <li class="relatedPost">
-                            <a href="http://www.tboox.org/cn/2016/07/22/how-to-compile-on-cross-toolchains/">如何通过xmake进行交叉编译
+                            <a href="http://www.tboox.org/2016/07/19/how-to-install-xmake/">How to install xmake
                             
                             </a>
                         </li>
@@ -571,24 +593,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -596,13 +600,12 @@
                     
                 
             
-            
-        
-            
-        
-            
-            
-            
+                
+                    
+                
+                    
+                
+                    
                 
                     
                 
@@ -626,24 +629,6 @@
                 
                     
                 
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -657,12 +642,6 @@
                     
                 
                     
-                
-                    
-                
-                    
-                
-            
                 
                     
                 
@@ -686,7 +665,37 @@
                 
                     
                 
+                    
+                
+                    
+                
+                    
+                
             
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
                 
                     
                 
@@ -701,6 +710,108 @@
             
             
         
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="http://www.tboox.org/2016/07/19/config-description/">How to configure for compiling
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
             
         
             
@@ -718,7 +829,31 @@
 
         
         
-        <p><strong>上一篇</strong> <a href="/cn/2016/06/09/plugin-hello/">插件开发之hello xmake</a></p>
+        
+
+        
+
+        
+
+        
+        
+        
+
+        
+
+        
+
+        
+        
+        
+
+        
+
+        
+
+        
+        
+        <p><strong>Prev Post</strong> <a href="/2016/07/22/how-to-compile-on-cross-toolchains/">How to complie project using the cross-toolchains</a></p>
         
     </div>
 
@@ -729,37 +864,444 @@
         
 
         
+
         
-        <p><strong>下一篇</strong> <a href="/cn/2016/06/09/plugin-macro/">插件使用之宏脚本记录</a></p>
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
         
     </div>
 </div>
 
 
-        <h2 id="comments">评论</h2>
+        <h2 id="comments">Comments</h2>
         
 
-<!-- 多说评论框 start -->
-<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/06/09/plugin-macro-package/" data-title="插件使用之批量打包" data-url="http://www.tboox.org/cn/2016/06/09/plugin-macro-package/"></div>
-<!-- 多说评论框 end -->
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-var duoshuoQuery = {short_name:"tboox"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-<!-- 多说公共JS代码 end -->
-<!-- 多说公共JS代码 end -->
 
 
 
 
+<div id="disqus_thread"></div>
+<script>
+    /**
+     * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+
+    var disqus_config = function() {
+        this.page.url = 'http://www.tboox.org/2016/07/25/support-debugger-on-windows/'; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://www.tboox.org/2016/07/25/support-debugger-on-windows/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document,
+            s = d.createElement('script');
+
+        s.src = '//zh-tboox.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
 
 
@@ -773,19 +1315,19 @@ var duoshuoQuery = {short_name:"tboox"};
             <!-- Content -->
             <div class="side content">
                 <div>
-                    内容
+                    Content
                 </div>
                 <ul id="content-side" class="content-ul">
-                    <li><a href="#similar_posts">相关文章</a></li>
-                    <li><a href="#comments">评论</a></li>
+                    <li><a href="#similar_posts">Similar Posts</a></li>
+                    <li><a href="#comments">Comments</a></li>
                 </ul>
             </div>
-            
+
             <br>
             <div class="side">
                 <div>
                     <i class="fa fa-external-link"></i>
-                    链接
+                    Links
                 </div>
                 <ul class="content-ul">
                   <li><a href="http://github.com/waruqi/tbox">tbox</a></li>
@@ -797,15 +1339,13 @@ var duoshuoQuery = {short_name:"tboox"};
             <!-- 其他div框放到这里 -->
             
 
-
             <!-- amazon ads -->
             
             <br>
             <div class="side" ads>
-            <iframe src="http://rcm-cn.amazon-adsystem.com/e/cm?t=tboox01-23&o=28&p=12&l=ur1&category=books&banner=1WBTNK2HJQF8QHK2R682&f=ifr" width="265" height="243" scrolling="no" border="0" marginwidth="0" style="border:none;max-width:800px;max-height:600px;" frameborder="0"></iframe>
+            <iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=books&banner=1QEXQKZ0XXMVAEBN3RR2&f=ifr&linkID=5766d20dcfa5a234daaf2c19095aae4c&t=tboox-20&tracking_id=tboox-20" width="265" height="243" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>
             </div>
             
-
         </div>
     </div>
 </div>
