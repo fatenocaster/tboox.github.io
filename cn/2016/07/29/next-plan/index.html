@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>xmake v2.0.3 更新!</title>
-    <meta name="description" content="主页源码更新内容新特性  增加头文件依赖自动检测和增量编译，提高编译速度  在终端中进行颜色高亮提示  添加调试器支持，xmake run -d program ...改进  增强运行shell的系列接口  更新luajit到v2.0.4版本  改进makefile生成插件，移除对xmake的依赖，并且支持win...">
+    <title>关于xmake下一步的开发计划</title>
+    <meta name="description" content="最近有很多用户反馈xmake在windows上编译体验不是很好，不方便进行调试和开发。。其实xmake的定位主要还是以直接编译为主，提供跨平台的编译和部署，不依赖第三方IDE工程，不过目前确实在windows的体验还不是很好尽管我已经优化了在windows下的编译速度，并且提供了xmake run -d xxxx...">
 
     
-    <meta name="keywords" content="xmake,lua,版本更新,xmake.io,windows,tboox" /> 
+    <meta name="keywords" content="xmake,lua,插件,后续计划,tboox" /> 
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://www.tboox.org/cn/2016/07/17/update-v2.0.3/">
+    <link rel="canonical" href="http://www.tboox.org/cn/2016/07/29/next-plan/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX Open Source Project" href="http://www.tboox.org/feed.xml ">
     <link rel="alternate" hreflang="en" href="http://www.tboox.org/" />
     <link rel="alternate" hreflang="cn" href="http://www.tboox.org/cn/" />
@@ -212,11 +212,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>xmake v2.0.3 更新!</h1>
+        <h1>关于xmake下一步的开发计划</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-07-17
+                <i class="fa fa-calendar"></i>2016-07-29
             </div>
 
             <div class="label-card">
@@ -259,14 +259,11 @@
         <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
         <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
     
-        <!--a href="/tag/#%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0" title="Tag: 版本更新" rel="tag">版本更新</a-->
-        <a href="/tag/#版本更新" title="Tag: 版本更新" rel="tag">版本更新</a>&nbsp;
+        <!--a href="/tag/#%E6%8F%92%E4%BB%B6" title="Tag: 插件" rel="tag">插件</a-->
+        <a href="/tag/#插件" title="Tag: 插件" rel="tag">插件</a>&nbsp;
     
-        <!--a href="/tag/#xmake.io" title="Tag: xmake.io" rel="tag">xmake.io</a-->
-        <a href="/tag/#xmake.io" title="Tag: xmake.io" rel="tag">xmake.io</a>&nbsp;
-    
-        <!--a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a-->
-        <a href="/tag/#windows" title="Tag: windows" rel="tag">windows</a>
+        <!--a href="/tag/#%E5%90%8E%E7%BB%AD%E8%AE%A1%E5%88%92" title="Tag: 后续计划" rel="tag">后续计划</a-->
+        <a href="/tag/#后续计划" title="Tag: 后续计划" rel="tag">后续计划</a>
     
   
 
@@ -277,36 +274,41 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p><a href="http://www.xmake.io/cn">主页</a>
-<a href="https://github.com/waruqi/xmake">源码</a></p>
+        <p>最近有很多用户反馈xmake在windows上编译体验不是很好，不方便进行调试和开发。。</p>
 
-<h1 id="section">更新内容</h1>
+<p>其实xmake的定位主要还是以直接编译为主，提供跨平台的编译和部署，不依赖第三方IDE工程，不过目前确实在windows的体验还不是很好</p>
 
-<h3 id="section-1">新特性</h3>
+<p>尽管我已经优化了在windows下的编译速度，并且提供了<code class="highlighter-rouge">xmake run -d xxxx</code>方式，直接加载调试器进行源码调试</p>
 
-<ul>
-  <li>增加头文件依赖自动检测和增量编译，提高编译速度</li>
-  <li>在终端中进行颜色高亮提示</li>
-  <li>添加调试器支持，<code class="highlighter-rouge">xmake run -d program ...</code></li>
-</ul>
+<p>但是毕竟整体开发上，没有IDE的支持，对于习惯IDE开发的用户来讲，就不是那么友好了。（虽然我个人觉得用编辑器+printf的方式已经够用了）</p>
 
-<h3 id="section-2">改进</h3>
+<p>因此我下一步计划（原本打算先做好包管理的），打算优先开始支持对Visual Stdio工程文件的生成，到时候会通过<code class="highlighter-rouge">project</code>插件的方式提供，例如：</p>
 
-<ul>
-  <li>增强运行shell的系列接口</li>
-  <li>更新luajit到v2.0.4版本</li>
-  <li>改进makefile生成插件，移除对xmake的依赖，并且支持<code class="highlighter-rouge">windows/linux/macosx</code>等大部分pc平台</li>
-  <li>优化多任务编译速度，在windows下编译提升较为明显</li>
-</ul>
+<p>创建vs2008工程文件：</p>
 
-<h3 id="bugs">Bugs修复</h3>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake project -k vs2008
+</code></pre>
+</div>
 
-<ul>
-  <li>修复安装目录错误问题</li>
-  <li>修复<code class="highlighter-rouge">import</code>根目录错误问题</li>
-  <li>修复在多版本vs同时存在的情况下，检测vs环境失败问题</li>
-</ul>
+<p>创建vs2015工程文件，并且输出到<code class="highlighter-rouge">f:\vsproject</code>目录：</p>
 
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake project -k vs2015 f:<span class="se">\v</span>sproject
+</code></pre>
+</div>
+
+<p>创建makefile文件（这个已实现）：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake project -k makefile
+</code></pre>
+</div>
+
+<p>xmake是可以灵活扩展插件的，如果有同学对xmake比较感兴趣，也想贡献插件的话（例如生成一些其他IDE工程文件。。），我还是非常欢迎的哈：）</p>
+
+<p>对于插件的开发，可以参考我之前写的一些<a href="/cn/tag/#插件">文档</a></p>
+
+<p>不过，由于个人还有很多工作上的事，因此空闲时间不是很多，对vs工程插件的开发也许会陆陆续续进行，具体什么时候完成，暂时我也无法确定，请大家见谅。。</p>
+
+<p>xmake的目标，不仅要做到跨平台构建和部署，还要提供最好的编译和开发体验，也许现在xmake还没有那么完善，体验上不是很好，但是大家可以多提意见，我会尽量去不断优化它。。</p>
 
         </article>
         <hr>
@@ -318,179 +320,101 @@
             
                 
                     
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+        
+            
+            
+            
+                
+                    
                         
                         <h2 id="similar_posts">相关文章</h2>
                         <ul>
-                        
-                        <li class="relatedPost">
-                            <a href="http://www.tboox.org/cn/2016/07/29/next-plan/">关于xmake下一步的开发计划
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-        
-            
-            
-            
-                
-                    
                         
                         <li class="relatedPost">
                             <a href="http://www.tboox.org/cn/2016/07/26/x86-script-instruction-virtual-machine/">x86汇编指令脚本虚拟机
@@ -507,23 +431,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
                 
                     
                 
@@ -543,23 +451,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
                 
                     
                 
@@ -579,11 +471,27 @@
                 
                     
                 
+            
+                
+                    
+                
+                    
+                
+                    
+                
                     
                 
             
                 
                     
+                
+                    
+                
+                    
+                
+                    
+                
+            
                 
                     
                 
@@ -619,23 +527,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
                 
                     
                 
@@ -655,6 +547,14 @@
                 
                     
                 
+            
+                
+                    
+                
+                    
+                
+                    
+                
                     
                 
             
@@ -667,8 +567,6 @@
                 
                     
                 
-                    
-                
             
                 
                     
@@ -679,11 +577,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
                 
                     
                 
@@ -717,23 +611,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
                 
                     
                 
@@ -753,6 +631,14 @@
                 
                     
                 
+            
+                
+                    
+                
+                    
+                
+                    
+                
                     
                 
             
@@ -765,11 +651,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
                 
                     
                 
@@ -803,23 +685,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
                 
                     
                 
@@ -839,11 +705,17 @@
                 
                     
                 
-                    
-                
             
                 
                     
+                
+                    
+                
+                    
+                
+                    
+                
+            
                 
                     
                 
@@ -877,23 +749,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
                 
                     
                 
@@ -913,6 +769,14 @@
                 
                     
                 
+            
+                
+                    
+                
+                    
+                
+                    
+                
                     
                 
             
@@ -925,8 +789,6 @@
                 
                     
                 
-                    
-                
             
                 
                     
@@ -937,9 +799,9 @@
                 
                     
                 
-                    
-                
             
+            
+        
             
         
         
@@ -955,15 +817,7 @@
 
         
         
-        
-
-        
-
-        
-
-        
-        
-        <p><strong>上一篇</strong> <a href="/cn/2016/07/17/demo-build-a-simple-project/">演示：构建一个简单的程序</a></p>
+        <p><strong>上一篇</strong> <a href="/cn/2016/07/29/code-style/">聊聊tbox的代码风格</a></p>
         
     </div>
 
@@ -974,7 +828,11 @@
         
 
         
+
         
+
+        
+
         
 
         
@@ -982,8 +840,433 @@
         
 
         
+
         
-        <p><strong>下一篇</strong> <a href="/cn/2016/07/18/wait-multi-processes/">多进程等待的跨平台实现</a></p>
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
         
     </div>
 </div>
@@ -993,7 +1276,7 @@
         
 
 <!-- 多说评论框 start -->
-<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/07/17/update-v2.0.3/" data-title="xmake v2.0.3 更新!" data-url="http://www.tboox.org/cn/2016/07/17/update-v2.0.3/"></div>
+<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/07/29/next-plan/" data-title="关于xmake下一步的开发计划" data-url="http://www.tboox.org/cn/2016/07/29/next-plan/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
