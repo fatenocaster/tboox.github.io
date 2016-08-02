@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Run target</title>
-    <meta name="description" content="You can use xmake to run the given target and need not know where is the target program.e.g.We define a simple target with named ‘test’.    target("test")   ...">
+    <title>xmake高级特性之选项绑定</title>
+    <meta name="description" content="什么是选项的绑定呢？例如我想在命令行中配置一个smallest的参数：xmake f --smallest=y这个时候，需要同时禁用多个其他的选项开关，来禁止编译多个模块，就是这个需求，相当于一个选项 与其他 多个选项之间 是有联动效应的。。那如何实现呢，可以通过下面两个api来实现：  add_bindings...">
 
     
-    <meta name="keywords" content="xmake,lua,run,tboox" /> 
+    <meta name="keywords" content="xmake,lua,选项绑定,tboox" /> 
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://www.tboox.org/2016/06/26/run-target/">
+    <link rel="canonical" href="http://www.tboox.org/cn/2016/08/02/binding-option/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX Open Source Project" href="http://www.tboox.org/feed.xml ">
     <link rel="alternate" hreflang="en" href="http://www.tboox.org/" />
     <link rel="alternate" hreflang="zh-Hans" href="http://www.tboox.org/cn/" />
@@ -41,145 +41,131 @@
 
     <header id="top">
     <div class="wrapper">
-        <a href="/" class="brand">TBOOX</a>
+        <a href="/cn" class="brand">TBOOX</a>
         <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
         <nav id="headerNav">
             <ul>
                 <li>
                     
-                    <a href="/cn">
+                    <a href="/">
                     
-                        <i class="fa fa-home"></i>中文
+                        <i class="fa fa-home"></i>English
                     </a>
                 </li>
 
                 
                     
-                     
                     
-                
-                    
-                     
-                     
                     <li>
                         
-                        <a href="/project/">
+                        <a href="/cn/project/">
                         
-                            <i class="fa fa-bookmark"></i>Projects
+                            <i class="fa fa-bookmark"></i>项目
                         </a>
                     </li>
                     
                     
+                
+                    
+                    
                     
                 
                     
-                     
                     
-                
-                    
-                     
-                     
                     <li>
                         
-                        <a href="/archive/">
+                        <a href="/cn/archive/">
                         
-                            <i class="fa fa-archive"></i>Archives
+                            <i class="fa fa-archive"></i>归档
                         </a>
                     </li>
                     
                     
+                
+                    
+                    
                     
                 
                     
-                     
                     
-                
-                    
-                     
-                     
                     <li>
                         
-                        <a href="/category/">
+                        <a href="/cn/category/">
                         
-                            <i class="fa fa-th-list"></i>Categories
+                            <i class="fa fa-th-list"></i>分类
                         </a>
                     </li>
                     
                     
+                
+                    
+                    
                     
                 
                     
-                     
                     
-                
-                    
-                     
-                     
                     <li>
                         
-                        <a href="/tag/">
+                        <a href="/cn/tag/">
                         
-                            <i class="fa fa-tags"></i>Tags
+                            <i class="fa fa-tags"></i>标记
                         </a>
                     </li>
                     
                     
+                
+                    
+                    
                     
                 
                     
                 
                     
-                     
                     
-                
-                    
-                     
-                     
                     <li>
                         
-                        <a href="/book/">
+                        <a href="/cn/book/">
                         
-                            <i class="fa fa-book"></i>Books
+                            <i class="fa fa-book"></i>书柜
                         </a>
                     </li>
                     
                     
+                
+                    
+                    
                     
                 
                     
-                     
                     
-                
-                    
-                     
-                     
                     <li>
                         
-                        <a href="/donation/">
+                        <a href="/cn/donation/">
                         
-                            <i class="fa fa-heart"></i>Donate
+                            <i class="fa fa-heart"></i>捐助
                         </a>
                     </li>
                     
                     
+                
+                    
+                    
                     
                 
                     
-                     
                     
-                
-                    
-                     
-                     
                     <li>
                         
-                        <a href="/about/">
+                        <a href="/cn/about/">
                         
-                            <i class="fa fa-user"></i>About
+                            <i class="fa fa-user"></i>关于
                         </a>
                     </li>
                     
                     
+                
+                    
+                    
                     
                 
                     
@@ -191,8 +177,6 @@
                     
                 
                     
-                     
-                     
                     
                     
                 
@@ -234,11 +218,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>Run target</h1>
+        <h1>xmake高级特性之选项绑定</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-06-26
+                <i class="fa fa-calendar"></i>2016-08-02
             </div>
 
             <div class="label-card">
@@ -276,13 +260,13 @@
   
     
         <!--a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a-->
-        <a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+        <a href="/cn/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
     
         <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
-        <a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+        <a href="/cn/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
     
-        <!--a href="/tag/#run" title="Tag: run" rel="tag">run</a-->
-        <a href="/tag/#run" title="Tag: run" rel="tag">run</a>
+        <!--a href="/tag/#%E9%80%89%E9%A1%B9%E7%BB%91%E5%AE%9A" title="Tag: 选项绑定" rel="tag">选项绑定</a-->
+        <a href="/cn/tag/#选项绑定" title="Tag: 选项绑定" rel="tag">选项绑定</a>
     
   
 
@@ -293,26 +277,48 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>You can use xmake to run the given target and need not know where is the target program.</p>
+        <p>什么是选项的绑定呢？</p>
 
-<p>e.g.</p>
+<p>例如我想在命令行中配置一个smallest的参数：<code class="highlighter-rouge">xmake f --smallest=y</code></p>
 
-<p>We define a simple target with named ‘test’.</p>
+<p>这个时候，需要同时禁用多个其他的选项开关，来禁止编译多个模块，就是这个需求，相当于一个选项 与其他 多个选项之间 是有联动效应的。。</p>
 
-<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="n">target</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>
-        <span class="n">set_kind</span><span class="p">(</span><span class="s2">"console"</span><span class="p">)</span>
-        <span class="n">add_files</span><span class="p">(</span><span class="s2">"*.c"</span><span class="p">)</span>
+<p>那如何实现呢，可以通过下面两个api来实现：</p>
+
+<ul>
+  <li>add_bindings: 添加正向绑定</li>
+  <li>add_rbindings: 添加反向绑定</li>
+</ul>
+
+<p>我们看下如何实现smallest的这个效果：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>
+<span class="c1">-- 定义选项开关: --smallest=y|n</span>
+<span class="n">option</span><span class="p">(</span><span class="s2">"smallest"</span><span class="p">)</span>
+
+    <span class="c1">-- 默认不启用</span>
+    <span class="n">set_enable</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+
+    <span class="c1">-- 在命令行菜单中显示描述，并且可手动配置</span>
+    <span class="n">set_showmenu</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+    
+    <span class="c1">-- 设置描述</span>
+    <span class="n">set_description</span><span class="p">(</span><span class="s2">"Enable the smallest compile mode and disable all modules."</span><span class="p">)</span>
+
+    <span class="c1">-- 添加反向绑定，如果smallest被启用，下面的所有模块全部禁用</span>
+    <span class="n">add_rbindings</span><span class="p">(</span><span class="s2">"xml"</span><span class="p">,</span> <span class="s2">"zip"</span><span class="p">,</span> <span class="s2">"asio"</span><span class="p">,</span> <span class="s2">"regex"</span><span class="p">,</span> <span class="s2">"object"</span><span class="p">,</span> <span class="s2">"thread"</span><span class="p">,</span> <span class="s2">"network"</span><span class="p">,</span> <span class="s2">"charset"</span><span class="p">,</span> <span class="s2">"database"</span><span class="p">)</span>
+    <span class="n">add_rbindings</span><span class="p">(</span><span class="s2">"zlib"</span><span class="p">,</span> <span class="s2">"mysql"</span><span class="p">,</span> <span class="s2">"sqlite3"</span><span class="p">,</span> <span class="s2">"openssl"</span><span class="p">,</span> <span class="s2">"polarssl"</span><span class="p">,</span> <span class="s2">"pcre2"</span><span class="p">,</span> <span class="s2">"pcre"</span><span class="p">,</span> <span class="s2">"base"</span><span class="p">)</span>
+
 </code></pre>
 </div>
 
-<p>So, we can run it directly.</p>
+<p>需要注意的是，命令行配置是有顺序的，你可以先通过启用smallest禁用所有模块，然后添加其他选项，逐一启用，例如：</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="nv">$xmake</span> r <span class="nb">test
-    </span>or <span class="nv">$xmake</span> run <span class="nb">test</span>
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>
+<span class="c1">-- 禁用所有模块，然后仅仅启用xml和zip模块</span>
+<span class="n">xmake</span> <span class="n">f</span> <span class="c1">--smallest=y --xml=y --zip=y</span>
 </code></pre>
 </div>
-
-<p>xmake will compile it automaticly if the target has not been built.</p>
 
 
         </article>
@@ -321,72 +327,17 @@
         
         
             
-            
-                
-            
         
             
-            
-                
-            
         
-            
-            
-                
-            
-        
-            
-            
-                
-            
-        
-            
-            
-                
-            
-        
-            
-            
-                
-            
-        
-            
-            
-                
-            
-        
-            
-            
-                
             
         
             
         
             
-            
-                
-            
         
             
         
-            
-            
-                
-            
-        
-            
-            
-                
-            
-        
-            
-            
-                
-            
-        
-            
-            
-                
             
         
             
@@ -408,20 +359,7 @@
             
         
             
-            
-                
-            
         
-            
-            
-                
-            
-        
-            
-        
-            
-            
-                
             
         
             
@@ -451,32 +389,12 @@
             
         
             
-            
-                
-            
-        
-            
         
             
             
                 
             
         
-            
-            
-                
-            
-        
-            
-        
-            
-            
-                
-            
-        
-            
-            
-                
             
         
             
@@ -498,12 +416,6 @@
             
         
             
-        
-            
-        
-            
-        
-            
             
                 
             
@@ -516,8 +428,7 @@
             
         
             
-            
-                
+        
             
         
             
@@ -526,28 +437,7 @@
             
         
             
-            
-                
-            
         
-            
-            
-                
-            
-        
-            
-            
-                
-            
-        
-            
-            
-                
-            
-        
-            
-            
-                
             
         
             
@@ -590,9 +480,6 @@
             
         
             
-            
-                
-            
         
             
             
@@ -600,38 +487,21 @@
             
         
             
-            
-                
+        
             
         
             
-            
-                
+        
             
         
             
-            
-                
+        
             
         
             
-            
-                
-            
         
             
-            
-                
-            
         
-            
-            
-                
-            
-        
-            
-            
-                
             
         
             
@@ -644,6 +514,43 @@
             
             
                 
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            
+                
+            
+        
             
         
         
@@ -651,17 +558,299 @@
         
         
             
-        
+            
+            
+                
+                    
+                        
+                        <h2 id="similar_posts">相关文章</h2>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="/cn/2016/08/02/plugin-doxygen/">doxygen文档生成
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
             
         
             
-        
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
             
         
             
-        
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
             
         
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/cn/2016/07/29/next-plan/">关于xmake下一步的开发计划
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
             
         
             
@@ -672,16 +861,21 @@
                 
                     
                         
-                        <h2 id="similar_posts">Similar Posts</h2>
-                        <ul>
-                        
                         <li class="relatedPost">
-                            <a href="/2016/07/26/x86-script-instruction-virtual-machine/">The x86 Script Instruction Virtual Machine
+                            <a href="/cn/2016/07/26/x86-script-instruction-virtual-machine/">x86汇编指令脚本虚拟机
                             
                             </a>
                         </li>
                         
                         
+                    
+                
+                    
+                
+                    
+                
+            
+                
                     
                 
                     
@@ -754,7 +948,7 @@
 
         
         
-        <p><strong>Prev Post</strong> <a href="/2016/06/26/package-target/">Package target</a></p>
+        <p><strong>上一篇</strong> <a href="/cn/2016/08/01/hnr-correct-slope/">手写数字识别系统之倾斜矫正</a></p>
         
     </div>
 
@@ -766,50 +960,35 @@
 
         
         
-        
-
-        
-
-        
-
-        
-        
-        <p><strong>Next Post</strong> <a href="/2016/07/02/xmake-io/">publish xmake.io</a></p>
+        <p><strong>下一篇</strong> <a href="/cn/2016/08/02/plugin-doxygen/">doxygen文档生成</a></p>
         
     </div>
 </div>
 
 
-        <h2 id="comments">Comments</h2>
+        <h2 id="comments">评论</h2>
         
 
+<!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/08/02/binding-option/" data-title="xmake高级特性之选项绑定" data-url="http://www.tboox.org/cn/2016/08/02/binding-option/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"tboox"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+<!-- 多说公共JS代码 end -->
 
 
 
-
-<div id="disqus_thread"></div>
-<script>
-    /**
-     * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-     * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-     */
-
-    var disqus_config = function() {
-        this.page.url = 'http://www.tboox.org/2016/06/26/run-target/'; // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://www.tboox.org/2016/06/26/run-target/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
-
-    (function() { // DON'T EDIT BELOW THIS LINE
-        var d = document,
-            s = d.createElement('script');
-
-        s.src = '//zh-tboox.disqus.com/embed.js';
-
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
 
 
@@ -823,20 +1002,20 @@
             <!-- Content -->
             <div class="side content">
                 <div>
-                    Content
+                    内容
                 </div>
                 <ul id="content-side" class="content-ul">
-                    <li><a href="#chinese">中文</a></li>
-                    <li><a href="#similar_posts">Similar Posts</a></li>
-                    <li><a href="#comments">Comments</a></li>
+                    <li><a href="#english">English</a></li>
+                    <li><a href="#similar_posts">相关文章</a></li>
+                    <li><a href="#comments">评论</a></li>
                 </ul>
             </div>
-
+            
             <br>
             <div class="side">
                 <div>
                     <i class="fa fa-external-link"></i>
-                    Links
+                    链接
                 </div>
                 <ul class="content-ul">
                   <li><a href="http://github.com/waruqi/tbox">tbox</a></li>
@@ -848,13 +1027,15 @@
             <!-- 其他div框放到这里 -->
             
 
+
             <!-- amazon ads -->
             
             <br>
             <div class="side" ads>
-            <iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=books&banner=1QEXQKZ0XXMVAEBN3RR2&f=ifr&linkID=5766d20dcfa5a234daaf2c19095aae4c&t=tboox-20&tracking_id=tboox-20" width="265" height="243" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>
+            <iframe src="http://rcm-cn.amazon-adsystem.com/e/cm?t=tboox01-23&o=28&p=12&l=ur1&category=books&banner=1WBTNK2HJQF8QHK2R682&f=ifr" width="265" height="243" scrolling="no" border="0" marginwidth="0" style="border:none;max-width:800px;max-height:600px;" frameborder="0"></iframe>
             </div>
             
+
         </div>
     </div>
 </div>
