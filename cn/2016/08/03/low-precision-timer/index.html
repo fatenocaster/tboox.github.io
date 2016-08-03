@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>tbox的裁剪和定制化编译</title>
-    <meta name="description" content="默认编译出来的tbox库，支持的功能比较全，带有所有模块，并且支持ssl（依赖polarssl/openssl）、gzip（依赖zlib）、database（依赖sqlite3/mysql）。因此生成的库文件偏大，而且会依赖三个第三方库，如果你用不到上述三个模块，完全可以自己配置编译所需要的模块，减小生成库的大小...">
+    <title>低精度定时器的使用</title>
+    <meta name="description" content="tbox提供了两种定时器：一种是基于最小堆的高精度定时器，精确到ms级别，但是时间复杂度在O(logn)还有一种就是基于timing-wheel时间轮算法的低精度定时器，时间复杂度仅为O(1)，实常数级别的，相当的快。这个定时器是参考了linux内核的timer算法实现，不过linux那个比较通用，实现复杂，tb...">
 
     
-    <meta name="keywords" content="tbox,c,裁剪,编译,配置,tboox" /> 
+    <meta name="keywords" content="tbox,定时器,时间轮算法,tboox" /> 
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://www.tboox.org/cn/2016/02/04/smallest-compile/">
+    <link rel="canonical" href="http://www.tboox.org/cn/2016/08/03/low-precision-timer/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX Open Source Project" href="http://www.tboox.org/feed.xml ">
     <link rel="alternate" hreflang="en" href="http://www.tboox.org/" />
     <link rel="alternate" hreflang="zh-Hans" href="http://www.tboox.org/cn/" />
@@ -218,11 +218,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>tbox的裁剪和定制化编译</h1>
+        <h1>低精度定时器的使用</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-02-04
+                <i class="fa fa-calendar"></i>2016-08-03
             </div>
 
             <div class="label-card">
@@ -262,17 +262,11 @@
         <!--a href="/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a-->
         <a href="/cn/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a>&nbsp;
     
-        <!--a href="/tag/#c" title="Tag: c" rel="tag">c</a-->
-        <a href="/cn/tag/#c" title="Tag: c" rel="tag">c</a>&nbsp;
+        <!--a href="/tag/#%E5%AE%9A%E6%97%B6%E5%99%A8" title="Tag: 定时器" rel="tag">定时器</a-->
+        <a href="/cn/tag/#定时器" title="Tag: 定时器" rel="tag">定时器</a>&nbsp;
     
-        <!--a href="/tag/#%E8%A3%81%E5%89%AA" title="Tag: 裁剪" rel="tag">裁剪</a-->
-        <a href="/cn/tag/#裁剪" title="Tag: 裁剪" rel="tag">裁剪</a>&nbsp;
-    
-        <!--a href="/tag/#%E7%BC%96%E8%AF%91" title="Tag: 编译" rel="tag">编译</a-->
-        <a href="/cn/tag/#编译" title="Tag: 编译" rel="tag">编译</a>&nbsp;
-    
-        <!--a href="/tag/#%E9%85%8D%E7%BD%AE" title="Tag: 配置" rel="tag">配置</a-->
-        <a href="/cn/tag/#配置" title="Tag: 配置" rel="tag">配置</a>
+        <!--a href="/tag/#%E6%97%B6%E9%97%B4%E8%BD%AE%E7%AE%97%E6%B3%95" title="Tag: 时间轮算法" rel="tag">时间轮算法</a-->
+        <a href="/cn/tag/#时间轮算法" title="Tag: 时间轮算法" rel="tag">时间轮算法</a>
     
   
 
@@ -283,57 +277,37 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>默认编译出来的tbox库，支持的功能比较全，带有所有模块，并且支持ssl（依赖polarssl/openssl）、gzip（依赖zlib）、database（依赖sqlite3/mysql）。</p>
+        <p>tbox提供了两种定时器：</p>
 
-<p>因此生成的库文件偏大，而且会依赖三个第三方库，如果你用不到上述三个模块，完全可以自己配置编译所需要的模块，减小生成库的大小。</p>
+<p>一种是基于最小堆的高精度定时器，精确到ms级别，但是时间复杂度在O(logn)</p>
 
-<p>新版采用xmake进行构建，裁剪模块已经是相当方便了，默认情况下回去自动检测依赖的第三方库进行编译。</p>
+<p>还有一种就是基于timing-wheel时间轮算法的低精度定时器，时间复杂度仅为O(1)，实常数级别的，相当的快。</p>
 
-<p>如果要禁用某个第三方库或者模块，只要执行<code class="highlighter-rouge">xmake f --xxxx=false</code>就行了，所有第三方库依赖都是可选，完全可以禁用。。</p>
+<p>这个定时器是参考了linux内核的timer算法实现，不过linux那个比较通用，实现复杂，tbox中为了考虑精简性和低资源，对其算法做了精简</p>
 
-<p>例如，禁用所有第三方库支持：</p>
+<p>使得其资源占用更小，效率更高，但是使用场景上会有些限制，可以根据自己的实际情况，来判断使用需要用这个定时器来优化性能，还是使用高精度版本。</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake f --polarssl<span class="o">=</span><span class="nb">false</span> --sqlite3<span class="o">=</span><span class="nb">false</span> --openssl<span class="o">=</span><span class="nb">false</span> --mysql<span class="o">=</span><span class="nb">false</span> --zlib<span class="o">=</span><span class="nb">false</span>
-</code></pre>
-</div>
+<p>ltimer低精度定时器，提供了几种精度模式：</p>
 
-<p>如果要最小化编译，可以禁用所有可选模块和特性：</p>
+<ul>
+  <li>TB_LTIMER_TICK_100MS：100毫秒级别</li>
+  <li>TB_LTIMER_TICK_S：秒级别</li>
+  <li>TB_LTIMER_TICK_M：分钟级别</li>
+  <li>TB_LTIMER_TICK_H：小时级别</li>
+</ul>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake f --network<span class="o">=</span><span class="nb">false</span> --asio<span class="o">=</span><span class="nb">false</span> --charset<span class="o">=</span><span class="nb">false</span> --xml<span class="o">=</span><span class="nb">false</span> --database<span class="o">=</span><span class="nb">false</span> --zip<span class="o">=</span><span class="nb">false</span> --thread<span class="o">=</span><span class="nb">false</span>
-</code></pre>
-</div>
+<p>ltimer考虑到资源问题，同时只能使用一种精度级别，不能够像linux的timer那么通用，但实现更加简单了。。</p>
 
-<p>tbox中使用float相关的代码，也是可以裁剪掉的，并且tbox还提供了一整套fixed16、fixed30、fixed6的定点运算库，来应付一些需要float运算的地方</p>
+<p>一般情况下，使用秒级别就够了，使用场景可以是：</p>
 
-<p>这个在图形算法上用的比较多，具体使用可以参考我的另外一个图形库项目：<a href="https://github.com/waruqi/gbox">gbox</a>，具体的裁剪如下：</p>
+<ul>
+  <li>针对服务器中socket超时定时器的管理和优化，这种精度不会太高，使用秒级别超时就ok了，但是在高并发下性能提升却很明显</li>
+  <li>针对一些精度要求不高的定时器场合，尤其是每秒钟一次的地方</li>
+</ul>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake f --float<span class="o">=</span><span class="nb">false</span>
-</code></pre>
-</div>
+<p>具体使用其实跟timer差不多，只要接口换成ltimer就行了，具体可参考：<a href="/cn/2016/08/03/high-precision-timer/">高精度定时器的使用</a></p>
 
-<p>只要执行上面的配置，跟float相关的操作接口，都会禁用，非常适合一些低端的嵌入式设备上。</p>
-
-<p>如果不想编译demo，节省时间，可以禁用demo模块：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake f --demo<span class="o">=</span><span class="nb">false</span>
-</code></pre>
-</div>
-
-<p>如果想要更小的话，就只能启用release模式了，编译发布版本，这样符号信息也被完全strip了：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    xmake f -m release
-</code></pre>
-</div>
-
-<p>如果还想更小，可以修改xmake.lua，设置优化选项为最小化编译（当然，针对ios/android等移动端，tbox默认就是这么设置的）：</p>
-
-<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="n">set_optimize</span><span class="p">(</span><span class="s2">"smallest"</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<p>如果把这些配置全部禁用，按照上述模式编译出来的tbox库，会相当小，虽然小了不少，但是该有的基础功能还是都有的。</p>
-
-<p>也可以根据自己的需要，启用部分模块和特性。</p>
+<p>两者的api是类似的，这里就不细说了。</p>
 
 
         </article>
@@ -590,6 +564,10 @@
                 
                     
                 
+            
+                
+                    
+                
                     
                 
                     
@@ -602,27 +580,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
                 
                     
                 
@@ -643,56 +601,6 @@
                         <ul>
                         
                         <li class="relatedPost">
-                            <a href="/cn/2016/08/03/low-precision-timer/">低精度定时器的使用
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-            
-            
-                
-                    
-                        
-                        <li class="relatedPost">
                             <a href="/cn/2016/08/03/high-precision-timer/">高精度定时器的使用
                             
                             </a>
@@ -705,6 +613,10 @@
                 
                     
                 
+            
+                
+                    
+                
                     
                 
                     
@@ -717,27 +629,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
                 
                     
                 
@@ -758,27 +650,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
                 
                     
                 
@@ -794,15 +666,15 @@
                 
                     
                 
-                    
-                
-                    
-                
             
                 
                     
                 
                     
+                
+                    
+                
+            
                 
                     
                 
@@ -823,10 +695,6 @@
                 
                     
                 
-                    
-                
-                    
-                
             
                 
                     
@@ -835,15 +703,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
                 
                     
                 
@@ -873,6 +733,10 @@
                 
                     
                 
+            
+                
+                    
+                
                     
                 
                     
@@ -885,27 +749,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
                 
                     
                 
@@ -926,6 +770,10 @@
                 
                     
                 
+            
+                
+                    
+                
                     
                 
                     
@@ -938,27 +786,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
                 
                     
                 
@@ -979,6 +807,10 @@
                 
                     
                 
+            
+                
+                    
+                
                     
                 
                     
@@ -991,27 +823,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
                 
                     
                 
@@ -1032,27 +844,7 @@
                 
                     
                 
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
                 
                     
                 
@@ -1068,15 +860,15 @@
                 
                     
                 
-                    
-                
-                    
-                
             
                 
                     
                 
                     
+                
+                    
+                
+            
                 
                     
                 
@@ -1097,6 +889,10 @@
                 
                     
                 
+            
+                
+                    
+                
                     
                 
                     
@@ -1109,10 +905,6 @@
                 
                     
                 
-                    
-                
-                    
-                
             
                 
                     
@@ -1121,15 +913,29 @@
                 
                     
                 
+            
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/cn/2016/07/29/code-style/">聊聊tbox的代码风格
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
                     
                 
                     
                 
             
-                
-                    
-                
-                    
                 
                     
                 
@@ -1153,7 +959,7 @@
 
         
         
-        <p><strong>上一篇</strong> <a href="/cn/2016/02/04/platform-thread-pool/">线程池的使用</a></p>
+        <p><strong>上一篇</strong> <a href="/cn/2016/08/03/high-precision-timer/">高精度定时器的使用</a></p>
         
     </div>
 
@@ -1165,7 +971,7 @@
 
         
         
-        <p><strong>下一篇</strong> <a href="/cn/2016/02/04/stream-zip/">通过流进行解压缩文件</a></p>
+        <p><strong>下一篇</strong> <a href="/cn/2016/08/03/switch-library-kind/">静态库和动态库的编译切换</a></p>
         
     </div>
 </div>
@@ -1175,7 +981,7 @@
         
 
 <!-- 多说评论框 start -->
-<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/02/04/smallest-compile/" data-title="tbox的裁剪和定制化编译" data-url="http://www.tboox.org/cn/2016/02/04/smallest-compile/"></div>
+<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/08/03/low-precision-timer/" data-title="低精度定时器的使用" data-url="http://www.tboox.org/cn/2016/08/03/low-precision-timer/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
