@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>利用bloom filter算法处理大规模数据过滤</title>
-    <meta name="description" content="Bloom Filter是由Bloom在1970年提出的一种快速查找算法，通过多个hash算法来共同判断某个元素是否在某个集合内。可以用于网络爬虫的url重复过滤、垃圾邮件的过滤等等。它相比hash容器的一个优势就是，不需要存储元素的实际数据到容器中去来一个个的比较是否存在。只需要对应的位段来标记是否存在就行了，...">
+    <title>tbox新增hash库模块</title>
+    <meta name="description" content="最近稍微整理了下tbox的utils模块，发现里面有很多都是一些，之前放置的hash算法，例如：md5, sha1, crc32, adler32啊什么，比较凌乱。因此我抽时间整理下这些hash算法，打算单独建立个hash算法模块，来放置各种大大小小的hash算法。顺便把tbox里面用到的一些字符串hash算法，...">
 
     
-    <meta name="keywords" content="tbox,c,bloom,filter,算法,大数据,过滤,tboox" /> 
+    <meta name="keywords" content="tbox,hash,算法,tboox" /> 
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://www.tboox.org/cn/2016/02/03/bloom-filter/">
+    <link rel="canonical" href="http://www.tboox.org/cn/2016/08/04/hash-library/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX Open Source Project" href="http://www.tboox.org/feed.xml ">
     <link rel="alternate" hreflang="en" href="http://www.tboox.org/" />
     <link rel="alternate" hreflang="zh-Hans" href="http://www.tboox.org/cn/" />
@@ -220,11 +220,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>利用bloom filter算法处理大规模数据过滤</h1>
+        <h1>tbox新增hash库模块</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-02-03
+                <i class="fa fa-calendar"></i>2016-08-04
             </div>
 
             <div class="label-card">
@@ -264,23 +264,11 @@
         <!--a href="/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a-->
         <a href="/cn/tag/#tbox" title="Tag: tbox" rel="tag">tbox</a>&nbsp;
     
-        <!--a href="/tag/#c" title="Tag: c" rel="tag">c</a-->
-        <a href="/cn/tag/#c" title="Tag: c" rel="tag">c</a>&nbsp;
-    
-        <!--a href="/tag/#bloom" title="Tag: bloom" rel="tag">bloom</a-->
-        <a href="/cn/tag/#bloom" title="Tag: bloom" rel="tag">bloom</a>&nbsp;
-    
-        <!--a href="/tag/#filter" title="Tag: filter" rel="tag">filter</a-->
-        <a href="/cn/tag/#filter" title="Tag: filter" rel="tag">filter</a>&nbsp;
+        <!--a href="/tag/#hash" title="Tag: hash" rel="tag">hash</a-->
+        <a href="/cn/tag/#hash" title="Tag: hash" rel="tag">hash</a>&nbsp;
     
         <!--a href="/tag/#%E7%AE%97%E6%B3%95" title="Tag: 算法" rel="tag">算法</a-->
-        <a href="/cn/tag/#算法" title="Tag: 算法" rel="tag">算法</a>&nbsp;
-    
-        <!--a href="/tag/#%E5%A4%A7%E6%95%B0%E6%8D%AE" title="Tag: 大数据" rel="tag">大数据</a-->
-        <a href="/cn/tag/#大数据" title="Tag: 大数据" rel="tag">大数据</a>&nbsp;
-    
-        <!--a href="/tag/#%E8%BF%87%E6%BB%A4" title="Tag: 过滤" rel="tag">过滤</a-->
-        <a href="/cn/tag/#过滤" title="Tag: 过滤" rel="tag">过滤</a>
+        <a href="/cn/tag/#算法" title="Tag: 算法" rel="tag">算法</a>
     
   
 
@@ -291,256 +279,183 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>Bloom Filter是由Bloom在1970年提出的一种快速查找算法，通过多个hash算法来共同判断某个元素是否在某个集合内。可以用于网络爬虫的url重复过滤、垃圾邮件的过滤等等。</p>
+        <p>最近稍微整理了下tbox的utils模块，发现里面有很多都是一些，之前放置的hash算法，例如：md5, sha1, crc32, adler32啊什么，比较凌乱。</p>
 
-<p>它相比hash容器的一个优势就是，不需要存储元素的实际数据到容器中去来一个个的比较是否存在。
-只需要对应的位段来标记是否存在就行了，所以想当节省内存，特别适合海量的数据处理。并且由于省去了存储元素和比较操作，所以性能也比基于hash容器的高了很多。</p>
+<p>因此我抽时间整理下这些hash算法，打算单独建立个hash算法模块，来放置各种大大小小的hash算法。</p>
 
-<p>但是由于bloom filter没有去比较元素，只通过多个hash来判断唯一性，所以存在一定的hash冲突导致误判。误判率的大小由hash函数的个数、hash函数优劣、以及存储的位空间大小共同决定。</p>
+<p>顺便把tbox里面用到的一些字符串hash算法，也做了些整理，一并归并到这个新模块中，例如比较常用的一些字符串哈希：</p>
 
-<p>并且删除也比较困难，解决办法是使用其变种，带计数的bloom filter，这个这里就不多说了。</p>
-
-<p>对于bloom filter算法的实现，相当简单：
-首先分配一块固定的连续空间，大小是m个比特位（m/8+1个字节），然后再提供k个不同hash函数，同时对每个元素进行计算位索引。如果每个位索引对应的位都为1，则存在该元素，否则就是不存在。</p>
-
-<p>可以看出，如果判断为不存在，那么肯定是不存在的，只有在判断为存在的时候，才会存在误判。</p>
-
-<p>bloom filter主要的难点其实在于估算：
-保证指定误判率的情况下，到底需要多少个hash函数，多少的存储空间。</p>
-
-<p>首先来看下bloom filter的误判率计算公式：</p>
-
-<p>假定有k个hash函数，m个比特位的存储空间，n个集合元素，则有误判率p：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>    p = (1 - ((1 - 1/ m) ^ kn))^k ~= (1 - e^(-kn/m))^k
+<div class="highlighter-rouge"><pre class="highlight"><code>bkdr, fnv, fnv-1a, aphash, rshash, djb2, murmur, sdbm, blizzard ...
 </code></pre>
 </div>
 
-<p>根据这个，官方给出了一个计算k的最优解公式，使其满足给定p的情况下，存储空间达到最小：</p>
+<p>其中 bkdr 的效果比较好，因此目前作为tbox里面主要的string哈希来用，其他的hash虽然实现了很多，但是大部分tbox都没怎么去用。。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    k = (m / n) * ln2
+<p>现在也只有<a href="/cn/2016/02/03/bloom-filter/">bloomfilter算法</a>模块，会用到其他多个hash的情况。</p>
+
+<p>此外，这次整理抽取了散落在tbox代码各处的hash代码后，如果配置<code class="highlighter-rouge">xmake f --smallest=y</code>最小化编译，库会更小些。</p>
+
+<p>因为现在新增了一个 <code class="highlighter-rouge">xmake f --hash=[y|n]</code> 的配置选项，来禁用和启用hash模块，smallest模式下，会禁用它，也就是不会去编译这些hash代码，如果用不到的话。。</p>
+
+<p>我还新增了一个benchmark的测试demo，可以测试各个hash的执行性能，因为目前只有adler32, crc32是稍微优化过的，其他的暂时没怎么去优化，所以测试结果仅作参考。</p>
+
+<p>如果想要运行demo，可以执行：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake r demo hash_benchmark
 </code></pre>
 </div>
 
-<p>把它带入概率公式得到：</p>
+<p>我这边的结果如下（仅供参考）：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    p = (1 - e ^-((m/nln2)n/m))^(m/nln2)
+<div class="highlighter-rouge"><pre class="highlight"><code>[demo]: [hash(1K)]: fnv32   : cae7edac 1431 ms
+[demo]: [hash(1K)]: fnv32-1a: 42041cc2 1419 ms
+[demo]: [hash(1K)]: rs      : 449e09d7 1614 ms
+[demo]: [hash(1K)]: ap      : 743c6a7d 2181 ms
+[demo]: [hash(1K)]: djb2    : c5fdc8ca 1450 ms
+[demo]: [hash(1K)]: sdbm    : 3a7175d1 1462 ms
+[demo]: [hash(1K)]: adler32 : 95feffd4 105 ms
+[demo]: [hash(1K)]: crc32   : a846383f 2658 ms
+[demo]: [hash(1K)]: crc32-le: 69de964b 2658 ms
+[demo]: [hash(1K)]: bkdr    : 01466ac5 1513 ms
+[demo]: [hash(1K)]: murmur  : cf826c7d 2463 ms
+[demo]: [hash(1K)]: blizzard: 3a7175d1 1638 ms
+[demo]: 
+[demo]: [hash(1M)]: fnv32   : 240670f1 1520 ms
+[demo]: [hash(1M)]: fnv32-1a: 49f2b159 1517 ms
+[demo]: [hash(1M)]: rs      : db1cd2ca 1510 ms
+[demo]: [hash(1M)]: ap      : 9ee66044 2167 ms
+[demo]: [hash(1M)]: djb2    : 683d1cd5 1525 ms
+[demo]: [hash(1M)]: sdbm    : 6cf0e47c 1538 ms
+[demo]: [hash(1M)]: adler32 : 93b3e9c2 102 ms
+[demo]: [hash(1M)]: crc32   : 42175630 2725 ms
+[demo]: [hash(1M)]: crc32-le: def09f36 2788 ms
+[demo]: [hash(1M)]: bkdr    : 2d447f50 1614 ms
+[demo]: [hash(1M)]: murmur  : 4d041d9c 2365 ms
+[demo]: [hash(1M)]: blizzard: 6cf0e47c 1580 ms
 </code></pre>
 </div>
 
-<p>简化为：</p>
+<p>对这个有兴趣的同学，可以尝试帮忙优化下各个hash的实现，并且欢迎贡献一些其他hash算法的实现。。：）</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    lnp = -m/n * (ln2)^2
+<p>对于如何使用这个hash接口，这边就拿crc32为例：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="cm">/*! make crc32 (IEEE)
+ *
+ * @param data      the input data
+ * @param size      the input size
+ * @param seed      uses this seed if be non-zero
+ *
+ * @return          the crc value
+ */</span>
+<span class="n">tb_uint32_t</span>         <span class="n">tb_crc32_make</span><span class="p">(</span><span class="n">tb_byte_t</span> <span class="k">const</span><span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="n">tb_size_t</span> <span class="n">size</span><span class="p">,</span> <span class="n">tb_uint32_t</span> <span class="n">seed</span><span class="p">);</span>
+
+<span class="cm">/*! make crc32 (IEEE) for cstr
+ *
+ * @param cstr      the input cstr
+ * @param seed      uses this seed if be non-zero
+ *
+ * @return          the crc value
+ */</span>
+<span class="n">tb_uint32_t</span>         <span class="n">tb_crc32_make_from_cstr</span><span class="p">(</span><span class="n">tb_char_t</span> <span class="k">const</span><span class="o">*</span> <span class="n">cstr</span><span class="p">,</span> <span class="n">tb_uint32_t</span> <span class="n">seed</span><span class="p">);</span>
 </code></pre>
 </div>
 
-<p>因此，如果指定p，只需要满足如果公式，就可以得到最优解：</p>
+<p>上面的接口，一个是对数据buffer进行计算，一个是对字符串数据进行计算，最后的seed值，就是初始化值，一般默认传0。。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    s = m/n = -lnp / (ln2 * ln2) = -log2(p) / ln2
-    k = s * ln2 = -log2(p)
+<p>计算字符串crc32如下：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="n">tb_trace_i</span><span class="p">(</span><span class="s">"[crc32]: %x"</span><span class="p">,</span> <span class="n">tb_crc32_make_from_cstr</span><span class="p">(</span><span class="s">"hello tbox"</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
 </code></pre>
 </div>
 
-<p>理论值：</p>
+<p>另外这回，还加了个uuid生成的接口：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    p &lt; 0.1: k = 3.321928, m/n = 4.79
-    p &lt; 0.01: k = 6.643856, m/n = 9.58
-    p &lt; 0.001: k = 9.965784, m/n = 14.37
-    p &lt; 0.0001: k = 13.287712, m/n = 19.170117
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="cm">/*! make an uuid
+ *
+ * @param uuid      the uuid output buffer
+ * @param name      we only generate it using a simple hashing function for speed if name is supplied 
+ *
+ * @return          tb_true or tb_false
+ */</span>
+<span class="n">tb_bool_t</span>           <span class="n">tb_uuid_make</span><span class="p">(</span><span class="n">tb_byte_t</span> <span class="n">uuid</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span> <span class="n">tb_char_t</span> <span class="k">const</span><span class="o">*</span> <span class="n">name</span><span class="p">);</span>
+
+<span class="cm">/*! make an uuid string
+ *
+ * @param uuid_cstr the uuid output c-string
+ * @param name      we only generate it using a simple hashing function for speed if name is supplied 
+ *
+ * @return          the uuid c-string or tb_null
+ */</span>
+<span class="n">tb_char_t</span> <span class="k">const</span><span class="o">*</span>    <span class="n">tb_uuid_make_cstr</span><span class="p">(</span><span class="n">tb_char_t</span> <span class="n">uuid_cstr</span><span class="p">[</span><span class="mi">37</span><span class="p">],</span> <span class="n">tb_char_t</span> <span class="k">const</span><span class="o">*</span> <span class="n">name</span><span class="p">);</span>
 </code></pre>
 </div>
 
-<p>可以看出，这个确实能够在保证误判率的前提下，使其存储空间达到最小，但是使用的hash函数个数k
-相对较多，至少也得4个，要满足p &lt; 0.001，需要10个才行，这个对于字符串hash的计算来讲，性能损耗相当大的，实际使用中根本没法接受。</p>
+<p>对于windows，内部直接调用的 <code class="highlighter-rouge">CocCreateGuid</code> 接口来生成，其他平台上，目前仅仅只是通过随机数来生成了个唯一的id而已</p>
 
-<p>因此我们需要另外一种推到公式，可以认为指定p和k的情况下，来计算空间使用s=m/n的大小，这样我们在实际使用的时候，灵活性就大大提高了。</p>
+<p>但是并不符合 RFC 4122 4.3 的规范，即需要满足如下要求：</p>
 
-<p>下面来看下，我自己推到出来的公式，首先还是依据误判率公式：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>o  The UUIDs generated at different times from the same name in the
+      same namespace MUST be equal.
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    p = (1 - e^(-kn/m))^k
+o  The UUIDs generated from two different names in the same namespace
+  should be different (with very high probability).
+
+o  The UUIDs generated from the same name in two different namespaces
+  should be different with (very high probability).
+
+o  If two UUIDs that were generated from names are equal, then they
+  were generated from the same name in the same namespace (with very
+  high probability).
 </code></pre>
 </div>
 
-<p>假定s=m/n，则有</p>
+<p>我目前主要是用uuid来为生成vs的工程文件做准备，只要保证唯一性就行了，等以后需要实现完整版了，我再去实现的更好些。。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    p = (1 - e^(-k/s))^k
+<p>目前的生成结果已经满足日常所需了，就暂时不去花太多精力到这上了，毕竟个人时间有限。</p>
+
+<p>使用uuid的接口也很简单：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="n">tb_char_t</span> <span class="n">uuid</span><span class="p">[</span><span class="mi">37</span><span class="p">];</span>
+<span class="n">tb_trace_i</span><span class="p">(</span><span class="s">"[uuid]: %s"</span><span class="p">,</span> <span class="n">tb_uuid_make_cstr</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">tb_null</span><span class="p">));</span>
 </code></pre>
 </div>
 
-<p>两边取导，得到：</p>
+<p>输出结果如下：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    lnp = k * ln(1 - e^(-k/s))
+<div class="highlighter-rouge"><pre class="highlight"><code>[demo]: [uuid]: 37DD735D-27FE-EC7D-520F-4189312D10E2
 </code></pre>
 </div>
 
-<p>交换k：</p>
+<p>如果有时候，上层已经有过key能够保证唯一性了，那么我们可以直接通过这个key来产生一个唯一的uuid，没必要再去按rfc的生成规则来运算</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    (lnp) / k = ln(1 - e^(-k/s))
+<p>这样效率会更快些，例如（通过指定唯一的key: <code class="highlighter-rouge">hello tbox</code>来生成）：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="n">tb_char_t</span> <span class="n">uuid</span><span class="p">[</span><span class="mi">37</span><span class="p">];</span>
+<span class="n">tb_trace_i</span><span class="p">(</span><span class="s">"[uuid]: %s"</span><span class="p">,</span> <span class="n">tb_uuid_make_cstr</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="s">"hello tbox"</span><span class="p">));</span>
 </code></pre>
 </div>
 
-<p>重新上e：</p>
+<p>目前tbox内部对于uuid的key哈希算法用的是bkdr，这个算法的综合效果不错，散列性也很好，基本上大部分库都默认首选这个hash算法。。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    e^((lnp) / k) = 1 - e^(-k/s)
+<p>这边贴下tbox里面的实现，我暂时没时间去优化它，毕竟对字符串作为key的输入一般都很小，暂时没需求去优化它：</p>
+
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="n">tb_size_t</span> <span class="nf">tb_bkdr_make</span><span class="p">(</span><span class="n">tb_byte_t</span> <span class="k">const</span><span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="n">tb_size_t</span> <span class="n">size</span><span class="p">,</span> <span class="n">tb_size_t</span> <span class="n">seed</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// check
+</span>    <span class="n">tb_assert_and_check_return_val</span><span class="p">(</span><span class="n">data</span> <span class="o">&amp;&amp;</span> <span class="n">size</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+    <span class="c1">// init value
+</span>    <span class="n">tb_size_t</span> <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  
+    <span class="k">if</span> <span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="mi">131313</span> <span class="o">+</span> <span class="n">seed</span><span class="p">;</span>
+
+    <span class="c1">// generate it
+</span>    <span class="k">while</span> <span class="p">(</span><span class="n">size</span><span class="o">--</span><span class="p">)</span> <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="mi">131313</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="o">++</span><span class="p">);</span>  
+    <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre>
 </div>
 
-<p>化简：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>    e^(-k/s) = 1 - e^((lnp) / k) = 1 - (e^lnp)^(1/k) = 1 - p^(1/k)
-</code></pre>
-</div>
-
-<p>再求导：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>    -k/s = ln(1 - p^(1/k))
-</code></pre>
-</div>
-
-<p>得出：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>    s = -k / ln(1 - p^(1/k))
-</code></pre>
-</div>
-
-<p>假定<code class="highlighter-rouge">c = p^(1/k)</code>：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>    s = -k / ln(1 - c)
-</code></pre>
-</div>
-
-<p>利用泰勒展开式：<code class="highlighter-rouge">ln(1 + x) ~= x - 0.5x^2 while x &lt; 1</code> 化简得到：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>    s ~= -k / (-c-0.5c^2) = 2k / (2c + c * c)
-</code></pre>
-</div>
-
-<p>最后得出公式：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>    c = p^(1/k)
-    s = m / n = 2k / (2c + c * c)
-</code></pre>
-</div>
-
-<p>假定有n=10000000的数据量，则有理论值：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>    p &lt; 0.1 and k = 1: s = m/n = 9.523810
-    p &lt; 0.1 and k = 2: s = m/n = 5.461082
-    p &lt; 0.1 and k = 3: s = m/n = 5.245850, space ~= 6.3MB
-    p &lt; 0.1 and k = 4: s = m/n = 5.552045, space ~= 6.6MB
-
-    p &lt; 0.01 and k = 1: s = m/n = 99.502488
-    p &lt; 0.01 and k = 2: s = m/n = 19.047619
-    p &lt; 0.01 and k = 3: s = m/n = 12.570636, space ~= 15MB
-    p &lt; 0.01 and k = 4: s = m/n = 10.922165, space ~= 13MB
-
-    p &lt; 0.001 and k = 1: s = m/n = 999.500250
-    p &lt; 0.001 and k = 2: s = m/n = 62.261118
-    p &lt; 0.001 and k = 3: s = m/n = 28.571429, space ~= 34MB
-    p &lt; 0.001 and k = 4: s = m/n = 20.656961, space ~= 24.6MB
-
-    p &lt; 0.0001 and k = 1: s = m/n = 9999.500025
-    p &lt; 0.0001 and k = 2: s = m/n = 199.004975
-    p &lt; 0.0001 and k = 3: s = m/n = 63.167063, space ~= 75.3MB
-    p &lt; 0.0001 and k = 4: s = m/n = 38.095238, space ~= 45.4MB
-    p &lt; 0.0001 and k = 5: s = m/n = 29.231432, space ~= 24.8MB
-</code></pre>
-</div>
-
-<p>可以看到，在k=3的情况下，其实已经可以达到我们平常使用所能的接受范围内了，没必要非得
-使用最优解，除非在空间使用极为苛刻的情况下，而且这个公式，针对程序空间使用的调整，更加的灵活智能。</p>
-
-<p>特别提下，经过实测，如果每个hash的实现非常优质，分布很均匀的情况下，其实际的误判率比理论值低很多:</p>
-
-<p>就拿TBOX的bloom filter的实现做测试，n=10000000：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>p &lt; 0.01 and k = 3的情况下，其实际误判率为：0.004965
-p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
-</code></pre>
-</div>
-
-<p>所以好的hash函数算法也是尤为的重要。</p>
-
-<p>下面来看下TBOX提供的bloom filter的使用，用起来也是相当的方便：</p>
-
-<div class="language-c highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// 总的元素个数
-</span>    <span class="n">tb_size_t</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">10000000</span><span class="p">;</span>
-
-    <span class="cm">/* 初始化bloom filter
-     *
-     * TB_BLOOM_FILTER_PROBABILITY_0_01: 预定义的误判率，接近0.01
-     * 注：由于内部使用位移数来表示：1 / 2^6 = 0.015625 ~= 0.01
-     * 所以实际传入的误判率，有可能稍微大一点，但是还是相当接近的
-     *
-     * 3：为k值，hash函数的个数，最大不超过15个
-     *
-     * count：指定的元素规模数
-     *
-     * tb_item_func_long()：容器的元素类型，主要是用其内定的hash函数，如果要自定义hash函数，可以替换:
-     *
-     * tb_size_t tb_xxxxxx_hash(tb_item_func_t* func, tb_cpointer_t data, tb_size_t mask, tb_size_t index)
-     * {
-     *      // mask为hash掩码，index为第index个hash算法的索引
-     *      return compute_hash(data, index) &amp; mask;
-     * }
-     *
-     * tb_item_func_t func = tb_item_func_long();
-     * func.hash = tb_xxxxxx_hash;
-     *
-     * 来进行
-     */</span>
-    <span class="n">tb_bloom_filter_ref_t</span> <span class="n">filter</span> <span class="o">=</span> <span class="n">tb_bloom_filter_init</span><span class="p">(</span><span class="n">TB_BLOOM_FILTER_PROBABILITY_0_01</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">tb_item_func_long</span><span class="p">());</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">filter</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">tb_size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="c1">// 产生随机数
-</span>            <span class="n">tb_long_t</span> <span class="n">value</span> <span class="o">=</span> <span class="n">tb_random</span><span class="p">();</span>
-            
-            <span class="c1">// 设置值到filter内，如果不存在，则返回tb_true表示设置成功
-</span>            <span class="k">if</span> <span class="p">(</span><span class="n">tb_bloom_filter_set</span><span class="p">(</span><span class="n">filter</span><span class="p">,</span> <span class="p">(</span><span class="n">tb_cpointer_t</span><span class="p">)</span><span class="n">value</span><span class="p">))</span>
-            <span class="p">{</span>
-                 <span class="c1">// 添加元素成功，之前元素不存在
-</span>                 <span class="c1">// 不会存在误判
-</span>            <span class="p">}</span>
-            <span class="k">else</span>
-            <span class="p">{</span>
-                 <span class="c1">// 添加失败，添加的元素已经存在
-</span>                 <span class="c1">// 这里可能会存在误判
-</span>            <span class="p">}</span>
-            
-            <span class="c1">// 仅仅判断元素是否存在
-</span>            <span class="k">if</span> <span class="p">(</span><span class="n">tb_bloom_filter_get</span><span class="p">(</span><span class="n">filter</span><span class="p">,</span> <span class="p">(</span><span class="n">tb_cpointer_t</span><span class="p">)</span><span class="n">data</span><span class="p">)</span>
-            <span class="p">{</span>
-                 <span class="c1">// 元素已经存在
-</span>                 <span class="c1">// 这里可能会存在误判
-</span>            <span class="p">}</span>
-            <span class="k">else</span>
-            <span class="p">{</span>
-                 <span class="c1">// 元素不存在
-</span>                 <span class="c1">// 不会存在误判
-</span>            <span class="p">}</span>
-        <span class="p">}</span>
-        
-        <span class="c1">// 退出filter
-</span>        <span class="n">tb_bloom_filter_exit</span><span class="p">(</span><span class="n">filter</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="c1">// 常用预定义的误判率，也可以指定其他值，注：必须是位移数，而不是实际值
-</span>    <span class="k">typedef</span> <span class="k">enum</span> <span class="n">__tb_bloom_filter_probability_e</span>
-    <span class="p">{</span>
-        <span class="n">TB_BLOOM_FILTER_PROBABILITY_0_1</span>         <span class="o">=</span> <span class="mi">3</span> <span class="c1">///!&lt; 1 / 2^3 = 0.125 ~= 0.1
-</span>    <span class="p">,</span>   <span class="n">TB_BLOOM_FILTER_PROBABILITY_0_01</span>        <span class="o">=</span> <span class="mi">6</span> <span class="c1">///!&lt; 1 / 2^6 = 0.015625 ~= 0.01
-</span>    <span class="p">,</span>   <span class="n">TB_BLOOM_FILTER_PROBABILITY_0_001</span>       <span class="o">=</span> <span class="mi">10</span> <span class="c1">///!&lt; 1 / 2^10 = 0.0009765625 ~= 0.001
-</span>    <span class="p">,</span>   <span class="n">TB_BLOOM_FILTER_PROBABILITY_0_0001</span>      <span class="o">=</span> <span class="mi">13</span> <span class="c1">///!&lt; 1 / 2^13 = 0.0001220703125 ~= 0.0001
-</span>    <span class="p">,</span>   <span class="n">TB_BLOOM_FILTER_PROBABILITY_0_00001</span>     <span class="o">=</span> <span class="mi">16</span> <span class="c1">///!&lt; 1 / 2^16 = 0.0000152587890625 ~= 0.00001
-</span>    <span class="p">,</span>   <span class="n">TB_BLOOM_FILTER_PROBABILITY_0_000001</span>    <span class="o">=</span> <span class="mi">20</span> <span class="c1">///!&lt; 1 / 2^20 = 0.00000095367431640625 ~= 0.000001
-</span>            
-    <span class="p">}</span><span class="n">tb_bloom_filter_probability_e</span><span class="p">;</span>
-</code></pre>
-</div>
-
+<p>其他的hash实现，可参考tbox下<code class="highlighter-rouge">src/tbox/hash</code>目录，这里就不一一介绍了。。。</p>
 
         </article>
         <hr>
@@ -814,14 +729,6 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -830,23 +737,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -876,14 +767,6 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -892,85 +775,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-            
-            
-                
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="/cn/2016/08/04/hash-library/">tbox新增hash库模块
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -991,7 +796,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
+            
                 
                     
                 
@@ -1007,39 +812,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -1069,14 +842,6 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -1085,23 +850,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -1131,7 +880,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
+            
                 
                     
                 
@@ -1147,39 +896,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -1200,7 +917,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
+            
                 
                     
                 
@@ -1216,14 +933,6 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -1232,39 +941,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -1285,14 +962,6 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -1301,23 +970,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -1347,7 +1000,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
+            
                 
                     
                 
@@ -1363,39 +1016,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -1416,7 +1037,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
+            
                 
                     
                 
@@ -1432,7 +1053,20 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
+            
+                
                     
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+            
+            
                 
                     
                 
@@ -1448,14 +1082,6 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -1464,7 +1090,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
                 
                     
                 
-                    
+            
                 
                     
                 
@@ -1488,15 +1114,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
 
         
         
-        
-
-        
-
-        
-
-        
-        
-        <p><strong>上一篇</strong> <a href="/cn/2016/01/30/welcome/">欢迎来到TBOOX开源项目!</a></p>
+        <p><strong>上一篇</strong> <a href="/cn/2016/08/03/switch-library-kind/">静态库和动态库的编译切换</a></p>
         
     </div>
 
@@ -1508,7 +1126,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
 
         
         
-        <p><strong>下一篇</strong> <a href="/cn/2016/02/03/project-description/">xmake工程描述入门</a></p>
+        <p><strong>下一篇</strong> <a href="/cn/2016/08/04/switch-global-memory/">切换tbox全局内存分配器</a></p>
         
     </div>
 </div>
@@ -1518,7 +1136,7 @@ p &lt; 0.001 and k = 3的情况下，其实际误判率为：0.000967
         
 
 <!-- 多说评论框 start -->
-<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/02/03/bloom-filter/" data-title="利用bloom filter算法处理大规模数据过滤" data-url="http://www.tboox.org/cn/2016/02/03/bloom-filter/"></div>
+<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/08/04/hash-library/" data-title="tbox新增hash库模块" data-url="http://www.tboox.org/cn/2016/08/04/hash-library/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
