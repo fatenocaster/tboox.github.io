@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>xmake编译配置过程详解</title>
-    <meta name="description" content="xmake 在构建程序的时候，会去自动检测系统环境，工程描述等来创建最合适的编译配置来进行编译。。一般情况下，我们只需要执行：$ xmake就行了，并且如果工程描述没有改变，就不会去重新检测和生成配置。。但是有时候，我们的编译需求千奇百怪，不可能一行xmake就能完全满足我们的需求，例如：我要在macosx上编译...">
+    <title>TBOOX开通微信公众号</title>
+    <meta name="description" content="欢迎加入TBOOX开源工程微信公众号，我们会不定期推送一些TBOOX开发上的最新资讯以及技术文章给大家。">
 
     
-    <meta name="keywords" content="xmake,lua,配置,android,vs,自动检测,tboox" /> 
+    <meta name="keywords" content="tboox,微信,公众号,tboox" /> 
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://www.tboox.org/cn/2016/07/19/config-description/">
+    <link rel="canonical" href="http://www.tboox.org/cn/2016/08/05/weixin-public/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX Open Source Project" href="http://www.tboox.org/feed.xml ">
     <link rel="alternate" hreflang="en" href="http://www.tboox.org/" />
     <link rel="alternate" hreflang="zh-Hans" href="http://www.tboox.org/cn/" />
@@ -220,11 +220,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>xmake编译配置过程详解</h1>
+        <h1>TBOOX开通微信公众号</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-07-19
+                <i class="fa fa-calendar"></i>2016-08-05
             </div>
 
             <div class="label-card">
@@ -244,7 +244,7 @@
   <i class="fa fa-th-list"></i>
   
     
-        <a href="/category/#xmake" title="Category: xmake" rel="category">xmake</a>
+        <a href="/category/#tboox" title="Category: tboox" rel="category">tboox</a>
     
   
 
@@ -261,23 +261,14 @@
   <i class="fa fa-tags"></i>
   
     
-        <!--a href="/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a-->
-        <a href="/cn/tag/#xmake" title="Tag: xmake" rel="tag">xmake</a>&nbsp;
+        <!--a href="/tag/#tboox" title="Tag: tboox" rel="tag">tboox</a-->
+        <a href="/cn/tag/#tboox" title="Tag: tboox" rel="tag">tboox</a>&nbsp;
     
-        <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
-        <a href="/cn/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
+        <!--a href="/tag/#%E5%BE%AE%E4%BF%A1" title="Tag: 微信" rel="tag">微信</a-->
+        <a href="/cn/tag/#微信" title="Tag: 微信" rel="tag">微信</a>&nbsp;
     
-        <!--a href="/tag/#%E9%85%8D%E7%BD%AE" title="Tag: 配置" rel="tag">配置</a-->
-        <a href="/cn/tag/#配置" title="Tag: 配置" rel="tag">配置</a>&nbsp;
-    
-        <!--a href="/tag/#android" title="Tag: android" rel="tag">android</a-->
-        <a href="/cn/tag/#android" title="Tag: android" rel="tag">android</a>&nbsp;
-    
-        <!--a href="/tag/#vs" title="Tag: vs" rel="tag">vs</a-->
-        <a href="/cn/tag/#vs" title="Tag: vs" rel="tag">vs</a>&nbsp;
-    
-        <!--a href="/tag/#%E8%87%AA%E5%8A%A8%E6%A3%80%E6%B5%8B" title="Tag: 自动检测" rel="tag">自动检测</a-->
-        <a href="/cn/tag/#自动检测" title="Tag: 自动检测" rel="tag">自动检测</a>
+        <!--a href="/tag/#%E5%85%AC%E4%BC%97%E5%8F%B7" title="Tag: 公众号" rel="tag">公众号</a-->
+        <a href="/cn/tag/#公众号" title="Tag: 公众号" rel="tag">公众号</a>
     
   
 
@@ -288,93 +279,10 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>xmake 在构建程序的时候，会去自动检测系统环境，工程描述等来创建最合适的编译配置来进行编译。。</p>
+        <p>欢迎加入TBOOX开源工程微信公众号，我们会不定期推送一些TBOOX开发上的最新资讯以及技术文章给大家。</p>
 
-<p>一般情况下，我们只需要执行：</p>
+<p><img src="/static/img/weixin_public.jpg" alt="weixin" width="256" height="256" /></p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake
-</code></pre>
-</div>
-
-<p>就行了，并且如果工程描述没有改变，就不会去重新检测和生成配置。。</p>
-
-<p>但是有时候，我们的编译需求千奇百怪，不可能一行<code class="highlighter-rouge">xmake</code>就能完全满足我们的需求，例如：我要在macosx上编译android程序了，怎么办</p>
-
-<p>这个时候就需要手动修改配置：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -p android --ndk<span class="o">=</span>~/file/android-ndk
-</code></pre>
-</div>
-
-<p>上面是简写，这样会少敲些字符，如果要可读性更好些，可以写全：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake config --plat<span class="o">=</span>android --ndk<span class="o">=</span>~/file/android-ndk
-</code></pre>
-</div>
-
-<p>然后我们继续执行编译即可：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake
-</code></pre>
-</div>
-
-<p>如果每次编译都是相同配置的话，就不需要重新配置了</p>
-
-<p>当然有时候系统环境发生改变，例如之前用的是 gcc， 现在gcc被卸载了，装了clang，那么缓存配置就无效了，这种情况下，xmake还没有那么智能，能够检测到进行重配，只能手动加上 <code class="highlighter-rouge">-c</code> 参数，强制清楚配置缓存，进行重新检测：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -c
-</code></pre>
-</div>
-
-<p>如果有时候遇到些配置上的问题，都可以尝试加上这个参数，重试下，一般都能解决。。</p>
-
-<p>上述讲的都是相对于工程的局部配置，只对当前工程有效，配置的缓存数据都被放置在了当前工程目录下：</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>projectdir/.xmake
-</code></pre>
-</div>
-
-<p>如果有些配置参数，每次都不变，那就不需要每次都手动输入一遍了，只需要放置到全局配置中区就行了，例如参数：<code class="highlighter-rouge">--ndk=~/file/android-ndk</code></p>
-
-<p>我们可以通过全局配置命令：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake global --ndk<span class="o">=</span>~/file/android-ndk
-</code></pre>
-</div>
-
-<p>或者简写方式：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake g --ndk<span class="o">=</span>~/file/android-ndk
-</code></pre>
-</div>
-
-<p>之后每次编译android的版本，就可以简化为：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -p android
-<span class="gp">$ </span>xmake
-</code></pre>
-</div>
-
-<p>是不是更方便了哈。。嘿嘿。。</p>
-
-<p>在比如，我要每次强行都使用vs2008这个特定版本，而不使用自动检测出来的v2015，（如果你装了两个vs的话），就可以通过全局配置，设置到vs2008上去：</p>
-
-<pre><code class="language-hash">$ xmake g --vs=2008
-</code></pre>
-
-<p>然后编译的时候执行(注：这里加上<code class="highlighter-rouge">-c</code>，是因为全局配置改了，最好强行重新检测下)：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -c
-<span class="gp">$ </span>xmake
-</code></pre>
-</div>
-
-<p>最后，如果需要了解配置的详细参数，可以执行<code class="highlighter-rouge">--help</code>来了解：</p>
-
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>xmake f -h
-<span class="gp">$ </span>xmake g -h
-</code></pre>
-</div>
 
         </article>
         <hr>
@@ -455,18 +363,6 @@
             
             
                 
-                    
-                    <h2 id="english">English</h2>
-                    <ul>
-                    
-                    <li class="relatedPost">
-                        <a href="/2016/07/19/config-description/">How to configure for compiling
-                        
-                        </a>
-                    </li>
-                    
-                    
-                
             
         
             
@@ -636,8 +532,6 @@
         
             
         
-        
-            </ul>
         
 
         
@@ -652,12 +546,6 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -666,19 +554,7 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -699,12 +575,6 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -713,19 +583,7 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -746,12 +604,6 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -760,19 +612,7 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -793,19 +633,7 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -821,78 +649,7 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
-            
-        
-            
-            
-            
-                
-                    
-                        
-                        <h2 id="similar_posts">相关文章</h2>
-                        <ul>
-                        
-                        <li class="relatedPost">
-                            <a href="/cn/2016/08/03/switch-library-kind/">静态库和动态库的编译切换
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -913,12 +670,6 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -927,19 +678,7 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -960,19 +699,7 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -988,159 +715,7 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-            
-            
-                
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="/cn/2016/08/02/plugin-doxygen/">xmake插件使用之doxygen文档生成
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-            
-            
-                
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="/cn/2016/08/02/binding-option/">xmake高级特性之选项绑定
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -1161,19 +736,7 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -1189,12 +752,6 @@
                 
                     
                 
-                    
-                
-                    
-                
-                    
-                
             
                 
                     
@@ -1202,6 +759,8 @@
                     
                 
                     
+                
+            
                 
                     
                 
@@ -1212,8 +771,109 @@
             
             
         
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
         
-            </ul>
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
         
 
         <div class="post-recent">
@@ -1225,7 +885,7 @@
 
         
         
-        <p><strong>上一篇</strong> <a href="/cn/2016/07/18/enable-pdb-for-windows/">如何为windows编译启用pdb支持</a></p>
+        <p><strong>上一篇</strong> <a href="/cn/2016/08/04/uses-vector/">tbox中vector容器的使用</a></p>
         
     </div>
 
@@ -1236,7 +896,11 @@
         
 
         
+
         
+
+        
+
         
 
         
@@ -1244,7 +908,11 @@
         
 
         
+
         
+
+        
+
         
 
         
@@ -1252,8 +920,499 @@
         
 
         
+
         
-        <p><strong>下一篇</strong> <a href="/cn/2016/07/21/tessellate-polygon-algorithm/">复杂多边形光栅化算法</a></p>
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
         
     </div>
 </div>
@@ -1263,7 +1422,7 @@
         
 
 <!-- 多说评论框 start -->
-<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/07/19/config-description/" data-title="xmake编译配置过程详解" data-url="http://www.tboox.org/cn/2016/07/19/config-description/"></div>
+<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/08/05/weixin-public/" data-title="TBOOX开通微信公众号" data-url="http://www.tboox.org/cn/2016/08/05/weixin-public/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
