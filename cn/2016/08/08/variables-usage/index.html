@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>插件使用之批量打包</title>
-    <meta name="description" content="xmake提供了一些比较实用的内置宏脚本，比如 批量打包宏脚本 xmake macro package这个宏脚本可以批量打包指定平台的所有架构，例如：    # 批量打包当前平台的所有架构    xmake macro package     # 批量打包iphoneos平台的所有架构    xmake macr...">
+    <title>xmake内建变量和外置变量的使用</title>
+    <meta name="description" content="内建变量内置在字符串中，例如：    set_objectdir("$(buildir)/.objs")其中的$(buildir)就是内建变量，这些是随着每次xmake config的配置改变而自动改变的。目前支持的一些变量如下：  $(buildir): 编译输出目录，可通过：xmake f -o /tmp 修...">
 
     
-    <meta name="keywords" content="xmake,lua,插件,宏脚本,打包,tboox" /> 
+    <meta name="keywords" content="xmake,lua,内建变量,外置变量,tboox" /> 
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
     <link rel="stylesheet" href=" /css/main.css ">
-    <link rel="canonical" href="http://www.tboox.org/cn/2016/06/09/plugin-macro-package/">
+    <link rel="canonical" href="http://www.tboox.org/cn/2016/08/08/variables-usage/">
     <link rel="alternate" type="application/rss+xml" title="TBOOX Open Source Project" href="http://www.tboox.org/feed.xml ">
     <link rel="alternate" hreflang="en" href="http://www.tboox.org/" />
     <link rel="alternate" hreflang="zh-Hans" href="http://www.tboox.org/cn/" />
@@ -222,11 +222,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>插件使用之批量打包</h1>
+        <h1>xmake内建变量和外置变量的使用</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2016-06-09
+                <i class="fa fa-calendar"></i>2016-08-08
             </div>
 
             <div class="label-card">
@@ -269,14 +269,11 @@
         <!--a href="/tag/#lua" title="Tag: lua" rel="tag">lua</a-->
         <a href="/cn/tag/#lua" title="Tag: lua" rel="tag">lua</a>&nbsp;
     
-        <!--a href="/tag/#%E6%8F%92%E4%BB%B6" title="Tag: 插件" rel="tag">插件</a-->
-        <a href="/cn/tag/#插件" title="Tag: 插件" rel="tag">插件</a>&nbsp;
+        <!--a href="/tag/#%E5%86%85%E5%BB%BA%E5%8F%98%E9%87%8F" title="Tag: 内建变量" rel="tag">内建变量</a-->
+        <a href="/cn/tag/#内建变量" title="Tag: 内建变量" rel="tag">内建变量</a>&nbsp;
     
-        <!--a href="/tag/#%E5%AE%8F%E8%84%9A%E6%9C%AC" title="Tag: 宏脚本" rel="tag">宏脚本</a-->
-        <a href="/cn/tag/#宏脚本" title="Tag: 宏脚本" rel="tag">宏脚本</a>&nbsp;
-    
-        <!--a href="/tag/#%E6%89%93%E5%8C%85" title="Tag: 打包" rel="tag">打包</a-->
-        <a href="/cn/tag/#打包" title="Tag: 打包" rel="tag">打包</a>
+        <!--a href="/tag/#%E5%A4%96%E7%BD%AE%E5%8F%98%E9%87%8F" title="Tag: 外置变量" rel="tag">外置变量</a-->
+        <a href="/cn/tag/#外置变量" title="Tag: 外置变量" rel="tag">外置变量</a>
     
   
 
@@ -287,24 +284,53 @@
         </div>
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
-        <p>xmake提供了一些比较实用的内置宏脚本，比如 批量打包宏脚本 <code class="highlighter-rouge">xmake macro package</code></p>
+        <h2 id="section">内建变量</h2>
 
-<p>这个宏脚本可以批量打包指定平台的所有架构，例如：</p>
+<p>内置在字符串中，例如：</p>
 
-<div class="language-bash highlighter-rouge"><pre class="highlight"><code>    <span class="c"># 批量打包当前平台的所有架构</span>
-    xmake macro package 
-
-    <span class="c"># 批量打包iphoneos平台的所有架构</span>
-    xmake macro package -p iphoneos
-
-    <span class="c"># 批量打包iphoneos平台的所有架构，并且传入"-m debug"给 `xmake config` 进行打包debug版本，包输出到/tmp/output目录</span>
-    xmake macro package -p iphoneos -f <span class="s2">"-m debug"</span> -o /tmp/output
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>    <span class="n">set_objectdir</span><span class="p">(</span><span class="s2">"$(buildir)/.objs"</span><span class="p">)</span>
 </code></pre>
 </div>
 
-<p>这个打包宏针对iphoneos平台，还会自动将所有arch的包打成一个universal包。</p>
+<p>其中的$(buildir)就是内建变量，这些是随着每次xmake config的配置改变而自动改变的。</p>
 
-<p>针对这个宏的详细使用说明，可以参看：<code class="highlighter-rouge">xmake macro package --help</code></p>
+<p>目前支持的一些变量如下：</p>
+
+<ul>
+  <li>$(buildir): 编译输出目录，可通过：<code class="highlighter-rouge">xmake f -o /tmp</code> 修改</li>
+  <li>$(projectdir): 工程主目录，可通过：<code class="highlighter-rouge">xmake f -P ./project</code> 修改</li>
+  <li>$(os): 编译目标的操作系统</li>
+  <li>$(plat): 编译目标的所在的平台，可通过：<code class="highlighter-rouge">xmake f -p android</code>修改</li>
+  <li>$(mode): 编译模式：debug、release、profile，可通过： <code class="highlighter-rouge">xmake f -m debug</code> 修改</li>
+  <li>$(arch): 编译目标的架构，可通过： <code class="highlighter-rouge">xmake f -a armv7</code> 修改</li>
+</ul>
+
+<p>注：所有通过<code class="highlighter-rouge">xmake f/config</code>配置的参数选项都可以通过内置变量访问，例如android下：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="n">xmake</span> <span class="n">f</span> <span class="o">-</span><span class="n">p</span> <span class="n">android</span> <span class="c1">--ndk=/xxxx</span>
+</code></pre>
+</div>
+
+<p>那么$(ndk)就是可访问变量，并且随着配置的改变而改变，但是这个在非android平台不能使用。</p>
+
+<p>其他所有的配置相关变量，可以通过以下命令来查看：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code><span class="n">xmake</span> <span class="n">f</span> <span class="c1">--help </span>
+</code></pre>
+</div>
+
+<h2 id="section-1">外置变量</h2>
+
+<p>外置变量很简单，就是lua的变量操作，因为xmake.lua本身就是lua脚本，那么lua的所有特性当然都能直接使用，因此可以这么使用：</p>
+
+<div class="language-lua highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">local</span> <span class="n">root</span> <span class="o">=</span> <span class="s2">"/tmp"</span>
+<span class="n">set_objectdir</span><span class="p">(</span><span class="n">root</span> <span class="o">..</span> <span class="s2">".objs"</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>通过lua的字符串变量追加语法就行了，是不是很简单。</p>
+
 
         </article>
         <hr>
@@ -575,148 +601,74 @@
             
                 
                     
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+        
+            
+            
+            
+                
+                    
                         
                         <h2 id="similar_posts">相关文章</h2>
                         <ul>
-                        
-                        <li class="relatedPost">
-                            <a href="/cn/2016/08/08/variables-usage/">xmake内建变量和外置变量的使用
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-        
-            
-            
-            
-                
-                    
                         
                         <li class="relatedPost">
                             <a href="/cn/2016/08/07/custom-option/">xmake高级特性之自定义选项
@@ -733,8 +685,6 @@
                 
                     
                 
-                    
-                
             
                 
                     
@@ -745,11 +695,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
                 
                     
                 
@@ -783,8 +729,6 @@
                 
                     
                 
-                    
-                
             
                 
                     
@@ -795,11 +739,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
                 
                     
                 
@@ -833,8 +773,6 @@
                 
                     
                 
-                    
-                
             
                 
                     
@@ -845,11 +783,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
                 
                     
                 
@@ -883,6 +817,14 @@
                 
                     
                 
+            
+                
+                    
+                
+                    
+                
+                    
+                
                     
                 
             
@@ -895,23 +837,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-                
-                    
                 
                     
                 
@@ -936,8 +862,6 @@
                 
                     
                 
-                    
-                
             
                 
                     
@@ -948,11 +872,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
                 
                     
                 
@@ -977,8 +897,6 @@
                 
                     
                 
-                    
-                
             
                 
                     
@@ -989,11 +907,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
                 
                     
                 
@@ -1018,8 +932,6 @@
                 
                     
                 
-                    
-                
             
                 
                     
@@ -1030,11 +942,7 @@
                 
                     
                 
-                    
-                
             
-                
-                    
                 
                     
                 
@@ -1059,6 +967,14 @@
                 
                     
                 
+            
+                
+                    
+                
+                    
+                
+                    
+                
                     
                 
             
@@ -1071,11 +987,51 @@
                 
                     
                 
+            
+            
+        
+            
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/cn/2016/08/03/switch-library-kind/">静态库和动态库的编译切换
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
                     
                 
             
                 
                     
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
                 
                     
                 
@@ -1101,7 +1057,7 @@
 
         
         
-        <p><strong>上一篇</strong> <a href="/cn/2016/06/09/plugin-hello/">插件开发之hello xmake</a></p>
+        <p><strong>上一篇</strong> <a href="/cn/2016/08/08/list-and-list-entry/">tbox链表list和list_entry的使用</a></p>
         
     </div>
 
@@ -1112,8 +1068,559 @@
         
 
         
+
         
-        <p><strong>下一篇</strong> <a href="/cn/2016/06/09/plugin-macro/">插件使用之宏脚本记录</a></p>
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
         
     </div>
 </div>
@@ -1123,7 +1630,7 @@
         
 
 <!-- 多说评论框 start -->
-<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/06/09/plugin-macro-package/" data-title="插件使用之批量打包" data-url="http://www.tboox.org/cn/2016/06/09/plugin-macro-package/"></div>
+<div class="ds-thread" data-thread-key="http://www.tboox.org/cn/2016/08/08/variables-usage/" data-title="xmake内建变量和外置变量的使用" data-url="http://www.tboox.org/cn/2016/08/08/variables-usage/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
